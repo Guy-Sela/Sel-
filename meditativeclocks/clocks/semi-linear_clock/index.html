@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+
+<head>
+    <!--    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">-->
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <meta charset="utf-8">
+    <meta name="author" content="Guy Sela">
+
+    <title>Semi-linear Clock</title>
+
+    <link rel="stylesheet" type="text/css" href="index.css">
+
+</head>
+
+
+<body class="swipable_elements" id="semi-linear_clock_full_view">
+
+    <div class="semi-linear_clock">
+
+        <div class="hours">
+            <div class="hour" id="hour0"></div>
+            <div class="hour" id="hour1"></div>
+            <div class="hour" id="hour2"></div>
+            <div class="hour" id="hour3"></div>
+            <div class="hour" id="hour4"></div>
+            <div class="hour" id="hour5"></div>
+            <div class="hour" id="hour6"></div>
+            <div class="hour" id="hour7"></div>
+            <div class="hour" id="hour8"></div>
+            <div class="hour" id="hour9"></div>
+            <div class="hour" id="hour10"></div>
+            <div class="hour" id="hour11"></div>
+            <div class="hour" id="hour12"></div>
+            <div class="hour" id="hour13"></div>
+            <div class="hour" id="hour14"></div>
+            <div class="hour" id="hour15"></div>
+            <div class="hour" id="hour16"></div>
+            <div class="hour" id="hour17"></div>
+            <div class="hour" id="hour18"></div>
+            <div class="hour" id="hour19"></div>
+            <div class="hour" id="hour20"></div>
+            <div class="hour" id="hour21"></div>
+            <div class="hour" id="hour22"></div>
+            <div class="hour" id="hour23"></div>
+        </div>
+
+
+        <div class="minutes">
+            <div class="minute" id="minute0"></div>
+            <div class="minute" id="minute1"></div>
+            <div class="minute" id="minute2"></div>
+            <div class="minute" id="minute3"></div>
+            <div class="minute" id="minute4"></div>
+            <div class="minute" id="minute5"></div>
+            <div class="minute" id="minute6"></div>
+            <div class="minute" id="minute7"></div>
+            <div class="minute" id="minute8"></div>
+            <div class="minute" id="minute9"></div>
+            <div class="minute" id="minute10"></div>
+            <div class="minute" id="minute11"></div>
+            <div class="minute" id="minute12"></div>
+            <div class="minute" id="minute13"></div>
+            <div class="minute" id="minute14"></div>
+            <div class="minute" id="minute15"></div>
+            <div class="minute" id="minute16"></div>
+            <div class="minute" id="minute17"></div>
+            <div class="minute" id="minute18"></div>
+            <div class="minute" id="minute19"></div>
+            <div class="minute" id="minute20"></div>
+            <div class="minute" id="minute21"></div>
+            <div class="minute" id="minute22"></div>
+            <div class="minute" id="minute23"></div>
+            <div class="minute" id="minute24"></div>
+            <div class="minute" id="minute25"></div>
+            <div class="minute" id="minute26"></div>
+            <div class="minute" id="minute27"></div>
+            <div class="minute" id="minute28"></div>
+            <div class="minute" id="minute29"></div>
+            <div class="minute" id="minute30"></div>
+            <div class="minute" id="minute31"></div>
+            <div class="minute" id="minute32"></div>
+            <div class="minute" id="minute33"></div>
+            <div class="minute" id="minute34"></div>
+            <div class="minute" id="minute35"></div>
+            <div class="minute" id="minute36"></div>
+            <div class="minute" id="minute37"></div>
+            <div class="minute" id="minute38"></div>
+            <div class="minute" id="minute39"></div>
+            <div class="minute" id="minute40"></div>
+            <div class="minute" id="minute41"></div>
+            <div class="minute" id="minute42"></div>
+            <div class="minute" id="minute43"></div>
+            <div class="minute" id="minute44"></div>
+            <div class="minute" id="minute45"></div>
+            <div class="minute" id="minute46"></div>
+            <div class="minute" id="minute47"></div>
+            <div class="minute" id="minute48"></div>
+            <div class="minute" id="minute49"></div>
+            <div class="minute" id="minute50"></div>
+            <div class="minute" id="minute51"></div>
+            <div class="minute" id="minute52"></div>
+            <div class="minute" id="minute53"></div>
+            <div class="minute" id="minute54"></div>
+            <div class="minute" id="minute55"></div>
+            <div class="minute" id="minute56"></div>
+            <div class="minute" id="minute57"></div>
+            <div class="minute" id="minute58"></div>
+            <div class="minute" id="minute59"></div>
+
+        </div>
+
+        <div class="seconds">
+            <div class="second" id="second0"></div>
+            <div class="second" id="second1"></div>
+            <div class="second" id="second2"></div>
+            <div class="second" id="second3"></div>
+            <div class="second" id="second4"></div>
+            <div class="second" id="second5"></div>
+            <div class="second" id="second6"></div>
+            <div class="second" id="second7"></div>
+            <div class="second" id="second8"></div>
+            <div class="second" id="second9"></div>
+            <div class="second" id="second10"></div>
+            <div class="second" id="second11"></div>
+            <div class="second" id="second12"></div>
+            <div class="second" id="second13"></div>
+            <div class="second" id="second14"></div>
+            <div class="second" id="second15"></div>
+            <div class="second" id="second16"></div>
+            <div class="second" id="second17"></div>
+            <div class="second" id="second18"></div>
+            <div class="second" id="second19"></div>
+            <div class="second" id="second20"></div>
+            <div class="second" id="second21"></div>
+            <div class="second" id="second22"></div>
+            <div class="second" id="second23"></div>
+            <div class="second" id="second24"></div>
+            <div class="second" id="second25"></div>
+            <div class="second" id="second26"></div>
+            <div class="second" id="second27"></div>
+            <div class="second" id="second28"></div>
+            <div class="second" id="second29"></div>
+            <div class="second" id="second30"></div>
+            <div class="second" id="second31"></div>
+            <div class="second" id="second32"></div>
+            <div class="second" id="second33"></div>
+            <div class="second" id="second34"></div>
+            <div class="second" id="second35"></div>
+            <div class="second" id="second36"></div>
+            <div class="second" id="second37"></div>
+            <div class="second" id="second38"></div>
+            <div class="second" id="second39"></div>
+            <div class="second" id="second40"></div>
+            <div class="second" id="second41"></div>
+            <div class="second" id="second42"></div>
+            <div class="second" id="second43"></div>
+            <div class="second" id="second44"></div>
+            <div class="second" id="second45"></div>
+            <div class="second" id="second46"></div>
+            <div class="second" id="second47"></div>
+            <div class="second" id="second48"></div>
+            <div class="second" id="second49"></div>
+            <div class="second" id="second50"></div>
+            <div class="second" id="second51"></div>
+            <div class="second" id="second52"></div>
+            <div class="second" id="second53"></div>
+            <div class="second" id="second54"></div>
+            <div class="second" id="second55"></div>
+            <div class="second" id="second56"></div>
+            <div class="second" id="second57"></div>
+            <div class="second" id="second58"></div>
+            <div class="second" id="second59"></div>
+
+        </div>
+
+    </div>
+
+
+<!--    <script type="text/javascript" src="index_randomColors.js"></script>-->
+    <script type="text/javascript" src="index_Black&White.js"></script>
+
+</body></html>

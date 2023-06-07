@@ -1,0 +1,51 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: black;
+}
+
+.semi-linear_clock {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 9vmin;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.seconds,
+.minutes {
+    display: inline-grid;
+    grid-template-columns: auto auto auto auto auto auto;
+    grid-gap: 0;
+    margin-right: 1vmin;
+}
+
+.hours {
+    display: inline-grid;
+    grid-template-columns: auto auto auto auto;
+    grid-gap: 0;
+    position: relative;
+    margin-right: 2vmin !important;
+
+}
+
+.second,
+.minute,
+.hour {
+    height: 5.5vmin;
+    width: 5.5vmin;
+    border: transparent 0.1vmin solid;
+}
+
+
+.full {
+    background-color: white;
+}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Shopping Cart</title>
+    <style>
+        body {
+            background-color: black;
+        }
+
+        /* Table style */
+        table {
+            background-color: black;
+            /* black background */
+            width: 100%;
+            /* full width of the container */
+            border-collapse: collapse;
+            /* removes the cell spacing */
+        }
+
+        th {
+            color: white;
+        }
+
+        /* Table cell style */
+        td {
+            color: white;
+            /* text color */
+            padding: 1rem;
+            /* 1rem padding */
+            text-align: center;
+            /* center align text */
+        }
+
+        #total {
+            color: white;
+            text-align: center;
+            font-size: 1.5rem;
+            padding: 1rem;
+            height: 100px;
+        }
+
+        button {
+            background-color: white;
+            color: black;
+            padding: 0.5rem 1rem;
+            border: none;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <table>
+        <tr>
+            <th></th>
+            <th>Off the shelf<br>5000$</th>
+            <th>Simple customization + NFT<br>
+                10,000$</th>
+            <th>Custom made + NFT<br>
+                20,000$ < </th>
+        </tr>
+        <tr>
+            <th>Present, past and Future</th>
+            <td>
+                <!-- <label> -->
+                <input type="checkbox">
+                <!-- </label> -->
+            </td>
+            <td><input type="checkbox"></td>
+            <td><input type="checkbox"></td>
+        </tr>
+    </table>
+
+    <div id="total"></div>
+
+    <div>
+        <button id="checkoutBtn" onclick="checkout()">Checkout</button>
+    </div>
+
+
+    <script>
+        // Select all checkboxes in the table
+        const checkboxes = document.querySelectorAll(" table input[type='checkbox' ]"); let shoppingCart = [];
+        // Create a sum total variable
+        let total = 0;
+        // Get a reference to the total element let
+        totalElement = document.getElementById("total"); checkboxes.forEach(function (checkbox, index) {
+            checkbox.addEventListener("change", function () {
+                if (checkbox.checked) {
+                    // Checkbox is selected, add the item to the shopping cart
+                    shoppingCart.push("item " + (index + 1));
+
+                    // Update the sum total
+                    if (index === 0) {
+                        total += 5000;
+                    }
+                    if (index === 1) {
+                        total += 10000;
+                    }
+                    if (index === 2) {
+                        total += 20000;
+                    }
+
+                } else {
+                    // Checkbox is deselected, remove the item from the shopping cart
+                    shoppingCart = shoppingCart.filter(function (item) {
+                        return item !== " item " + (index + 1);
+                    });
+                    // Update the sum total
+                    if (index === 0) {
+                        total -= 5000;
+                    }
+                    if (index === 1) {
+                        total -= 10000;
+                    }
+                    if (index === 2) {
+                        total -= 20000;
+                    }
+
+                }
+                totalElement.innerHTML = total
+                console.log(" Shopping Cart: ", shoppingCart);
+            });
+        });
+
+        function checkout() {
+            // Perform the checkout actions here
+            console.log(" Checkout button clicked!");
+        }
+    </script>
+
+</body>
+
+</html>

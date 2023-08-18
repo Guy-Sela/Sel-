@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <title>Semi-Linear Clock</title>
+    <meta name="description" content="Exhibition @be-ahava 31-12-23">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- <link rel="stylesheet" type="text/css" href="index.css"> -->
+
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Josefin Sans;
+        }
+
+        html,
+        body {
+            /* overflow: hidden; */
+            background-color: black;
+            color: white;
+            height: 200vh;
+            position: fixed;
+            font-size: 16px;
+            /* scale: 0.5; */
+        }
+
+        #pages {
+            display: grid;
+            grid-template-columns: auto auto;
+            width: 200vw;
+            height: 200vh;
+            transition: all 0.7s;
+            background-color: black;
+            position: relative;
+            /* right: 33.33%; */
+        }
+
+
+        .page {
+            width: 100vw;
+            height: 100vh;
+            /* border: solid pink 1px; */
+            position: relative;
+        }
+
+        #ho {
+            grid-row-start: 2;
+        }
+
+        #eventInfo {
+            grid-row-start: 2;
+            grid-column-start: 2;
+            padding: 5vmin;
+            line-height: 1.3;
+            padding: 5rem 10%;
+            overflow: auto;
+            text-align: center;
+            overflow-x: hidden;
+            /* margin: auto; */
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            /* color: #333; */
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            /* color: #555; */
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            /* color: #777; */
+        }
+
+        .title {
+            /* border: pink 1px solid; */
+            font-size: 15vmin;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+        }
+
+        .chevron {
+            font-size: 30vmin;
+            /* border: pink 1px solid; */
+            color: white;
+            position: absolute;
+            cursor: pointer;
+            /* transform: translate(-50%, -50%); */
+        }
+
+        #downChevron {
+            transform: translate(-50%, -50%) rotate(-90deg);
+            top: 70%;
+            left: 50%;
+        }
+
+        #rightChevron {
+            transform: translateY(-55%);
+            top: 50%;
+            left: 72.5%;
+        }
+
+        iframe {
+            border: none;
+            width: 100vw;
+            height: 50vmin;
+            margin: 5rem auto;
+            display: block;
+        }
+
+        .registration-form {
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 2rem;
+            background-color: transparent;
+            border-radius: 0.5rem;
+            width: 75%;
+
+        }
+
+        section {
+            padding: 3rem;
+            margin: 2rem auto;
+            /* border: solid pink 1vmin; */
+            width: 100vw;
+            position: relative;
+            overflow: hidden;
+            /* line-height: 1.5; */
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1em;
+            border: 0.05rem solid #ccc;
+            border-radius: 0.5rem;
+        }
+
+        input[type="submit"] {
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+            border: solid 0.05rem white;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+
+        #leadTitle {
+            text-align: left;
+            font-size: 1.2rem;
+            padding-left: 1rem;
+            padding-top: 1rem;
+        }
+
+        #what {
+            z-index: 1;
+        }
+
+        .background {
+            font-size: 30rem;
+            z-index: -1;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            opacity: 0.3;
+            text-align: center;
+            transform: translate(-50%, -50%);
+            overflow: hidden;
+        }
+
+        #bgWhat {
+            /* transform: rotate3d(1, 0, 0, 45deg); */
+        }
+
+        .no-spam {
+            font-size: 0.8em;
+            color: gray;
+            margin-top: 1em;
+        }
+
+        .twitter-follow {
+            display: inline-flex;
+            align-items: center;
+            color: #1DA1F2;
+            /* Twitter's color */
+            text-decoration: none;
+        }
+
+        .twitter-follow i {
+            margin-left: 0.5em;
+            /* Adds some spacing between the text and the icon */
+        }
+
+        footer {
+            width: 100%;
+            padding: 1vh 0;
+            text-align: center;
+            background-color: #333;
+            /* This is just an example color, adjust as needed */
+            color: white;
+        }
+
+        /* Small devices (tablets): */
+        @media (min-width: 576px) {
+            /* Adjust styles for tablets */
+        }
+
+        /* Medium devices: */
+        @media (min-width: 768px) {
+
+            /* Adjust styles for some desktops */
+            .page {
+                /* The height might need to be adjusted for medium-sized screens */
+                height: 80vh;
+            }
+
+            .title {
+                font-size: 12vmin;
+            }
+
+            .chevron {
+                font-size: 20vmin;
+            }
+
+            .registration-form {
+                width: 85%;
+            }
+        }
+
+        /* Large devices (desktops): */
+        @media (min-width: 992px) {
+
+            /* Styles for typical desktops */
+            .page {
+                height: 90vh;
+            }
+
+            .title {
+                font-size: 13vmin;
+            }
+
+            .chevron {
+                font-size: 25vmin;
+            }
+
+            .registration-form {
+                width: 80%;
+            }
+        }
+
+        /* Extra large devices (large desktops, TVs): */
+        @media (min-width: 1200px) {
+
+            /* Styles for large desktops */
+            .page {
+                height: 100vh;
+            }
+
+            .title {
+                font-size: 15vmin;
+            }
+
+            .chevron {
+                font-size: 30vmin;
+            }
+
+            .registration-form {
+                width: 75%;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="pages">
+        <div class="page" id="hey">
+            <div class='title'>HEY</div>
+            <div class='chevron' id="downChevron">&lsaquo;</div>
+        </div>
+        <div class="page" id="ho">
+            <div class='title'>HO</div>
+            <div class='chevron' id="rightChevron">&rsaquo;</div>
+        </div>
+        <div class="page" id="eventInfo">
+            <h3 id="leadTitle">Thought you might like to know...</h3>
+            <iframe src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+            <section id="what">
+                <P class="background" id="bgWhat">WHAT</P>
+                <h1>LIVE EXHIBITION AND SALE</h1>
+                <h1>&mdash;</h1>
+                <h2>SEMI-LINEAR CLOCK</h2>
+            </section>
+            <section id="where">
+                <P class="background">WHERE</P>
+                <h3>Be-ahava Gallery, Kikar Kdumim, Jaffa, Israel</h3>
+                <h3>and online</h3>
+            </section>
+            <section id="when">
+                <P class="background">WHEN</P>
+                <h2>New Year's Eve</h2>
+                <h3>Sunday, 19:00 (UTC+2), 31-12-23</h3>
+            </section>
+            <section id="participate">
+                <P class="background">SHOP</P>
+                <h3>NFT</h3>
+                <h3>T-Shirts</h3>
+                <h3>Prints</h3>
+            </section>
+            <section id="registration">
+                <P class="background">SIGN UP</P>
+                <h3>20% off Presale discount, early bird discounts and more...</h3>
+                <div class="registration-form">
+                    <form action="" method="post">
+                        <div class="form-group">
+                            <input type="text" placeholder="Name" id="name" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="email" placeholder="Email Address" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="submit" value="Sign up">
+                        </div>
+                    </form>
+                    <p class="no-spam">No spam, obviously.</p>
+                </div>
+            </section>
+            <a href="https://twitter.com/YourTwitterHandle" target="_blank" class="twitter-follow">
+                Follow <i class="fab fa-twitter"></i>
+            </a>
+            <footer>
+                <p>&copy; Selà <span id="year"></span></p>
+            </footer>
+
+        </div>
+    </div>
+    <!-- <script type="text/javascript" src="index.js"></script> -->
+
+    <script>
+
+        const pages = document.getElementById("pages");
+        const downChevron = document.getElementById('downChevron');
+        const rightChevron = document.getElementById('rightChevron');
+
+        downChevron.addEventListener('click', () => {
+            console.log('down chevron clicked');
+            pages.style.transform = 'translateY(-50%)';
+        });
+
+        rightChevron.addEventListener('click', () => {
+            console.log('right chevron clicked');
+            pages.style.transform = 'translate(-50%, -50%)';
+        });
+
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        // const backgrounds = document.getElementsByClassName('background')
+
+        // let fontSize = parseInt(window.getComputedStyle(backgrounds[0]).getPropertyValue('font-size'));
+        // console.log(fontSize)
+
+        // const animateBackgrounds = setInterval(() => {
+
+        //     fontSize--
+        //     backgrounds[0].style.fontSize = `${fontSize}px`
+        // }, 100)
+
+
+
+        // Helper function to get random number within a range
+        // function getRandom(min, max) {
+        //     return Math.random() * (max - min) + min;
+        // }
+
+
+        const backgrounds = document.getElementsByClassName('background');
+
+        // Initialize the states
+        let bgStates = Array.from(backgrounds).map(bg => {
+            const initialSize = parseInt(window.getComputedStyle(bg).getPropertyValue('font-size'));
+            return {
+                element: bg,
+                fontSize: initialSize,
+                initialSize: initialSize,
+                direction: -1
+            };
+        });
+
+        let lastTime = 0;
+        const interval = 1000 / 30; // Approximately 30 fps
+
+        function updateState(state) {
+            state.fontSize += state.direction;
+
+            if (state.fontSize <= 80) {
+                state.direction = 1;
+            } else if (state.fontSize >= state.initialSize + 1000) {
+                state.direction = -1;
+            }
+        }
+        function draw(state) {
+            state.element.style.fontSize = `${state.fontSize}px`;
+        }
+
+
+        function animate(timestamp) {
+            const deltaTime = timestamp - lastTime;
+
+            if (deltaTime > interval) {
+                bgStates.forEach(state => {
+                    updateState(state);
+                    draw(state);
+                });
+
+                lastTime = timestamp - (deltaTime % interval);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+
+
+        // function animateBackgrounds() {
+        //     // Convert HTMLCollection to Array and loop through
+        //     Array.from(backgrounds).forEach((bg) => {
+        //         // Get the current font size
+        //         let fontSize = parseInt(window.getComputedStyle(bg).getPropertyValue('font-size'));
+
+        //         // Change the font size by a random amount between -2 and 2
+        //         // fontSize += getRandom(-2, 2);
+        //         fontSize -= 0.001
+        //         // Set the new font size
+        //         bg.style.fontSize = `${fontSize}px`;
+        //     });
+
+        //     // Use requestAnimationFrame for smoother animations
+        //     requestAnimationFrame(animateBackgrounds);
+        // }
+
+        // // Start the animation
+        // animateBackgrounds();
+    </script>
+
+</body>
+
+</html>

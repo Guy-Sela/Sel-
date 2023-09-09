@@ -5,9 +5,9 @@
     <meta charset="utf-8">
 
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
-    <title>Semi-Linear Clock</title>
+    <title>Semi-Linear Clock &mdash; Live Exhibition</title>
     <meta name="description" content="Exhibition @be-ahava 31-12-23">
-    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <!-- <link rel="stylesheet" type="text/css" href="index.css"> -->
@@ -23,31 +23,39 @@
 
         html,
         body {
-            /* overflow: hidden; */
+
             background-color: black;
             color: white;
-            height: 200vh;
+            height: 300vh;
             position: fixed;
             font-size: 16px;
-            /* scale: 0.5; */
+
+
         }
+
+        body.cursor-hidden {
+            cursor: none;
+        }
+
 
         #pages {
             display: grid;
             grid-template-columns: auto auto;
+            grid-template-rows: auto auto auto;
             width: 200vw;
-            height: 200vh;
-            transition: all 0.7s;
+            height: 300vh;
+            transition: transform 0.7s;
             background-color: black;
             position: relative;
-            /* right: 33.33%; */
+
+
         }
 
 
         .page {
             width: 100vw;
             height: 100vh;
-            /* border: solid pink 1px; */
+
             position: relative;
         }
 
@@ -58,13 +66,6 @@
         #eventInfo {
             grid-row-start: 2;
             grid-column-start: 2;
-            padding: 5vmin;
-            line-height: 1.3;
-            padding: 5rem 10%;
-            overflow: auto;
-            text-align: center;
-            overflow-x: hidden;
-            /* margin: auto; */
         }
 
         h1,
@@ -76,22 +77,22 @@
         h1 {
             font-size: 1.5rem;
             font-weight: 800;
-            /* color: #333; */
+
         }
 
         h2 {
             font-size: 1.5rem;
             font-weight: 800;
-            /* color: #555; */
+
         }
 
         h3 {
             font-size: 1.5rem;
-            /* color: #777; */
+
         }
 
         .title {
-            /* border: pink 1px solid; */
+
             font-size: 15vmin;
             position: absolute;
             top: 50%;
@@ -103,11 +104,11 @@
 
         .chevron {
             font-size: 30vmin;
-            /* border: pink 1px solid; */
+
             color: white;
             position: absolute;
             cursor: pointer;
-            /* transform: translate(-50%, -50%); */
+
         }
 
         #downChevron {
@@ -123,11 +124,18 @@
         }
 
         iframe {
+            /* border: solid blue 0.3vmin;
+            border-radius: 12pt; */
+            min-height: 56.5vw;
+            max-height: 56.5vw;
+            min-width: 100vw;
+            max-width: 100vw;
             border: none;
-            width: 100vw;
-            height: 50vmin;
-            margin: 5rem auto;
-            display: block;
+            /* width: 100%; */
+            /* position: relative;
+            left: 0;
+            opacity: 1; */
+            /* border: yellow 1vmin solid; */
         }
 
         .registration-form {
@@ -142,14 +150,17 @@
 
         }
 
+        #registration {
+            transform-style: preserve-3d;
+        }
+
         section {
             padding: 3rem;
             margin: 2rem auto;
-            /* border: solid pink 1vmin; */
             width: 100vw;
             position: relative;
-            overflow: hidden;
-            /* line-height: 1.5; */
+            height: 100%;
+            /* overflow: hidden; */
         }
 
         .form-group {
@@ -167,6 +178,8 @@
             font-size: 1em;
             border: 0.05rem solid #ccc;
             border-radius: 0.5rem;
+            background-color: black;
+            color: white;
         }
 
         input[type="submit"] {
@@ -183,18 +196,18 @@
         }
 
         #leadTitle {
-            text-align: left;
+
             font-size: 1.2rem;
-            padding-left: 1rem;
-            padding-top: 1rem;
+            white-space: nowrap;
         }
 
-        #what {
+        /* #what {
             z-index: 1;
-        }
+        } */
 
-        .background {
-            font-size: 30rem;
+        .background,
+        .backgroundStatic {
+            font-size: 35rem;
             z-index: -1;
             color: white;
             position: absolute;
@@ -204,29 +217,77 @@
             text-align: center;
             transform: translate(-50%, -50%);
             overflow: hidden;
+            will-change: transform;
+            /* perspective: 1000px; */
+            white-space: nowrap;
+            /* max-height: 100%; */
+            /* height: 200px; */
         }
 
-        #bgWhat {
-            /* transform: rotate3d(1, 0, 0, 45deg); */
+        .backgroundStatic {
+            font-size: 15rem;
+        }
+
+        #downChevronsContainer {
+            position: absolute;
+            top: 58%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: row;
+        }
+
+        form {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bgWrapper {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-flow: column nowrap;
+            justify-content: center;
+            align-items: center;
+            /* border: solid pink 1px; */
+        }
+
+        #explainer {
+            padding: 0;
+            margin: 3rem 0;
+            min-height: 56.5vw;
+            max-height: 56.5vw;
+        }
+
+        .buffer>h3 {
+            visibility: hidden;
         }
 
         .no-spam {
             font-size: 0.8em;
             color: gray;
-            margin-top: 1em;
+            margin-top: 1rem;
+            margin-left: 0.25rem;
         }
 
         .twitter-follow {
             display: inline-flex;
             align-items: center;
             color: #1DA1F2;
-            /* Twitter's color */
+
             text-decoration: none;
         }
 
         .twitter-follow i {
             margin-left: 0.5em;
-            /* Adds some spacing between the text and the icon */
+
         }
 
         footer {
@@ -234,23 +295,68 @@
             padding: 1vh 0;
             text-align: center;
             background-color: #333;
-            /* This is just an example color, adjust as needed */
+
             color: white;
         }
 
-        /* Small devices (tablets): */
-        @media (min-width: 576px) {
-            /* Adjust styles for tablets */
+        #bgDownChev {
+            transform: rotate(-90deg);
+            position: absolute;
+            top: 60%;
         }
 
-        /* Medium devices: */
+        #bgUpChev {
+            transform: rotate(90deg);
+            position: absolute;
+            bottom: 60%;
+        }
+
+        .bgDownWrapper {
+            transform: rotate(-90deg);
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            /* left: 0; */
+            top: 65%;
+            /* display: flex;
+            flex-flow: column nowrap; */
+            /* border: solid green 1px; */
+        }
+
+        .twoDownChevrons {
+            transform: translate(-50%, -50%) rotate(-90deg);
+            display: inline-block;
+            margin: 1rem;
+            opacity: 0;
+        }
+
+        .showTwoDownChevrons {
+            opacity: 1;
+        }
+
+        .individual-letter {
+            display: inline-block;
+            transition: transform 1.5s;
+        }
+
+        #sectionsWrapper {
+            grid-row-start: 3;
+            grid-column-start: 2;
+            text-align: center;
+            overflow: auto;
+            /* height: 100vh; */
+            display: flex;
+            flex-flow: column nowrap;
+        }
+
+        @media (min-width: 576px) {}
+
+
         @media (min-width: 768px) {
 
-            /* Adjust styles for some desktops */
-            .page {
-                /* The height might need to be adjusted for medium-sized screens */
-                height: 80vh;
-            }
+
+
 
             .title {
                 font-size: 12vmin;
@@ -265,13 +371,9 @@
             }
         }
 
-        /* Large devices (desktops): */
+
         @media (min-width: 992px) {
 
-            /* Styles for typical desktops */
-            .page {
-                height: 90vh;
-            }
 
             .title {
                 font-size: 13vmin;
@@ -286,10 +388,10 @@
             }
         }
 
-        /* Extra large devices (large desktops, TVs): */
+
         @media (min-width: 1200px) {
 
-            /* Styles for large desktops */
+
             .page {
                 height: 100vh;
             }
@@ -321,38 +423,81 @@
             <div class='chevron' id="rightChevron">&rsaquo;</div>
         </div>
         <div class="page" id="eventInfo">
-            <h3 id="leadTitle">Thought you might like to know...</h3>
-            <iframe src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+            <!-- <h3 id="leadTitle">Thought you might like to know...</h3> -->
+            <div class='title' id="leadTitle">Thought you might like to know</div>
+            <div id="downChevronsContainer"><span class="twoDownChevrons">&lsaquo;</span><span
+                    class="twoDownChevrons">&lsaquo;</span>
+            </div>
+        </div>
+        <div class="page" id="sectionsWrapper">
             <section id="what">
-                <P class="background" id="bgWhat">WHAT</P>
+                <div class="bgWrapper">
+                    <P class="background" id="bgWhat">WHAT</P>
+                </div>
                 <h1>LIVE EXHIBITION AND SALE</h1>
                 <h1>&mdash;</h1>
                 <h2>SEMI-LINEAR CLOCK</h2>
             </section>
             <section id="where">
-                <P class="background">WHERE</P>
+                <div class="bgWrapper">
+                    <P class="background">WHERE</P>
+                </div>
                 <h3>Be-ahava Gallery, Kikar Kdumim, Jaffa, Israel</h3>
-                <h3>and online</h3>
+                <h3>and Online</h3>
             </section>
             <section id="when">
-                <P class="background">WHEN</P>
+                <div class="bgWrapper">
+                    <P class="background">WHEN</P>
+                </div>
                 <h2>New Year's Eve</h2>
                 <h3>Sunday, 19:00 (UTC+2), 31-12-23</h3>
             </section>
-            <section id="participate">
-                <P class="background">SHOP</P>
+            <section id="onSale">
+                <div class="bgWrapper">
+                    <P class="background">ON SALE</P>
+                </div>
                 <h3>NFT</h3>
                 <h3>T-Shirts</h3>
                 <h3>Prints</h3>
             </section>
+            <section class="buffer">
+                <div class="bgWrapper">
+                    <P class="backgroundStatic">NITTY</P>
+                    <!-- <div class="bgDownWrapper"> -->
+                    <span id="bgDownChev" class="backgroundStatic">&lsaquo;</span>
+                    <!-- </div> -->
+                </div>
+                <h3>'</h3>
+                <h3>'</h3>
+                <h3>'</h3>
+                <h3>'</h3>
+                <h3>'</h3>
+                <h3>'</h3>
+                <h3>'</h3>
+            </section>
+            <section id="explainer">
+                <iframe src="presentation.html"></iframe>
+            </section>
+            <section class="buffer">
+                <div class="bgWrapper">
+                    <span id="bgUpChev" class="backgroundStatic">&lsaquo;</span>
+                    <P class="backgroundStatic">GRITTY</P>
+                </div>
+                <h3>'</h3>
+                <h3>'</h3>
+                <h3>'</h3>
+                <h3>'</h3>
+                <h3>'</h3>
+                <h3>'</h3>
+                <h3>'</h3>
+            </section>
             <section id="registration">
-                <P class="background">SIGN UP</P>
+                <div class="bgWrapper">
+                    <P class="background">SIGN UP</P>
+                </div>
                 <h3>20% off Presale discount, early bird discounts and more...</h3>
                 <div class="registration-form">
                     <form action="" method="post">
-                        <div class="form-group">
-                            <input type="text" placeholder="Name" id="name" name="name" required>
-                        </div>
 
                         <div class="form-group">
                             <input type="email" placeholder="Email Address" id="email" name="email" required>
@@ -361,8 +506,9 @@
                         <div class="form-group">
                             <input type="submit" value="Sign up">
                         </div>
+                        <p class="no-spam">No spam, obviously.</p>
                     </form>
-                    <p class="no-spam">No spam, obviously.</p>
+
                 </div>
             </section>
             <a href="https://twitter.com/YourTwitterHandle" target="_blank" class="twitter-follow">
@@ -371,49 +517,86 @@
             <footer>
                 <p>&copy; Selà <span id="year"></span></p>
             </footer>
-
         </div>
+
     </div>
+
     <!-- <script type="text/javascript" src="index.js"></script> -->
 
     <script>
 
+        let cursorTimer;
+
+        document.addEventListener('mousemove', function () {
+            clearTimeout(cursorTimer);
+
+            // Show the cursor
+            document.body.classList.remove('cursor-hidden');
+
+            // Hide the cursor after 3 seconds of inactivity
+            cursorTimer = setTimeout(function () {
+                document.body.classList.add('cursor-hidden');
+            }, 3000);
+        });
+
+
         const pages = document.getElementById("pages");
-        const downChevron = document.getElementById('downChevron');
+        const twoDownChevrons = document.getElementsByClassName('twoDownChevrons');
         const rightChevron = document.getElementById('rightChevron');
+        const leadTitle = document.getElementById('leadTitle');
+        const downChevron = document.getElementById('downChevron');
 
         downChevron.addEventListener('click', () => {
             console.log('down chevron clicked');
-            pages.style.transform = 'translateY(-50%)';
+            pages.style.transform = 'translateY(-100vh)';
         });
 
         rightChevron.addEventListener('click', () => {
             console.log('right chevron clicked');
-            pages.style.transform = 'translate(-50%, -50%)';
+            pages.style.transform = 'translate(-100vw, -100vh)';
+
+            setTimeout(() => {
+                twoDownChevrons[0].classList.add('showTwoDownChevrons');
+            }, 1000);
+
+            setTimeout(() => {
+                twoDownChevrons[1].classList.add('showTwoDownChevrons');
+            }, 1100);
+
+            setTimeout(() => {
+                pages.style.transition = 'transform 3s';
+                pages.style.transform = 'translate(-100vw, -200vh)';
+                // requestAnimationFrame(animate);
+            }, 3500);
         });
 
         document.getElementById("year").textContent = new Date().getFullYear();
 
-        // const backgrounds = document.getElementsByClassName('background')
-
-        // let fontSize = parseInt(window.getComputedStyle(backgrounds[0]).getPropertyValue('font-size'));
-        // console.log(fontSize)
-
-        // const animateBackgrounds = setInterval(() => {
-
-        //     fontSize--
-        //     backgrounds[0].style.fontSize = `${fontSize}px`
-        // }, 100)
 
 
+        const backgrounds = document.getElementsByClassName('background')
 
-        // Helper function to get random number within a range
-        // function getRandom(min, max) {
-        //     return Math.random() * (max - min) + min;
-        // }
+        function wrapLettersWithSpans(element) {
+            const text = element.textContent;
+            let newText = '';
+            for (let char of text) {
+                if (char === ' ') {
+                    newText += ' ';
+                } else {
+                    newText += `<span class="individual-letter">${char}</span>`;
+                }
+            }
+            element.innerHTML = newText;
+        }
 
+        for (let bg of backgrounds) {
+            wrapLettersWithSpans(bg);
+        }
 
-        const backgrounds = document.getElementsByClassName('background');
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
 
         // Initialize the states
         let bgStates = Array.from(backgrounds).map(bg => {
@@ -422,22 +605,57 @@
                 element: bg,
                 fontSize: initialSize,
                 initialSize: initialSize,
-                direction: -1
+                direction: -1,
+                initialRotations: [],
+                currentRotations: []
             };
         });
 
         let lastTime = 0;
-        const interval = 1000 / 30; // Approximately 30 fps
+        const interval = 1000 / 30;
+        // const interval = 1000;
+
+        // function lerp(start, end, t) {
+        //     return start * (1 - t) + end * t;
+        // }
 
         function updateState(state) {
-            state.fontSize += state.direction;
+            // Define max and min sizes for clarity
+            const minSize = 200;
+            const maxSize = state.initialSize + 500;
 
-            if (state.fontSize <= 80) {
-                state.direction = 1;
-            } else if (state.fontSize >= state.initialSize + 1000) {
-                state.direction = -1;
+            // Check if we've already ended the animation
+            if (state.hasEnded) {
+                return;
+            }
+
+            // Contract font size
+            if (state.direction === -1) {
+                state.fontSize += state.direction;
+
+                if (state.fontSize <= minSize) {
+                    state.fontSize = minSize; // Ensure it doesn't go below the min size
+                    state.direction = 0; // Stop changing font size
+
+                    // Pause for 5 seconds
+                    setTimeout(() => {
+                        state.direction = 1; // Set direction for expansion
+                    }, 5000);
+                }
+            }
+
+            // Expand font size
+            if (state.direction === 1) {
+                state.fontSize += state.direction;
+
+                if (state.fontSize >= maxSize) {
+                    state.fontSize = maxSize; // Ensure it doesn't exceed the max size
+                    state.direction = 0; // Stop changing font size
+                    state.hasEnded = true; // Mark animation as ended
+                }
             }
         }
+
         function draw(state) {
             state.element.style.fontSize = `${state.fontSize}px`;
         }
@@ -459,27 +677,6 @@
         }
 
         requestAnimationFrame(animate);
-
-
-        // function animateBackgrounds() {
-        //     // Convert HTMLCollection to Array and loop through
-        //     Array.from(backgrounds).forEach((bg) => {
-        //         // Get the current font size
-        //         let fontSize = parseInt(window.getComputedStyle(bg).getPropertyValue('font-size'));
-
-        //         // Change the font size by a random amount between -2 and 2
-        //         // fontSize += getRandom(-2, 2);
-        //         fontSize -= 0.001
-        //         // Set the new font size
-        //         bg.style.fontSize = `${fontSize}px`;
-        //     });
-
-        //     // Use requestAnimationFrame for smoother animations
-        //     requestAnimationFrame(animateBackgrounds);
-        // }
-
-        // // Start the animation
-        // animateBackgrounds();
     </script>
 
 </body>

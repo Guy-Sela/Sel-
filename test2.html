@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Grid</title>
+    <!-- <link rel="stylesheet" type="text/css" href="meditativeclocks/clocks/semi-linear_clock/index.css"> -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            background-color: black;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        .semi-linear_clock {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 3vw;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .seconds,
+        .minutes {
+            display: inline-grid;
+            grid-template-columns: auto auto auto auto auto auto;
+        }
+
+        .hours {
+            display: inline-grid;
+            grid-template-columns: auto auto auto auto;
+        }
+
+        .second,
+        .minute,
+        .hour {
+            height: 3vw;
+            width: 3vw;
+            border: solid 0.01px black;
+            background-color: blueviolet;
+        }
+
+
+        .full {
+            background-color: white;
+            border: solid 0.01px white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="semi-linear_clock"></div>
+
+    <script>
+
+        // DOM related operations
+        function createElement(type, className = "", id = "") {
+            const element = document.createElement(type);
+            element.className = className;
+            element.id = id;
+            return element;
+        }
+
+        function buildClockStructure(semiLinearClock, timeUnitsData) {
+            Object.entries(timeUnitsData).forEach(([unit, data]) => {
+                const unitContainer = createElement("div", `${unit}s`);
+                for (let i = 0; i < data.limit; i++) {
+                    const unitElement = createElement("div", unit, `${unit}${i}`);
+                    unitContainer.appendChild(unitElement);
+                    data.elements.push(unitElement);
+                }
+                semiLinearClock.appendChild(unitContainer);
+            });
+        }
+
+        // Utility to get the current time values
+        function getCurrentTimeValues() {
+            const currentTime = new Date();
+            return {
+                second: currentTime.getSeconds(),
+                minute: currentTime.getMinutes(),
+                hour: currentTime.getHours()
+            };
+        }
+
+        // Random animations and their resets
+        function initializeRandomly(unitData, count) {
+            for (let i = 0; i < count; i++) {
+                const index = Math.floor(Math.random() * unitData.elements.length);
+                const elem = unitData.elements.splice(index, 1)[0];
+                elem.classList.add("full");
+                unitData.used.push(elem);
+            }
+        }
+
+        function animateRandomly(unitData) {
+            if (unitData.elements.length > 0) {
+                const index = Math.floor(Math.random() * unitData.elements.length);
+                const rand = unitData.elements.splice(index, 1)[0];
+                rand.classList.toggle("full");
+                unitData.used.push(rand);
+            } else {
+                resetTimeUnit(unitData);
+            }
+        }
+
+        function resetTimeUnit(unitData) {
+            unitData.elements.push(...unitData.used);
+            unitData.used = [];
+        }
+
+        // Clock's primary run mechanism
+        function runClock(lastAnimatedTime, timeUnitsData) {
+            const currentValues = getCurrentTimeValues();
+
+            for (const unit of ['second', 'minute', 'hour']) {
+                if (currentValues[unit] !== lastAnimatedTime[unit]) {
+                    animateRandomly(timeUnitsData[unit]);
+                    lastAnimatedTime[unit] = currentValues[unit];
+                }
+            }
+
+            const delayUntilNextSecond = 1000 - (new Date().getTime() % 1000);
+            setTimeout(() => runClock(lastAnimatedTime, timeUnitsData), delayUntilNextSecond);
+        }
+
+        // Execution starts here
+        const semiLinearClock = document.querySelector('.semi-linear_clock');
+        const timeUnitsData = {
+            hour: { limit: 24, elements: [], used: [] },
+            minute: { limit: 60, elements: [], used: [] },
+            second: { limit: 60, elements: [], used: [] }
+        };
+
+        buildClockStructure(semiLinearClock, timeUnitsData);
+
+        const lastAnimatedTime = getCurrentTimeValues();
+        Object.entries(timeUnitsData).forEach(([unit, data]) => {
+            const currentTimeValue = lastAnimatedTime[unit] % data.limit;
+            initializeRandomly(data, currentTimeValue);
+        });
+
+        runClock(lastAnimatedTime, timeUnitsData);
+
+    </script>
+    <!-- <script type="text/javascript" src="/meditativeclocks/clocks/semi-linear_clock/index_Black&White.js"></script> -->
+</body>
+
+</html>

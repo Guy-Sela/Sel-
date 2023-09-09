@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Size Animation</title>
+
+    <style>
+        #text {
+            will-change: transform;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="text">Hello, World!</div>
+
+    <script>
+
+        const textElement = document.getElementById('text');
+        const startSize = 1; // Starting font size in pixels
+        const endSize = 1000; // Ending font size in pixels
+        const duration = 10000; // Duration of the animation in milliseconds
+        let startTime = null;
+        document.body.style.overflow = 'hidden';
+
+
+        function animate(timestamp) {
+            // If this is the first frame, set the startTime
+            if (startTime === null) {
+                startTime = timestamp;
+            }
+
+            // Calculate how far along we are in the duration
+            const elapsed = timestamp - startTime;
+            const progress = Math.min(elapsed / duration, 1); // Ensure we don't exceed 1
+
+            // Linearly interpolate between the start and end sizes
+            const currentSize = startSize + (endSize - startSize) * progress;
+            textElement.style.fontSize = `${currentSize}px`;
+
+            // If the animation hasn't finished, request another frame
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            }
+        }
+
+        // Start the animation
+        requestAnimationFrame(animate);
+
+    </script>
+
+    <!-- <script src="script.js"></script> -->
+</body>
+
+</html>

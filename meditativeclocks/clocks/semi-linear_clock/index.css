@@ -2,8 +2,13 @@
     box-sizing: border-box;
 }
 
+html,
 body {
-    background: black;
+    background-color: black;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
 }
 
 .semi-linear_clock {
@@ -11,41 +16,34 @@ body {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 9vmin;
-    margin: auto;
+    gap: 3vw;
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .seconds,
 .minutes {
     display: inline-grid;
     grid-template-columns: auto auto auto auto auto auto;
-    grid-gap: 0;
-    margin-right: 1vmin;
 }
 
 .hours {
     display: inline-grid;
     grid-template-columns: auto auto auto auto;
-    grid-gap: 0;
-    position: relative;
-    margin-right: 2vmin !important;
-
 }
 
 .second,
 .minute,
 .hour {
-    height: 5.5vmin;
-    width: 5.5vmin;
-    border: transparent 0.1vmin solid;
+    height: 3vw;
+    width: 3vw;
+    border: solid 0.01px black;
 }
 
 
 .full {
     background-color: white;
+    border: solid 0.01px white;
 }

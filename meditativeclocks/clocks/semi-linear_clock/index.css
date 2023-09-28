@@ -39,11 +39,11 @@ body {
 .hour {
     height: 3vw;
     width: 3vw;
-    border: solid 0.01px black;
+    /* border: solid 0.01px black; */
 }
 
 
 .full {
     background-color: white;
-    border: solid 0.01px white;
+    /* border: solid 0.01px white; */
 }

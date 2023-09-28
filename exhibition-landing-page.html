@@ -205,8 +205,7 @@
             z-index: 1;
         } */
 
-        .background,
-        .backgroundStatic {
+        .background {
             font-size: 35rem;
             z-index: -1;
             color: white;
@@ -224,8 +223,30 @@
             /* height: 200px; */
         }
 
+        /* #nuts::after {
+            content: '\A ‹';
+            white-space: pre;
+            display: block;
+            transform: rotate(-90deg);
+        } */
+
+
+        #nutsChev {
+            display: inline-block;
+            transform: rotate(-90deg);
+        }
+
+        #boltsChev {
+            display: inline-block;
+            transform: rotate(90deg);
+        }
+
         .backgroundStatic {
-            font-size: 15rem;
+            font-size: 13vmin;
+            line-height: 1.2;
+            white-space: normal;
+            /* overflow: visible; */
+            opacity: 0.3;
         }
 
         #downChevronsContainer {
@@ -261,13 +282,33 @@
 
         #explainer {
             padding: 0;
-            margin: 3rem 0;
+            /* margin: 3rem 0; */
             min-height: 56.5vw;
             max-height: 56.5vw;
         }
 
         .buffer>h3 {
             visibility: hidden;
+        }
+
+        .buffer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #topBuffer {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            margin-top: 8rem;
+            /* padding-top: 0; */
+        }
+
+        #bottomBuffer {
+            margin-top: 0;
+            padding-top: 0;
+            margin-bottom: 8rem;
         }
 
         .no-spam {
@@ -302,7 +343,10 @@
         #bgDownChev {
             transform: rotate(-90deg);
             position: absolute;
-            top: 60%;
+            top: 0;
+            font-size: inherit;
+            /* color: white;
+            opacity: 0.3; */
         }
 
         #bgUpChev {
@@ -460,36 +504,14 @@
                 <h3>T-Shirts</h3>
                 <h3>Prints</h3>
             </section>
-            <section class="buffer">
-                <div class="bgWrapper">
-                    <P class="backgroundStatic">NITTY</P>
-                    <!-- <div class="bgDownWrapper"> -->
-                    <span id="bgDownChev" class="backgroundStatic">&lsaquo;</span>
-                    <!-- </div> -->
-                </div>
-                <h3>'</h3>
-                <h3>'</h3>
-                <h3>'</h3>
-                <h3>'</h3>
-                <h3>'</h3>
-                <h3>'</h3>
-                <h3>'</h3>
+            <section id="topBuffer" class="buffer">
+                <p id="nuts" class="backgroundStatic">NUTS<br><span id="nutsChev">&lsaquo;</span></p>
             </section>
             <section id="explainer">
                 <iframe src="presentation.html"></iframe>
             </section>
-            <section class="buffer">
-                <div class="bgWrapper">
-                    <span id="bgUpChev" class="backgroundStatic">&lsaquo;</span>
-                    <P class="backgroundStatic">GRITTY</P>
-                </div>
-                <h3>'</h3>
-                <h3>'</h3>
-                <h3>'</h3>
-                <h3>'</h3>
-                <h3>'</h3>
-                <h3>'</h3>
-                <h3>'</h3>
+            <section id="bottomBuffer" class="buffer">
+                <P class="backgroundStatic"><span id="boltsChev">&lsaquo;</span><br>& BOLTS</P>
             </section>
             <section id="registration">
                 <div class="bgWrapper">

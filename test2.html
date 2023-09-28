@@ -133,9 +133,6 @@
                     lastAnimatedTime[unit] = currentValues[unit];
                 }
             }
-
-            const delayUntilNextSecond = 1000 - (new Date().getTime() % 1000);
-            setTimeout(() => runClock(lastAnimatedTime, timeUnitsData), delayUntilNextSecond);
         }
 
         // Execution starts here
@@ -154,7 +151,71 @@
             initializeRandomly(data, currentTimeValue);
         });
 
-        runClock(lastAnimatedTime, timeUnitsData);
+        setInterval(() => runClock(lastAnimatedTime, timeUnitsData), 100);
+
+
+
+        function computeExpectedToggles(initialValues, currentValues) {
+            const expectedToggles = {};
+            for (const unit of ['second', 'minute', 'hour']) {
+                expectedToggles[unit] = currentValues[unit] - initialValues[unit];
+                if (expectedToggles[unit] < 0) {
+                    if (unit === 'hour') {
+                        expectedToggles[unit] += 24;
+                    } else {
+                        expectedToggles[unit] += 60;
+                    }
+                }
+            }
+            return expectedToggles;
+        }
+        // External Verification Observer
+
+        // 1. Store the initial time when you start the observation.
+        const initialTime = getCurrentTimeValues();
+
+        // Create a log to keep track of the number of toggles for each time unit
+        const toggleLogs = {
+            second: 0,
+            minute: 0,
+            hour: 0
+        };
+
+        // Use MutationObserver to watch for DOM changes (i.e., toggles)
+        const observerConfig = { attributes: true, attributeFilter: ['class'] };
+        const observerCallback = (mutationsList, observer) => {
+            for (const mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (mutation.target.classList.contains('full')) {
+                        const id = mutation.target.id;
+                        const unit = id.replace(/[0-9]/g, ''); // Get 'second', 'minute' or 'hour' from the id
+                        toggleLogs[unit]++;
+                    }
+                }
+            }
+        };
+        const observer = new MutationObserver(observerCallback);
+        observer.observe(semiLinearClock, observerConfig);
+
+        // After a certain observation duration, test the accuracy
+        setTimeout(() => {
+            const currentValues = getCurrentTimeValues();
+            const expectedToggles = computeExpectedToggles(initialTime, currentValues);
+
+            console.log('Expected Toggles:', expectedToggles);
+            console.log('Actual Toggles:', toggleLogs);
+
+            for (const unit of ['second', 'minute', 'hour']) {
+                if (expectedToggles[unit] !== toggleLogs[unit]) {
+                    console.error(`${unit} toggle discrepancy detected. Expected ${expectedToggles[unit]} but got ${toggleLogs[unit]}`);
+                } else {
+                    console.log(`${unit} toggles are accurate.`);
+                }
+            }
+
+            observer.disconnect();  // Stop observing
+        }, 5 * 60 * 1000);  // For example, test after 5 minutes
+
 
     </script>
     <!-- <script type="text/javascript" src="/meditativeclocks/clocks/semi-linear_clock/index_Black&White.js"></script> -->

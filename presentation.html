@@ -86,6 +86,20 @@
             appearance: none;
         }
 
+        #prevSlide {
+            position: absolute;
+            top: 50%;
+            left: 1%;
+            transform: translateY(-50%);
+        }
+
+        #nextSlide {
+            position: absolute;
+            top: 50%;
+            right: 1%;
+            transform: translateY(-50%);
+        }
+
         #progressContainer {
             position: absolute;
             top: 5%;
@@ -124,6 +138,8 @@
         a {
             color: white;
             cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
         }
 
         .slideBg {
@@ -134,7 +150,7 @@
             opacity: 0.3;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            /* transform: translate(-50%, -50%); */
         }
 
         .bgContainer {
@@ -171,11 +187,14 @@
                 <div class="bgContainer">
                     <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
                 </div>
-                <p>It always depicts the right time, but never in the same way. The left table represents hours, the
-                    table next to it represents minutes, and next to it — seconds. Which square will be animated next
-                    for each passing moment is determined randomly. The chance that the same clock pattern will appear
-                    more than once is virtually zero. Thus the cliché that each moment in life is unique takes real
-                    form.</p>
+                <p>It always shows the right time, but never in the same way, as the visualization of "the next moment"
+                    is randomized.<br><br>
+                    Today's 10:23:48 won't look like tomorrow's 10:23:48. Moreover, my 10:23:48 today won't look like
+                    yours 10:23:48 today, if you're running a different instance of the clock.<br><br>
+                    Moreover still, no one can predict how these moments will appear on the clock. The algorithm is set
+                    to random.<br><br>
+                    So, each moment is inherently unique. We use this concept as a cliché all the time. Now it is
+                    embodied in an actual clock.
             </div>
             <div class="slide">
                 <!-- <h1>About</h1> -->
@@ -183,7 +202,7 @@
                     <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
                 </div>
                 <p>On New Year's Eve 2023 - 2024, there will be a special exhibition and sale of Semi-Linear Clock.
-                    Offerings will be extremely limited, so enrolling for presale is highly encouraged.</p>
+                    Offerings will be extremely limited, so enrolling for pre-sale is highly encouraged.</p>
             </div>
             <div class="slide">
                 <!-- <h1>About</h1> -->
@@ -198,22 +217,22 @@
                     <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
                 </div>
                 <p>In collaboration with:<br>
-                    Be-ahava Gallery | Ba'alie Hamelaha Studio | SuperRare | Monolove | Southbies | Binance</p>
+                    Be-ahava Gallery | Ba'alie Hamelaha Studio | SuperRare | Monolove | Sothbies | Binance</p>
             </div>
             <div class="slide">
                 <!-- <h1>About</h1> -->
                 <p>See you on New Year's</p>
             </div>
         </div>
-    </div>
-    <div class="button-container">
+
+        <!-- <div class="button-container"> -->
         <button id="prevSlide">
             <span class="chevron">&lsaquo;</span>
         </button>
         <button id="nextSlide">
             <span class="chevron">&rsaquo;</span>
         </button>
-    </div>
+        <!-- </div> -->
     </div>
 
     <script>
@@ -286,13 +305,14 @@
         moveSlides();
         updateProgressBar();
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const slideBg = document.getElementsByClassName('slideBg');
 
-        const slideBg = document.getElementsByClassName('slideBg');
+            for (let i = 0; i < slideBg.length; i++) {
 
-        for (let i = 0; i < slideBg.length; i++) {
-
-            slideBg[i].style.transform = `scale(${i + 2})`;
-        }
+                slideBg[i].style.transform = `translate(-50%, -50%) scale(${i + 2})`;
+            }
+        })
 
     </script>
 

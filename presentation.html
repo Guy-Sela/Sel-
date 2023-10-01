@@ -42,6 +42,9 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+            /* background-color: transparent; */
         }
 
         p {
@@ -122,6 +125,29 @@
             color: white;
             cursor: pointer;
         }
+
+        .slideBg {
+            z-index: -1;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .bgContainer {
+            z-index: -1;
+            position: absolute;
+            width: 80%;
+            height: 40%;
+            /* border: pink 1px solid; */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            overflow: hidden;
+        }
     </style>
 </head>
 
@@ -134,11 +160,17 @@
             </div>
             <div class="slide">
                 <!-- <h1>About</h1> -->
-                <p>Semi-Linear Clock is part of the <a href="#YOUR_LINK_HERE">Meditative Clocks collection</a> by <a
-                        href="#YOUR_LINK_HERE">Selà.</a></p>
+                <div class="bgContainer">
+                    <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+                </div>
+                <p>Semi-Linear Clock is part of the <a href="#YOUR_LINK_HERE">Meditative Clocks</a> collection by <a
+                        href="#YOUR_LINK_HERE">Selà</a>.</p>
             </div>
             <div class="slide">
                 <!-- <h1>Slide 3</h1> -->
+                <div class="bgContainer">
+                    <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+                </div>
                 <p>It always depicts the right time, but never in the same way. The left table represents hours, the
                     table next to it represents minutes, and next to it — seconds. Which square will be animated next
                     for each passing moment is determined randomly. The chance that the same clock pattern will appear
@@ -147,17 +179,26 @@
             </div>
             <div class="slide">
                 <!-- <h1>About</h1> -->
+                <div class="bgContainer">
+                    <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+                </div>
                 <p>On New Year's Eve 2023 - 2024, there will be a special exhibition and sale of Semi-Linear Clock.
                     Offerings will be extremely limited, so enrolling for presale is highly encouraged.</p>
             </div>
             <div class="slide">
                 <!-- <h1>About</h1> -->
+                <div class="bgContainer">
+                    <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+                </div>
                 <p>Live algorithmic music, composed specifically for Semi-Linear Clock and this event, by ___.</p>
             </div>
             <div class="slide">
                 <!-- <h1>About</h1> -->
+                <div class="bgContainer">
+                    <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+                </div>
                 <p>In collaboration with:<br>
-                    Be-ahava Gallery | SuperRare | Monolove | Southbies | Binance</p>
+                    Be-ahava Gallery | Ba'alie Hamelaha Studio | SuperRare | Monolove | Southbies | Binance</p>
             </div>
             <div class="slide">
                 <!-- <h1>About</h1> -->
@@ -244,6 +285,14 @@
         // Initial setup
         moveSlides();
         updateProgressBar();
+
+
+        const slideBg = document.getElementsByClassName('slideBg');
+
+        for (let i = 0; i < slideBg.length; i++) {
+
+            slideBg[i].style.transform = `scale(${i + 2})`;
+        }
 
     </script>
 

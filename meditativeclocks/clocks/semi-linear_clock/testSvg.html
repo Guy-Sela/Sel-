@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test SVG</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            background-color: black;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .semi-linear_clock {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 3vw;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .hours,
+        .minutes,
+        .seconds {
+            /* display: none; */
+            /* Hide HTML grids because we're using SVG now */
+        }
+
+        .second,
+        .minute,
+        .hour {
+            fill: white;
+            /* Using SVG fill instead of background-color */
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <svg class="swipable_elements" id="semi-linear_clock_full_view" xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100vw 100vh">
+
+        <!-- For the hours -->
+        <g class="hours">
+            <rect class="hour" id="hour0" x="1vw" y="47vh" width="3vw" height="3vw" />
+            <rect class="hour" id="hour1" x="7vw" y="47vh" width="3vw" height="3vw" />
+            <rect class="hour" id="hour2" x="13vw" y="47vh" width="3vw" height="3vw" />
+            <rect class="hour" id="hour3" x="19vw" y="47vh" width="3vw" height="3vw" />
+        </g>
+
+        <!-- For the minutes -->
+        <g class="minutes">
+            <rect class="minute" id="minute0" x="22vw" y="41vh" width="3vw" height="3vw" />
+            <rect class="minute" id="minute1" x="28vw" y="41vh" width="3vw" height="3vw" />
+            <rect class="minute" id="minute2" x="34vw" y="41vh" width="3vw" height="3vw" />
+            <rect class="minute" id="minute3" x="40vw" y="41vh" width="3vw" height="3vw" />
+            <rect class="minute" id="minute4" x="46vw" y="41vh" width="3vw" height="3vw" />
+            <rect class="minute" id="minute5" x="52vw" y="41vh" width="3vw" height="3vw" />
+            <rect class="minute" id="minute6" x="22vw" y="50vh" width="3vw" height="3vw" />
+            <rect class="minute" id="minute7" x="28vw" y="50vh" width="3vw" height="3vw" />
+            <!-- ... Add more rows for the minutes if you need -->
+        </g>
+
+        <!-- For the seconds -->
+        <g class="seconds">
+            <rect class="second" id="second0" x="55vw" y="41vh" width="3vw" height="3vw" />
+            <rect class="second" id="second1" x="61vw" y="41vh" width="3vw" height="3vw" />
+            <rect class="second" id="second2" x="67vw" y="41vh" width="3vw" height="3vw" />
+            <rect class="second" id="second3" x="73vw" y="41vh" width="3vw" height="3vw" />
+            <rect class="second" id="second4" x="79vw" y="41vh" width="3vw" height="3vw" />
+            <rect class="second" id="second5" x="85vw" y="41vh" width="3vw" height="3vw" />
+            <rect class="second" id="second6" x="55vw" y="50vh" width="3vw" height="3vw" />
+            <rect class="second" id="second7" x="61vw" y="50vh" width="3vw" height="3vw" />
+            <!-- ... Add more rows for the seconds if you need -->
+        </g>
+
+    </svg>
+
+</body>
+
+</html>

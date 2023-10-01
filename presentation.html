@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation Slider</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        html,
+        body {
+            font-size: 16px;
+            background-color: black;
+            color: white;
+            overflow: hidden;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            /* border: solid pink 1vmin; */
+        }
+
+        .slides {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s;
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            /* background-color: transparent; */
+        }
+
+        p {
+            padding: 10rem;
+            line-height: 1.2;
+            font-size: 1.2rem;
+        }
+
+        .button-container {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            justify-content: space-between;
+            z-index: 1;
+        }
+
+        .chevron {
+            padding: 2rem;
+            cursor: pointer;
+            color: white;
+            font-size: 3rem;
+        }
+
+        button {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            outline: none;
+            font: inherit;
+            color: inherit;
+            cursor: pointer;
+            -webkit-appearance: none;
+            /* Safari and Chrome */
+            -moz-appearance: none;
+            /* Firefox */
+            appearance: none;
+        }
+
+        #progressContainer {
+            position: absolute;
+            top: 5%;
+            left: 50%;
+            width: 80%;
+            height: 0.3rem;
+            display: flex;
+            align-items: center;
+            transform: translateX(-50%);
+            gap: 0.3rem;
+        }
+
+        .slideProgress {
+            flex: 1;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.3);
+            transition: background-color 0.3s;
+        }
+
+        .slideProgress:last-child {
+            margin-right: 0;
+        }
+
+        .currentSlideProgress {
+            background-color: white;
+        }
+
+        iframe {
+            min-height: 56.5vw;
+            max-height: 56.5vw;
+            min-width: 100vw;
+            max-width: 100vw;
+            border: none;
+        }
+
+        a {
+            color: white;
+            cursor: pointer;
+        }
+
+        .slideBg {
+            z-index: -1;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .bgContainer {
+            z-index: -1;
+            position: absolute;
+            width: 80%;
+            height: 40%;
+            /* border: pink 1px solid; */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="presentation">
+        <div id="progressContainer"></div>
+        <div class="slides">
+            <div class="slide">
+                <iframe src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+            </div>
+            <div class="slide">
+                <!-- <h1>About</h1> -->
+                <div class="bgContainer">
+                    <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+                </div>
+                <p>Semi-Linear Clock is part of the <a href="#YOUR_LINK_HERE">Meditative Clocks</a> collection by <a
+                        href="#YOUR_LINK_HERE">Selà</a>.</p>
+            </div>
+            <div class="slide">
+                <!-- <h1>Slide 3</h1> -->
+                <div class="bgContainer">
+                    <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+                </div>
+                <p>It always depicts the right time, but never in the same way. The left table represents hours, the
+                    table next to it represents minutes, and next to it — seconds. Which square will be animated next
+                    for each passing moment is determined randomly. The chance that the same clock pattern will appear
+                    more than once is virtually zero. Thus the cliché that each moment in life is unique takes real
+                    form.</p>
+            </div>
+            <div class="slide">
+                <!-- <h1>About</h1> -->
+                <div class="bgContainer">
+                    <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+                </div>
+                <p>On New Year's Eve 2023 - 2024, there will be a special exhibition and sale of Semi-Linear Clock.
+                    Offerings will be extremely limited, so enrolling for presale is highly encouraged.</p>
+            </div>
+            <div class="slide">
+                <!-- <h1>About</h1> -->
+                <div class="bgContainer">
+                    <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+                </div>
+                <p>Live algorithmic music, composed specifically for Semi-Linear Clock and this event, by ___.</p>
+            </div>
+            <div class="slide">
+                <!-- <h1>About</h1> -->
+                <div class="bgContainer">
+                    <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
+                </div>
+                <p>In collaboration with:<br>
+                    Be-ahava Gallery | Ba'alie Hamelaha Studio | SuperRare | Monolove | Southbies | Binance</p>
+            </div>
+            <div class="slide">
+                <!-- <h1>About</h1> -->
+                <p>See you on New Year's</p>
+            </div>
+        </div>
+    </div>
+    <div class="button-container">
+        <button id="prevSlide">
+            <span class="chevron">&lsaquo;</span>
+        </button>
+        <button id="nextSlide">
+            <span class="chevron">&rsaquo;</span>
+        </button>
+    </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll(".slide");
+        const totalSlides = slides.length;
+        let currentSlide = 0;
+        let startX = 0;
+        let endX = 0;
+
+        document.getElementById("nextSlide").addEventListener("click", () => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            moveSlides();
+            updateProgressBar();
+        });
+
+        document.getElementById("prevSlide").addEventListener("click", () => {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            moveSlides();
+            updateProgressBar();
+        });
+
+        // Swipe functionality
+        document.querySelector('.presentation').addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        document.querySelector('.presentation').addEventListener('touchmove', (e) => {
+            endX = e.touches[0].clientX;
+        });
+
+        document.querySelector('.presentation').addEventListener('touchend', () => {
+            let threshold = 50; // Minimum distance for a swipe to register, you can adjust based on your needs.
+            if (startX - endX > threshold) {
+                // Detected swipe to left
+                currentSlide = (currentSlide + 1) % totalSlides;
+            } else if (endX - startX > threshold) {
+                // Detected swipe to right
+                currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            }
+            moveSlides();
+            updateProgressBar();
+        });
+
+        // Create segments for each slide in the progress bar
+        const progressContainer = document.getElementById("progressContainer");
+        for (let i = 0; i < totalSlides; i++) {
+            const slideProgress = document.createElement("div");
+            slideProgress.classList.add("slideProgress");
+            progressContainer.appendChild(slideProgress);
+        }
+
+        function moveSlides() {
+            const slidesContainer = document.querySelector(".slides");
+            slidesContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        function updateProgressBar() {
+            // Update progress segments based on the current slide
+            const slideProgresses = document.querySelectorAll(".slideProgress");
+            slideProgresses.forEach((segment, index) => {
+                if (index === currentSlide) {
+                    segment.classList.add("currentSlideProgress");
+                } else {
+                    segment.classList.remove("currentSlideProgress");
+                }
+            });
+        }
+
+        // Initial setup
+        moveSlides();
+        updateProgressBar();
+
+
+        const slideBg = document.getElementsByClassName('slideBg');
+
+        for (let i = 0; i < slideBg.length; i++) {
+
+            slideBg[i].style.transform = `scale(${i + 2})`;
+        }
+
+    </script>
+
+    <!-- <script src="script.js"></script> -->
+</body>
+
+</html>

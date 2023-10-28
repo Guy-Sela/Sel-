@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <title>Semi-Linear Clock &mdash; Live Exhibition</title>
+    <meta name="description" content="Exhibition @be-ahava 31-12-23">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- <link rel="stylesheet" type="text/css" href="index.css"> -->
+
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Josefin Sans;
+        }
+
+        html,
+        body {
+
+            background-color: black;
+            color: white;
+            height: 300vh;
+            position: fixed;
+            font-size: 16px;
+
+
+        }
+
+        body.cursor-hidden {
+            cursor: none;
+        }
+
+
+        #pages {
+            display: grid;
+            grid-template-columns: auto auto;
+            grid-template-rows: auto auto auto;
+            width: 200vw;
+            height: 300vh;
+            transition: transform 0.7s;
+            background-color: black;
+            position: relative;
+
+
+        }
+
+
+        .page {
+            width: 100vw;
+            height: 100vh;
+
+            position: relative;
+        }
+
+        #ho {
+            grid-row-start: 2;
+        }
+
+        #eventInfo {
+            grid-row-start: 2;
+            grid-column-start: 2;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+
+        }
+
+        h3 {
+            font-size: 1.5rem;
+
+        }
+
+        .title {
+
+            font-size: 15vmin;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+        }
+
+        .chevron {
+            font-size: 30vmin;
+
+            color: white;
+            position: absolute;
+            cursor: pointer;
+
+        }
+
+        #downChevron {
+            transform: translate(-50%, -50%) rotate(-90deg);
+            top: 70%;
+            left: 50%;
+        }
+
+        #rightChevron {
+            transform: translateY(-55%);
+            top: 50%;
+            left: 72.5%;
+        }
+
+        iframe {
+            /* border: solid blue 0.3vmin;
+            border-radius: 12pt; */
+            min-height: 56.5vw;
+            max-height: 56.5vw;
+            min-width: 100vw;
+            max-width: 100vw;
+            border: none;
+            /* width: 100%; */
+            /* position: relative;
+            left: 0;
+            opacity: 1; */
+            /* border: yellow 1vmin solid; */
+        }
+
+        .registration-form {
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 2rem;
+            background-color: transparent;
+            border-radius: 0.5rem;
+            width: 75%;
+
+        }
+
+        #registration {
+            transform-style: preserve-3d;
+        }
+
+        section {
+            padding: 3rem;
+            margin: 2rem auto;
+            width: 100vw;
+            position: relative;
+            height: 100%;
+            /* overflow: hidden; */
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1em;
+            border: 0.05rem solid #ccc;
+            border-radius: 0.5rem;
+            background-color: black;
+            color: white;
+        }
+
+        input[type="submit"] {
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+            border: solid 0.05rem white;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #555;
+        }
+
+        #leadTitle {
+
+            font-size: 1.5rem;
+            white-space: nowrap;
+        }
+
+        /* #what {
+            z-index: 1;
+        } */
+
+        .background {
+            font-size: 35rem;
+            z-index: -1;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            opacity: 0.3;
+            text-align: center;
+            transform: translate(-50%, -50%);
+            overflow: hidden;
+            will-change: transform;
+            /* perspective: 1000px; */
+            white-space: nowrap;
+            /* max-height: 100%; */
+            /* height: 200px; */
+        }
+
+        /* #nuts::after {
+            content: '\A ‹';
+            white-space: pre;
+            display: block;
+            transform: rotate(-90deg);
+        } */
+
+
+        #nutsChev {
+            display: inline-block;
+            transform: rotate(-90deg);
+        }
+
+        #boltsChev {
+            display: inline-block;
+            transform: rotate(90deg);
+        }
+
+        .backgroundStatic {
+            font-size: 13vmin;
+            line-height: 1.2;
+            white-space: normal;
+            /* overflow: visible; */
+            opacity: 0.3;
+        }
+
+        #downChevronsContainer {
+            position: absolute;
+            top: 58%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: row;
+        }
+
+        form {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bgWrapper {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-flow: column nowrap;
+            justify-content: center;
+            align-items: center;
+            /* border: solid pink 1px; */
+        }
+
+        #explainer {
+            padding: 0;
+            /* margin: 3rem 0; */
+            min-height: 56.5vw;
+            max-height: 56.5vw;
+        }
+
+        .buffer>h3 {
+            visibility: hidden;
+        }
+
+        .buffer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #topBuffer {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            margin-top: 8rem;
+            /* padding-top: 0; */
+        }
+
+        #bottomBuffer {
+            margin-top: 0;
+            padding-top: 0;
+            margin-bottom: 8rem;
+        }
+
+        .no-spam {
+            font-size: 0.8em;
+            color: gray;
+            margin-top: 1rem;
+            margin-left: 0.25rem;
+        }
+
+        .twitter-follow {
+            display: inline-flex;
+            align-items: center;
+            color: #1DA1F2;
+
+            text-decoration: none;
+        }
+
+        .twitter-follow i {
+            margin-left: 0.5em;
+
+        }
+
+        footer {
+            width: 100%;
+            padding: 1vh 0;
+            text-align: center;
+            /* background-color: #333; */
+            color: white;
+        }
+
+        #bgDownChev {
+            transform: rotate(-90deg);
+            position: absolute;
+            top: 0;
+            font-size: inherit;
+            /* color: white;
+            opacity: 0.3; */
+        }
+
+        #bgUpChev {
+            transform: rotate(90deg);
+            position: absolute;
+            bottom: 60%;
+        }
+
+        .bgDownWrapper {
+            transform: rotate(-90deg);
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            /* left: 0; */
+            top: 65%;
+            /* display: flex;
+            flex-flow: column nowrap; */
+            /* border: solid green 1px; */
+        }
+
+        .twoDownChevrons {
+            transform: translate(-50%, -50%) rotate(-90deg);
+            display: inline-block;
+            margin: 1rem;
+            opacity: 0;
+            font-size: 2rem;
+        }
+
+        .showTwoDownChevrons {
+            opacity: 1;
+        }
+
+        .individual-letter {
+            display: inline-block;
+            transition: transform 1.5s;
+        }
+
+        #sectionsWrapper {
+            grid-row-start: 3;
+            grid-column-start: 2;
+            text-align: center;
+            overflow: auto;
+            /* height: 100vh; */
+            display: flex;
+            flex-flow: column nowrap;
+        }
+
+
+        @media (min-width: 350px) {
+            .background {
+                font-size: 17rem;
+            }
+        }
+
+
+        @media (min-width: 576px) {}
+
+
+        @media (min-width: 768px) {
+
+
+
+
+            .title {
+                font-size: 12vmin;
+            }
+
+            .chevron {
+                font-size: 20vmin;
+            }
+
+            .registration-form {
+                width: 85%;
+            }
+        }
+
+
+        @media (min-width: 992px) {
+
+
+            .title {
+                font-size: 13vmin;
+            }
+
+            .chevron {
+                font-size: 25vmin;
+            }
+
+            .registration-form {
+                width: 80%;
+            }
+        }
+
+
+        @media (min-width: 1200px) {
+
+
+            .page {
+                height: 100vh;
+            }
+
+            .title {
+                font-size: 15vmin;
+            }
+
+            .chevron {
+                font-size: 30vmin;
+            }
+
+            .registration-form {
+                width: 75%;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="pages">
+        <div class="page" id="hey">
+            <div class='title'>HEY</div>
+            <div class='chevron' id="downChevron">&lsaquo;</div>
+        </div>
+        <div class="page" id="ho">
+            <div class='title'>HO</div>
+            <div class='chevron' id="rightChevron">&rsaquo;</div>
+        </div>
+        <div class="page" id="eventInfo">
+            <!-- <h3 id="leadTitle">Thought you might like to know...</h3> -->
+            <div class='title' id="leadTitle">Thought you might like to know</div>
+            <div id="downChevronsContainer"><span class="twoDownChevrons">&lsaquo;</span><span
+                    class="twoDownChevrons">&lsaquo;</span>
+            </div>
+        </div>
+        <div class="page" id="sectionsWrapper">
+            <section id="what">
+                <div class="bgWrapper">
+                    <P class="background" id="bgWhat">WHAT</P>
+                </div>
+                <h1>LIVE EXHIBITION AND SALE</h1>
+                <h1>&mdash;</h1>
+                <h2>SEMI-LINEAR CLOCK</h2>
+            </section>
+            <section id="where">
+                <div class="bgWrapper">
+                    <P class="background">WHERE</P>
+                </div>
+                <h3>Be-ahava Gallery, Jaffa, Israel</h3>
+                <h3>and Online</h3>
+            </section>
+            <section id="when">
+                <div class="bgWrapper">
+                    <P class="background">WHEN</P>
+                </div>
+                <h2>New Year's Eve</h2>
+                <h3>Sunday, 19:00 (UTC+2), 31-12-23</h3>
+            </section>
+            <section id="onSale">
+                <div class="bgWrapper">
+                    <P class="background">ON SALE</P>
+                </div>
+                <h3>NFT</h3>
+                <h3>T-Shirts</h3>
+                <h3>Prints</h3>
+            </section>
+            <section id="topBuffer" class="buffer">
+                <p id="nuts" class="backgroundStatic">NUTS<br><span id="nutsChev">&lsaquo;</span></p>
+            </section>
+            <section id="explainer">
+                <iframe src="presentation.html"></iframe>
+            </section>
+            <section id="bottomBuffer" class="buffer">
+                <P class="backgroundStatic"><span id="boltsChev">&lsaquo;</span><br>& BOLTS</P>
+            </section>
+            <section id="registration">
+                <div class="bgWrapper">
+                    <P class="background">SIGN UP</P>
+                </div>
+                <h3>20% off Presale discount, early bird discounts and more...</h3>
+                <div class="registration-form">
+                    <form action="" method="post">
+
+                        <div class="form-group">
+                            <input type="email" placeholder="Email Address" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="submit" value="Sign up">
+                        </div>
+                        <p class="no-spam">Obviously, no spam.</p>
+                    </form>
+
+                </div>
+            </section>
+            <a href="https://twitter.com/YourTwitterHandle" target="_blank" class="twitter-follow">
+                Follow <i class="fab fa-twitter"></i>
+            </a>
+            <footer>
+                <p>&copy; Selà <span id="year"></span></p>
+            </footer>
+        </div>
+
+    </div>
+
+    <!-- <script type="text/javascript" src="index.js"></script> -->
+
+    <script>
+
+        let cursorTimer;
+
+        document.addEventListener('mousemove', function () {
+            clearTimeout(cursorTimer);
+
+            // Show the cursor
+            document.body.classList.remove('cursor-hidden');
+
+            // Hide the cursor after 3 seconds of inactivity
+            cursorTimer = setTimeout(function () {
+                document.body.classList.add('cursor-hidden');
+            }, 3000);
+        });
+
+
+        const pages = document.getElementById("pages");
+        const twoDownChevrons = document.getElementsByClassName('twoDownChevrons');
+        const rightChevron = document.getElementById('rightChevron');
+        const leadTitle = document.getElementById('leadTitle');
+        const downChevron = document.getElementById('downChevron');
+
+        downChevron.addEventListener('click', () => {
+            console.log('down chevron clicked');
+            pages.style.transform = 'translateY(-100vh)';
+        });
+
+        rightChevron.addEventListener('click', () => {
+            console.log('right chevron clicked');
+            pages.style.transform = 'translate(-100vw, -100vh)';
+
+            setTimeout(() => {
+                twoDownChevrons[0].classList.add('showTwoDownChevrons');
+            }, 1500);
+
+            setTimeout(() => {
+                twoDownChevrons[1].classList.add('showTwoDownChevrons');
+            }, 2000);
+
+            setTimeout(() => {
+                pages.style.transition = 'transform 3s';
+                pages.style.transform = 'translate(-100vw, -200vh)';
+                // requestAnimationFrame(animate);
+            }, 3500);
+        });
+
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+
+
+        const backgrounds = document.getElementsByClassName('background')
+
+        function wrapLettersWithSpans(element) {
+            const text = element.textContent;
+            let newText = '';
+            for (let char of text) {
+                if (char === ' ') {
+                    newText += ' ';
+                } else {
+                    newText += `<span class="individual-letter">${char}</span>`;
+                }
+            }
+            element.innerHTML = newText;
+        }
+
+        for (let bg of backgrounds) {
+            wrapLettersWithSpans(bg);
+        }
+
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+
+        // Initialize the states
+        let bgStates = Array.from(backgrounds).map(bg => {
+            const initialSize = parseInt(window.getComputedStyle(bg).getPropertyValue('font-size'));
+            return {
+                element: bg,
+                fontSize: initialSize,
+                initialSize: initialSize,
+                direction: -1,
+                initialRotations: [],
+                currentRotations: []
+            };
+        });
+
+        let lastTime = 0;
+        const interval = 1000 / 30;
+        // const interval = 1000;
+
+        // function lerp(start, end, t) {
+        //     return start * (1 - t) + end * t;
+        // }
+
+        function updateState(state) {
+            // Define max and min sizes for clarity
+            const minSize = state.initialSize - 200;
+            const maxSize = state.initialSize + 500;
+
+            // Check if we've already ended the animation
+            if (state.hasEnded) {
+                return;
+            }
+
+            // Contract font size
+            if (state.direction === -1) {
+                state.fontSize += state.direction / 2;
+
+                if (state.fontSize <= minSize) {
+                    state.fontSize = minSize; // Ensure it doesn't go below the min size
+                    state.direction = 0; // Stop changing font size
+
+                    // Pause for 5 seconds
+                    setTimeout(() => {
+                        state.direction = 1; // Set direction for expansion
+                    }, 5000);
+                }
+            }
+
+            // Expand font size
+            if (state.direction === 1) {
+                state.fontSize += state.direction / 2;
+
+                if (state.fontSize >= maxSize) {
+                    state.fontSize = maxSize; // Ensure it doesn't exceed the max size
+                    state.direction = 0; // Stop changing font size
+                    state.hasEnded = true; // Mark animation as ended
+                }
+            }
+        }
+
+        function draw(state) {
+            state.element.style.fontSize = `${state.fontSize}px`;
+        }
+
+
+        function animate(timestamp) {
+            const deltaTime = timestamp - lastTime;
+
+            if (deltaTime > interval) {
+                bgStates.forEach(state => {
+                    updateState(state);
+                    draw(state);
+                });
+
+                lastTime = timestamp - (deltaTime % interval);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+    </script>
+
+</body>
+
+</html>

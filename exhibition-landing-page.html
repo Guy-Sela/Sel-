@@ -335,7 +335,12 @@
             width: 100%;
             padding: 1vh 0;
             text-align: center;
+<<<<<<< HEAD
             /* background-color: #333; */
+=======
+            background-color: #333;
+
+>>>>>>> 6482a6050ebcec0571f50a6835f86ac1f313e4e1
             color: white;
         }
 
@@ -394,6 +399,7 @@
             flex-flow: column nowrap;
         }
 
+<<<<<<< HEAD
 
         @media (min-width: 350px) {
             .background {
@@ -402,6 +408,8 @@
         }
 
 
+=======
+>>>>>>> 6482a6050ebcec0571f50a6835f86ac1f313e4e1
         @media (min-width: 576px) {}
 
 
@@ -536,7 +544,11 @@
                         <div class="form-group">
                             <input type="submit" value="Sign up">
                         </div>
+<<<<<<< HEAD
                         <p class="no-spam">Obviously, no spam.</p>
+=======
+                        <p class="no-spam">No spam, obviously.</p>
+>>>>>>> 6482a6050ebcec0571f50a6835f86ac1f313e4e1
                     </form>
 
                 </div>
@@ -651,7 +663,11 @@
 
         function updateState(state) {
             // Define max and min sizes for clarity
+<<<<<<< HEAD
             const minSize = state.initialSize - 200;
+=======
+            const minSize = 200;
+>>>>>>> 6482a6050ebcec0571f50a6835f86ac1f313e4e1
             const maxSize = state.initialSize + 500;
 
             // Check if we've already ended the animation
@@ -661,7 +677,11 @@
 
             // Contract font size
             if (state.direction === -1) {
+<<<<<<< HEAD
                 state.fontSize += state.direction / 2;
+=======
+                state.fontSize += state.direction;
+>>>>>>> 6482a6050ebcec0571f50a6835f86ac1f313e4e1
 
                 if (state.fontSize <= minSize) {
                     state.fontSize = minSize; // Ensure it doesn't go below the min size
@@ -676,7 +696,11 @@
 
             // Expand font size
             if (state.direction === 1) {
+<<<<<<< HEAD
                 state.fontSize += state.direction / 2;
+=======
+                state.fontSize += state.direction;
+>>>>>>> 6482a6050ebcec0571f50a6835f86ac1f313e4e1
 
                 if (state.fontSize >= maxSize) {
                     state.fontSize = maxSize; // Ensure it doesn't exceed the max size

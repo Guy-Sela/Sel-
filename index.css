@@ -136,8 +136,13 @@ button {
   font-size: 10vmin;
   display: inline-block;
   cursor: pointer;
-  transition: 0.3s ease-out;
+  /* padding-bottom: 0.5rem; */
+  /* transition: 0.3s ease-out; */
 }
+
+/* #appChevron { */
+/* padding-bottom: 1.4rem; */
+/* } */
 
 #elseChevron {
   transform: rotate(0.25turn);
@@ -145,6 +150,7 @@ button {
   margin-bottom: 6vmin;
   letter-spacing: -2.5vmin;
   margin-top: 2vmin;
+  padding-bottom: 0;
 }
 
 #backFromAppChevron {
@@ -238,9 +244,10 @@ figcaption {
 #contact,
 #altSite {
   cursor: pointer;
-  text-align: center;
-  margin-top: 5%;
-  width: 50vw;
+  font-size: 5vmin;
+  /* text-align: center; */
+  /* margin-top: 5%; */
+  /* width: 50vw; */
 }
 
 #navBar {
@@ -301,6 +308,10 @@ figcaption {
   #period {
     right: 0;
     line-height: 0.7;
+  }
+
+  #period::before {
+    content: "—";
   }
 
   #navBar {
@@ -385,7 +396,17 @@ figcaption {
   #period {
     right: 0;
     line-height: 0.7;
+    /* visibility: hidden; */
   }
+
+  /* #period::before {
+    content: '-';
+    visibility: visible;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  } */
 
   #navBar {
     font-size: 5vmin;

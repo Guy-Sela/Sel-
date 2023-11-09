@@ -56,6 +56,12 @@ p {
   /* display: none; */
 }
 
+#navBar button:nth-of-type(3),
+#navBar button:nth-of-type(4),
+#navBar button:nth-of-type(5) {
+  display: none;
+}
+
 button {
   all: unset;
   margin: 3vmin;

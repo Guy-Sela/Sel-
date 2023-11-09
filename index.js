@@ -146,7 +146,7 @@ function displayWorldPopCounter(pop, growthRate) {
 
 const contact = document.getElementById('contact')
 
-const altSite = document.getElementById('altSite')
+// const altSite = document.getElementById('altSite')
 
 
 contact.addEventListener('click', () => {
@@ -155,11 +155,11 @@ contact.addEventListener('click', () => {
 
 })
 
-altSite.addEventListener('click', () => {
+// altSite.addEventListener('click', () => {
 
-    window.open('https://guy-sela.github.io/', '_blank');
+//     window.open('https://guy-sela.github.io/', '_blank');
 
-})
+// })
 
 
 // -FOOTER-

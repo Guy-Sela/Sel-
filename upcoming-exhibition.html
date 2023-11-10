@@ -192,7 +192,7 @@
         }
 
         #leadTitle {
-
+            /* transition: opacity 5s; */
             font-size: 3rem;
             white-space: nowrap;
         }
@@ -370,9 +370,9 @@
         .twoDownChevrons {
             transform: translate(-50%, -50%) rotate(-90deg);
             display: inline-block;
-            margin: 1rem;
+            margin: 3rem;
             opacity: 0;
-            font-size: 2rem;
+            font-size: 3rem;
         }
 
         .showTwoDownChevrons {
@@ -511,10 +511,7 @@
         </div>
         <div class="page" id="eventInfo">
             <!-- <h3 id="leadTitle">Thought you might like to know...</h3> -->
-            <div class='title' id="leadTitle">Thought you might like to know</div>
-            <div id="downChevronsContainer"><span class="twoDownChevrons">&lsaquo;</span><span
-                    class="twoDownChevrons">&lsaquo;</span>
-            </div>
+            <div class='title' id="leadTitle">Thought you might like to know...</div>
         </div>
         <div class="page" id="sectionsWrapper">
             <section id="what">
@@ -606,7 +603,7 @@
 
 
         const pages = document.getElementById("pages");
-        const twoDownChevrons = document.getElementsByClassName('twoDownChevrons');
+        // const twoDownChevrons = document.getElementsByClassName('twoDownChevrons');
         const rightChevron = document.getElementById('rightChevron');
         const leadTitle = document.getElementById('leadTitle');
         const downChevron = document.getElementById('downChevron');
@@ -619,19 +616,10 @@
         rightChevron.addEventListener('click', () => {
             console.log('right chevron clicked');
             pages.style.transform = 'translate(-100vw, -100vh)';
-
-            setTimeout(() => {
-                twoDownChevrons[0].classList.add('showTwoDownChevrons');
-            }, 1500);
-
-            setTimeout(() => {
-                twoDownChevrons[1].classList.add('showTwoDownChevrons');
-            }, 2000);
-
             setTimeout(() => {
                 pages.style.transition = 'transform 3s';
                 pages.style.transform = 'translate(-100vw, -200vh)';
-                // requestAnimationFrame(animate);
+                requestAnimationFrame(animate);
             }, 3500);
         });
 
@@ -666,6 +654,7 @@
         // Initialize the states
         let bgStates = Array.from(backgrounds).map(bg => {
             const initialSize = parseInt(window.getComputedStyle(bg).getPropertyValue('font-size'));
+            console.log(initialSize)
             return {
                 element: bg,
                 fontSize: initialSize,
@@ -687,9 +676,9 @@
         function updateState(state) {
             // Define max and min sizes for clarity
 
-            // const minSize = state.initialSize - 200;
+            const minSize = state.initialSize / 3.5;
 
-            const minSize = 200;
+            // const minSize = 200;
 
             const maxSize = state.initialSize + 500;
 
@@ -748,7 +737,7 @@
             requestAnimationFrame(animate);
         }
 
-        requestAnimationFrame(animate);
+        // requestAnimationFrame(animate);
     </script>
 
 </body>

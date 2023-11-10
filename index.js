@@ -1,6 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
-    location.href = '#home'
-    // console.log("DOMContentLoaded event fired!");
+
+    const hash = window.location.hash;
+    switch (hash) {
+        case "#home":
+            console.log("home");
+            break;
+        case "#art":
+            setTimeout(() => {
+                slide('right', '#art');
+            }, 1200);
+            console.log("art");
+            break;
+        case "#else":
+            console.log("else");
+            break;
+        default:
+            console.log("Does not end with 'home', 'art', or 'else'");
+    }
 });
 
 
@@ -151,7 +167,7 @@ const contact = document.getElementById('contact')
 
 contact.addEventListener('click', () => {
 
-    window.location.href = "mailto:" + "selà@selà.com";
+    window.location.href = "mailto:" + "guyselastein@protonmail.com";
 
 })
 

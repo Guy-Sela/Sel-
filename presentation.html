@@ -218,8 +218,8 @@
                 <div class="bgContainer">
                     <iframe class="slideBg" src="meditativeclocks/clocks/semi-linear_clock/index.html"></iframe>
                 </div>
-                <p>Semi-Linear Clock is part of the <a href="meditativeclocks/index.html">Meditative Clocks</a>
-                    collection by <a href="index.html">Selà</a>.</p>
+                <p>Semi-Linear Clock is part of the <a href="index.html#art" target="_blank">Meditative Clocks</a>
+                    collection by <a href="index.html#home" target="_blank">Selà</a>.</p>
             </div>
             <div class="slide">
                 <!-- <h1>Slide 3</h1> -->
@@ -294,13 +294,13 @@
         });
 
         // Swipe functionality
-        document.querySelector('.presentation').addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-        });
+        // document.querySelector('.presentation').addEventListener('touchstart', (e) => {
+        //     startX = e.touches[0].clientX;
+        // });
 
-        document.querySelector('.presentation').addEventListener('touchmove', (e) => {
-            endX = e.touches[0].clientX;
-        });
+        // document.querySelector('.presentation').addEventListener('touchmove', (e) => {
+        //     endX = e.touches[0].clientX;
+        // });
 
         document.querySelector('.presentation').addEventListener('touchend', () => {
             let threshold = 50; // Minimum distance for a swipe to register, you can adjust based on your needs.

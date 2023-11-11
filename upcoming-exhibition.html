@@ -159,9 +159,9 @@
             /* overflow: hidden; */
         }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+        /* .form-group { */
+        /* margin-bottom: 1.5rem; */
+        /* } */
 
         .form-group label {
             display: block;
@@ -256,8 +256,9 @@
         #signUpWrapper {
             display: flex;
             flex-flow: row nowrap;
-            justify-content: center;
-            margin-left: -1.8rem;
+            justify-content: space-around;
+            align-items: end;
+            /* margin-left: -1.8rem; */
             /* align-items: center; */
         }
 
@@ -393,7 +394,7 @@
 
         @media (max-width: 40em) {
             .background {
-                font-size: 17rem;
+                font-size: 20rem;
             }
 
             #leadTitle {
@@ -429,67 +430,15 @@
                 padding-left: 0;
                 padding-right: 0;
             }
-        }
 
-        @media (min-width: 576px) {
-
-            #leadTitle {
-                font-size: 2rem;
+            #signUpWrapper {
+                display: flex;
+                flex-flow: row nowrap;
+                justify-content: space-around;
+                align-items: end;
+                width: 100%;
             }
         }
-
-
-        @media (min-width: 768px) {
-
-            .title {
-                font-size: 12vmin;
-            }
-
-            .chevron {
-                font-size: 20vmin;
-            }
-
-            .registration-form {
-                width: 85%;
-            }
-        }
-
-
-        @media (min-width: 992px) and (max-width: 1200px) {
-
-
-            .title {
-                font-size: 13vmin;
-            }
-
-            .chevron {
-                font-size: 25vmin;
-            }
-
-            .registration-form {
-                width: 80%;
-            }
-        }
-
-
-        /* @media (min-width: 1200px) {
-
-            .page {
-                height: 100vh;
-            }
-
-            .title {
-                font-size: 15vmin;
-            }
-
-            .chevron {
-                font-size: 30vmin;
-            }
-
-            .registration-form {
-                width: 75%;
-            }
-        } */
     </style>
 
 </head>
@@ -671,7 +620,7 @@
         function updateState(state) {
             // Define max and min sizes for clarity
 
-            const minSize = state.initialSize / 3.5;
+            const minSize = state.initialSize / 4;
 
             // const minSize = 200;
 

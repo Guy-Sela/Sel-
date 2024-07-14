@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Effect with Text</title>
+    <link href="https://fonts.googleapis.com/css2?family=Alef:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Alef', sans-serif;
+            background-color: black;
+            color: white;
+        }
+
+        #text-qrcode-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+        }
+
+        #text-qrcode {
+            width: 100%;
+            height: 100%;
+            border-radius: 12pt;
+            border: transparent solid 0.3vmin;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overlay-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            pointer-events: none;
+            white-space: pre-wrap;
+        }
+
+        input,
+        button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .text-3d {
+            text-shadow: 1px 1px 1px #333;
+        }
+    </style>
+</head>
+
+<body>
+    <label for="text-input">Enter Text:</label>
+    <input type="text" id="text-input" placeholder="Enter text" aria-label="Enter text" oninput="generateTextQRCode()">
+
+    <label for="color">Text Color:</label>
+    <input type="color" id="color" aria-label="Text Color" value="#000000" onchange="generateTextQRCode()">
+
+    <label for="bg-color">Background Color:</label>
+    <input type="color" id="bg-color" aria-label="Background Color" value="#ffffff" onchange="generateTextQRCode()">
+
+    <label for="bold-text">Bold Text:</label>
+    <input type="checkbox" id="bold-text" aria-label="Bold Text" onchange="generateTextQRCode()">
+
+    <label for="3d-text">3D Effect:</label>
+    <input type="checkbox" id="3d-text" aria-label="3D Effect" onchange="generateTextQRCode()">
+
+    <button onclick="generateTextQRCode()">Generate Text QR Code</button>
+    <button onclick="downloadImage('png')">Download PNG</button>
+    <button onclick="downloadImage('jpeg')">Download JPEG</button>
+
+    <div id="text-qrcode-container">
+        <canvas id="text-qrcode"></canvas>
+        <div id="shape-overlay" class="overlay-text"></div>
+    </div>
+
+    <script>
+        function generateTextQRCode() {
+            const text = document.getElementById('text-input').value.trim();
+            const color = document.getElementById('color').value.trim();
+            const bgColor = document.getElementById('bg-color').value.trim();
+            const isBold = document.getElementById('bold-text').checked;
+            const is3D = document.getElementById('3d-text').checked;
+
+            const qrCanvas = document.getElementById('text-qrcode');
+            const shapeOverlay = document.getElementById('shape-overlay');
+            const ctx = qrCanvas.getContext('2d');
+
+            qrCanvas.width = 200;
+            qrCanvas.height = 200;
+
+            // Clear the canvas
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, qrCanvas.width, qrCanvas.height);
+
+            // Draw text overlay on canvas
+            if (text) {
+                ctx.fillStyle = color;
+                ctx.font = `${isBold ? 'bold ' : ''}48px 'Alef', sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                if (is3D) {
+                    ctx.shadowColor = '#333';
+                    ctx.shadowOffsetX = 1;
+                    ctx.shadowOffsetY = 1;
+                    ctx.shadowBlur = 1;
+                } else {
+                    ctx.shadowColor = 'transparent';
+                }
+
+                ctx.fillText(text, qrCanvas.width / 2, qrCanvas.height / 2);
+            }
+        }
+
+        async function downloadImage(format) {
+            const qrCanvas = document.getElementById('text-qrcode');
+            const dataUrl = qrCanvas.toDataURL(`image/${format}`);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = dataUrl;
+            downloadLink.download = `text_qr_code.${format}`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+
+        generateTextQRCode();  // Initial call to display the default text QR code
+    </script>
+</body>
+
+</html>

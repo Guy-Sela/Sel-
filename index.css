@@ -66,7 +66,7 @@ body {
   line-height: 1.3;
   text-align: left;
   margin: 0 auto;
-  padding: 7vw;
+  padding: 8vw;
 }
 
 #app>div {
@@ -132,7 +132,7 @@ iframe {
 button {
   background-color: transparent;
   color: var(--text-color);
-  font-size: 10vmin;
+  font-size: 15vmin;
   border: none;
   cursor: pointer;
   font-family: 'Josefin Sans', sans-serif;
@@ -281,6 +281,10 @@ a>img {
     font-size: 10vmin;
   }
 
+  button {
+    font-size: 10vmin;
+  }
+
   #colon,
   #comma,
   #period {
@@ -301,11 +305,19 @@ a>img {
   figcaption {
     flex-direction: row;
   }
+
+  button {
+    font-size: 10vmin;
+  }
 }
 
-@media (max-height: 800px) {
+
+
+@media (max-height: 600px) {
   figcaption {
-    margin-top: 15vh;
+    flex-direction: row;
+    margin-top: 20vh;
+    justify-content: space-between;
   }
 
   #contact {

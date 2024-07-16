@@ -162,9 +162,9 @@ button {
 .els {
   width: 100%;
   cursor: pointer;
-  margin: 5vmin;
   transition: all 3s;
   overflow: hidden;
+  margin-bottom: 5vh;
 }
 
 .expandEl {
@@ -290,6 +290,7 @@ video {
 
   .els {
     width: 50%;
+    margin: 5vmin;
   }
 
   .expandEl {

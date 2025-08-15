@@ -1,11 +1,3 @@
-:root {
-  --bg-color: #121212;
-  --text-color: #e0e0e0;
-  --accent-color: #ffd700;
-  --secondary-color: rgba(191, 191, 191, 0.5);
-  --border-color: #404040;
-}
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -14,321 +6,33 @@
 
 html,
 body {
-  overflow: auto;
-  font-family: 'Josefin Sans', sans-serif;
-  background-color: var(--bg-color);
-  height: 200vh;
-  position: fixed;
-}
-
-#pages {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  width: 300vw;
-  transition: all 0.7s;
-  background-color: var(--bg-color);
-  position: relative;
-  right: 33.33%;
-}
-
-.page {
-  width: 100vw;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-
-#home {
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-}
-
-#home>div {
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  width: 100vw;
-  flex: 1;
-}
-
-#app {
-  height: 100vh;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  color: var(--accent-color);
-  text-align: center;
-}
-
-#app>h3 {
-  color: var(--text-color);
-  font-size: 1.3rem;
-  line-height: 1.3;
-  text-align: left;
-  margin: 0 auto;
-  padding: 8vw;
-}
-
-#app>div {
-  display: flex;
-  justify-content: center;
-  border: var(--border-color) solid 0.3vmin;
-  border-radius: 14pt;
-  cursor: pointer;
-}
-
-#app>div:nth-child(2) {
-  border: none;
-  cursor: default;
-}
-
-#app>div>a {
-  width: 100%;
   height: 100%;
-  padding: 0;
+  background-color: #000000;
+  overflow: hidden;
+}
+
+.container {
   display: flex;
-  align-items: center;
   justify-content: center;
-}
-
-a {
-  color: var(--text-color);
-  text-decoration: none;
-  padding: 3vmin;
-  font-size: 10vmin;
-}
-
-iframe {
+  align-items: center;
+  height: 100vh;
   width: 100vw;
-  height: 100vh;
-  background-color: var(--bg-color);
-  border: none;
+  background-color: #000000;
 }
 
-#else {
-  grid-column-start: 2;
-  position: relative;
-  height: 100vh;
-  overflow: auto;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: center;
-  align-content: center;
-}
-
-#footer {
-  width: 100%;
-  white-space: nowrap;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: var(--secondary-color);
-  position: relative;
-  bottom: 3vh;
-}
-
-button {
-  background-color: transparent;
-  color: var(--text-color);
-  font-size: 15vmin;
-  border: none;
-  cursor: pointer;
-  font-family: 'Josefin Sans', sans-serif;
-  display: flex;
-  flex-flow: row nowrap;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-}
-
-.chevron {
-  font-size: 10vmin;
-  display: inline-block;
-  cursor: pointer;
-}
-
-#elseChevron {
-  transform: rotate(0.25turn);
-  color: var(--accent-color);
-  margin-bottom: 6vmin;
-  letter-spacing: -2.5vmin;
-  margin-top: 2vmin;
-  padding-bottom: 0;
-}
-
-#backFromAppChevron {
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  font-size: 10vmin;
-  color: var(--accent-color);
-  padding-top: 5vh;
-}
-
-#backHomeChevron {
-  margin: 3% auto;
-  transform: rotate(-0.25turn);
-  cursor: pointer;
-  font-size: 10vmin;
-  color: var(--accent-color);
-}
-
-figure {
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-img {
-  height: auto;
-  width: auto;
-  max-height: 100%;
+.gif-frame {
   max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  animation-play-state: paused;
+  animation-delay: -1s;
+  animation-duration: 1s;
+  animation-iteration-count: 1;
 }
 
-figcaption {
-  color: var(--text-color);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  line-height: 1.4;
-  font-size: 2rem;
-  width: 100%;
-  white-space: nowrap;
-  gap: 2vmin;
-  margin-top: 5vh;
-}
-
-#about {
-  font-size: 10vmin;
-  position: relative;
-  top: 1vmin;
-}
-
-.haha {
-  position: relative;
-  top: 0.7vmin;
-  font-size: 5vmin;
-}
-
-#colon,
-#comma,
-#period {
-  font-size: 15vmin;
-  position: relative;
-  bottom: 2vmin;
-}
-
-#colon::before {
-  content: ':';
-}
-
-#comma,
-#period {
-  right: 3vmin;
-}
-
-#bottomWrapper {
-  position: absolute;
-  top: 100vh;
-  min-height: 150vh;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-between;
-  align-items: center;
-  width: 100vw;
-}
-
-#navBar {
-  display: flex;
-  flex-flow: row nowrap;
-  width: 50vw;
-  justify-content: center;
-  margin: 0 auto;
-  font-size: 3vmin;
-  text-align: center;
-  gap: 5vmin;
-  white-space: nowrap;
-}
-
-#contact {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: 3vmin;
-}
-
-#contact>h1 {
-  font-size: 1.3rem;
-}
-
-a>img {
-  width: 7vmin;
-  height: 7vmin;
-}
-
-@media only screen and (min-width: 768px) {
-  #about {
-    font-size: 10vmin;
-  }
-
-  button {
-    font-size: 10vmin;
-  }
-
-  #colon,
-  #comma,
-  #period {
-    font-size: 15vmin;
-  }
-
-  figcaption {
-    font-size: 1.2rem;
-    gap: 7vmin;
-  }
-
-  .haha {
-    font-size: 1.3rem;
-  }
-}
-
-@media only screen and (min-width: 1024px) {
-  figcaption {
-    flex-direction: row;
-  }
-
-  button {
-    font-size: 10vmin;
-  }
-}
-
-
-
-@media (max-height: 600px) {
-  figcaption {
-    flex-direction: row;
-    margin-top: 20vh;
-    justify-content: space-between;
-  }
-
-  #contact {
-    padding: 7vmin;
-  }
-
-  #backHomeChevron {
-    padding: 7vmin;
-  }
-
-  footer {
-    padding: 7vmin;
-  }
+/* Alternative approach: if the gif doesn't pause properly, this ensures only first frame shows */
+.gif-frame {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }

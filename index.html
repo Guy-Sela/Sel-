@@ -4,100 +4,28 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
-  <title>Selà - Portfolio</title>
+  <title>Selà</title>
 
-  <meta name="description" content="Selà — Portfolio">
-  <meta name="keywords" content="Selà, portfolio, web development, app development, design, projects">
+  <meta name="description" content="Selà">
   <meta name="author" content="Selà">
   <link rel="icon" type="image/x-icon" href="favicon-16x16.png">
 
-  <meta property="og:title" content="Selà - Portfolio">
-  <meta property="og:description" content="Websites | Apps">
-  <meta property="og:image" content="https://guy-sela.github.io/Sel-/selà-1200x630.png">
+  <meta property="og:title" content="Selà">
+  <meta property="og:description" content="Selà">
+  <meta property="og:image" content="https://guy-sela.github.io/Sel-/selà-1200x630.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://guy-sela.github.io/Sel-/#home">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_US">
 
-  <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet">
-  <link rel="preload" href="index.css" as="style">
   <link rel="stylesheet" type="text/css" href="index.css">
 </head>
 
 <body>
-  <div id="pages">
-    <section class="page" id="app">
-      <h3><b>Awaker</b> is a simple yet profound tool for expanding consciousness.<br><br>
-        The app was available on the app store and google play for a while, but now it's down for an overhaul.<br><br>
-        I plan to re-release it shortly.
-      </h3>
-      <div>
-        <span id="backFromAppChevron" aria-hidden="true">&rsaquo;</span>
-      </div>
-    </section>
-    <nav class="page" id="home">
-      <div>
-        <button onClick="slide('left', '#app')"><span class='chevron' id="appChevron" aria-hidden="true">&lsaquo;</span>
-          <div class='title'>&nbsp;&nbsp;&nbsp;APP</div>
-        </button>
-      </div>
-      <div>
-        <button onClick="slide('right', '#art')">
-          <div class='title'>ART&nbsp;&nbsp;&nbsp;</div><span class='chevron' aria-hidden="true">&rsaquo;</span>
-        </button>
-      </div>
-      <div>
-        <button onClick="slide('down', '#else')">EL&nbsp;<span class='chevron' id="elseChevron"
-            aria-hidden="true">&rsaquo;</span>&nbsp;SE</button>
-      </div>
-    </nav>
-    <section class="page" id="art">
-      <iframe src="meditativeclocks/index.html" title="Meditative Clocks"></iframe>
-    </section>
-    <section class="page" id="else">
-      <figure>
-        <!-- <img src="portrait-noBG.png" alt="Portrait"> -->
-        <img src="me-gif.gif" alt="Portrait">
-        <!-- <video width="320" height="240" autoplay muted>
-          <source src="pixelated.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video> -->
-      </figure>
-      <div id="bottomWrapper">
-        <figcaption>
-          <div id="about">ABOUT</div>
-          <div id="colon"></div>
-          <div class="haha">
-            <h3>On a good day</h3>
-            one in <div class="worldPopCounter"></div>
-          </div>
-          <div id="comma">,</div>
-          <div class="haha">
-            <h3>On a bad day</h3>
-            one of <div class="worldPopCounter"></div>
-          </div>
-          <div id="period">.</div>
-        </figcaption>
-        <div id="contact">
-          <h1>Talk to me:</h1>
-          <a href="mailto:guyselastein@protonmail.com" target="_blank">
-            <img src="empty-email-svgrepo-com.svg" alt="email">
-          </a>
-          <a href="https://wa.me/972544415474" target="_blank">
-            <img src="whatsapp-white-icon.svg" alt="WhatsApp">
-          </a>
-        </div>
-        <div id="btnWrapper">
-          <button id="backHomeChevron" onclick="slide('up', '#home')" aria-label="Back to home">&rsaquo;</button>
-        </div>
-        <footer id="footer">
-          <p>&copy; <span id='copyrightYear'></span> Selà</p>
-        </footer>
-      </div>
-    </section>
+  <div class="container">
+    <img src="me-gif.gif" alt="Selà" class="gif-frame">
   </div>
-  <script src="index.js"></script>
 </body>
 
 </html>

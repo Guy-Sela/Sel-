@@ -1,0 +1,5 @@
+16.8.25
+
+• bought selahq.com (on cloudflare) for only ascii email address. 
+• moved dns of selà.com and feinschmecker.dev to cloudflare as well (plan to move registrar as well in the future).
+• setup hey email for contact@selahq.com (guyselastein@gmail.com is recovery).

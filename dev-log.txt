@@ -3,3 +3,11 @@
 • bought selahq.com (on cloudflare) for only ascii email address. 
 • moved dns of selà.com and feinschmecker.dev to cloudflare as well (plan to move registrar as well in the future).
 • setup hey email for contact@selahq.com (guyselastein@gmail.com is recovery).
+
+
+28.11.25
+
+• pixelated soul is up and running for two weeks now.
+• ditched Hey for gmail, ops@selahq.com mainly, for business.
+• now want to create home website to feature px soul, as well as conceptual timing, and then more projects, possibly redo microdosing on enlightenment.
+ 

@@ -1,64 +1,112 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const hash = window.location.hash;
-    switch (hash) {
-        case "#home":
-            break;
-        case "#art":
-            setTimeout(() => slide('right', '#art'), 1200);
-            break;
-        case "#else":
-            break;
+document.addEventListener('DOMContentLoaded', () => {
+    // Dynamic Year
+    const yearSpan = document.getElementById('year');
+    if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
     }
-});
 
-const pages = document.getElementById("pages");
-const translateAmountX = 33.33;
-const translateAmountY = 50;
-let translateX = 0;
-let translateY = 0;
+    // Header Scroll Logic
+    const header = document.getElementById('main-header');
+    let lastScrollY = window.scrollY;
+    let ticking = false;
 
-function slide(direction, href) {
-    switch (direction) {
-        case 'left':
-            translateX += translateAmountX;
-            break;
-        case 'right':
-            translateX -= translateAmountX;
-            break;
-        case 'up':
-            translateY += translateAmountY;
-            break;
-        case 'down':
-            translateY -= translateAmountY;
-            break;
-    }
-    pages.style.transform = `translate(${translateX}%, ${translateY}%)`;
-    setTimeout(() => location.href = href, 750);
-}
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const currentScrollY = window.scrollY;
+                
+                if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                    // Scrolling down
+                    header.classList.add('header-hidden');
+                } else {
+                    // Scrolling up
+                    header.classList.remove('header-hidden');
+                }
+                
+                // Add background to header when scrolled past hero
+                if (currentScrollY > window.innerHeight - 80) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
 
-document.getElementById('backFromAppChevron').addEventListener('click', () => {
-    slide('right', '#home');
-});
-
-window.addEventListener('message', function (event) {
-    if (event.source !== window.frames[0]) return;
-    if (typeof event.data !== 'string' || !event.data.startsWith('Back')) return;
-    slide('left', '#home');
-});
-
-const worldPopCounter = document.getElementsByClassName('worldPopCounter');
-fetch('https://www.census.gov/popclock/data/population.php/world?_=' + new Date().getTime())
-    .then(response => response.json())
-    .then(data => {
-        let pop = data.world.population;
-        const growthRate = data.world.population_rate;
-        function count() {
-            pop = Math.round(pop += growthRate);
-            worldPopCounter[0].innerHTML = pop.toLocaleString('en-US');
-            worldPopCounter[1].innerHTML = worldPopCounter[0].innerHTML;
+                lastScrollY = currentScrollY;
+                ticking = false;
+            });
+            ticking = true;
         }
-        count();
-        setInterval(count, 1000);
     });
 
-document.getElementById('copyrightYear').innerHTML = new Date().getFullYear();
+    // Hero Background Logic (Mixed Videos and Iframes)
+    const heroBg = document.getElementById('hero-bg');
+    const backgroundItems = [
+        { type: 'video', src: 'meditativeclocks/clocksInBackground/Ebb&FlowYoga.mp4' },
+        { type: 'iframe', src: 'meditativeclocks/clocks/abstract_hourglass/index.html' },
+        { type: 'video', src: 'meditativeclocks/clocksInBackground/Escalator - hourglass.mp4' },
+        { type: 'iframe', src: 'meditativeclocks/clocks/universe_clock/index.html' },
+        { type: 'video', src: 'meditativeclocks/clocksInBackground/PastPresentFutureAirport.mp4' },
+        { type: 'iframe', src: 'meditativeclocks/clocks/serendipity/index.html' },
+        { type: 'video', src: 'meditativeclocks/clocksInBackground/Serendipity BMW.mp4' },
+        { type: 'iframe', src: 'meditativeclocks/clocks/present_past_and_future/index.html' },
+        { type: 'video', src: 'meditativeclocks/clocksInBackground/street- univarse.mp4' },
+        { type: 'iframe', src: 'meditativeclocks/clocks/the_ebb_and_flow_of_time/index.html' }
+    ];
+
+    let currentIndex = 0;
+    const elements = [];
+
+    // Initialize all elements
+    backgroundItems.forEach((item, index) => {
+        let el;
+        if (item.type === 'video') {
+            el = document.createElement('video');
+            el.src = item.src;
+            el.muted = true;
+            el.loop = true;
+            el.playsInline = true;
+        } else {
+            el = document.createElement('iframe');
+            el.src = item.src;
+        }
+        
+        el.classList.add('hero-media'); // Shared class for styling
+        if (index === 0) el.classList.add('active');
+        
+        heroBg.appendChild(el);
+        elements.push(el);
+    });
+
+    // Start the first video if it's a video
+    if (elements[0].tagName === 'VIDEO') {
+        elements[0].play().catch(e => console.log("Auto-play prevented:", e));
+    }
+
+    // Cycle Logic
+    setInterval(() => {
+        const currentEl = elements[currentIndex];
+        
+        // 1. Fade out current
+        currentEl.classList.remove('active');
+        
+        // Wait for fade out to finish
+        setTimeout(() => {
+            if (currentEl.tagName === 'VIDEO') {
+                currentEl.pause();
+                currentEl.currentTime = 0;
+            }
+
+            // 2. Prepare next
+            currentIndex = (currentIndex + 1) % elements.length;
+            const nextEl = elements[currentIndex];
+
+            // Start video if needed
+            if (nextEl.tagName === 'VIDEO') {
+                nextEl.play().catch(e => console.log("Play error:", e));
+            }
+            
+            // 3. Fade in next
+            nextEl.classList.add('active');
+        }, 2000); // Wait for 2s fade out to complete before showing next
+
+    }, 8000); // Switch every 8 seconds
+});

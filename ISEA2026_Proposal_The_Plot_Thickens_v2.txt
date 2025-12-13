@@ -1,0 +1,111 @@
+ISEA2026 Artistic Proposal (Version 2)
+
+Basic Contact Details
+Name: Selà
+Year of Birth: 1977
+Country: Israel
+Email: contact@sela.art
+Website: https://pxsoul.selà.com/
+
+Artist Biography (300 words max)
+Selà (b. 1977, Israel) is a conceptual artist working with code, generative systems, and interactive installations. His practice strips away decoration to expose the hidden logics of digital and human systems. Projects include "Pixelated Soul," a daily log of AI existence minted as NFTs, and "Meditative Clocks," a collection of alternative timepieces that question conventional temporal perception. His work often deals with the poetics of data—finding meaning and beauty in the residue of digital processes. Available for commissions, installations, and collaborations.
+
+Thematic Statement (200–500 words)
+Sub-theme: Charting Constellations – Digital Geographies
+
+Ancient navigators read the stars. Today, we read data. The stars are still there, but we have turned our gaze downward—to the screens that aggregate our every move, purchase, and click into patterns that guide us. This data is our new constellation.
+
+"The Plot Thickens" makes this shift visible. It is a live map of the event itself, drawn by the bodies of its visitors. Instead of charting celestial bodies, it charts human ones. Instead of fixed points of light, it shows fluid trajectories.
+
+This is not a map for navigation. It has no utilitarian purpose. Unlike the surveillance systems that track us daily to sell us things or assess our risk, this map exists only for itself. It reframes tracking as a creative act—mining data for aesthetics, not profit.
+
+The circular format echoes celestial charts, but the content is fundamentally different. It is a portrait of the crowd, not the cosmos. A collective self-portrait painted by movement alone.
+
+There is also a loop at play. Visitors see the map. The map changes their behavior. Their behavior changes the map. Data stops being a passive record and becomes a participant. This loop points to a larger truth: the systems that observe us also shape us. The data is not neutral.
+
+Finally, the finished map is a unique artifact. It cannot be reproduced. It is specific to this event, this group of people, this moment. In a world of infinite digital copies, it is a rare object—a fossil of something that happened only once.
+
+Artwork Proposal (300–800 words)
+Title: The Plot Thickens
+
+Summary
+A real-time visualization that tracks visitor movement and renders it as an abstract, accumulating drawing inside a circle. Over the course of the event, the map fills with overlapping lines, creating a dense texture that records the collective presence of the audience.
+
+How It Works
+Visitors are tracked as they move through the space. Their paths are plotted as continuous lines on a projected circular canvas. The visual accumulates over time. Early in the event, the map is sparse. By the end, it is dense and complex—a record of every trajectory.
+
+The visual style is minimal. Lines are thin. The palette is restrained. The goal is to let the data speak, not to decorate it.
+
+Why a Circle?
+The circle has no beginning or end. It contains. It recalls astrolabes, celestial maps, and mandalas. It frames the data as something complete and bounded, even as it grows chaotically inside.
+
+Key Ideas
+1. Tracking Without Utility
+We are tracked constantly—by phones, cameras, cookies. That tracking serves commercial or governmental ends. Here, tracking serves only art. The data has no afterlife. It is not sold, analyzed for patterns, or used to predict behavior. It just exists.
+
+2. Data as Material
+The project treats data the way a sculptor treats clay. It is raw material, shaped into form. The form here is emergent—no one designs it. It is a by-product of collective behavior.
+
+3. Anonymity
+Every visitor is reduced to a line. Names, faces, identities—gone. This is how systems see us. It is also, in a strange way, democratic. Everyone's line is equal.
+
+4. The Artifact
+The final image is unrepeatable. It is the portrait of this event and no other. It can be minted, printed, archived—a token of something that was.
+
+5. The Feedback
+Visitors watch themselves being mapped. They may change how they move. The observation alters the observed. This is not a bug; it is the point.
+
+Technical and Logistical Requirements
+
+Display
+- Large projection or LED screen, minimum 2m x 2m, ideally 3m x 3m
+- Mounted on a wall visible from the tracked area
+- Low ambient light preferred for projection
+
+Tracking System (one of the following)
+Option A: UWB (Ultra-Wideband)
+- 4-6 anchors mounted around tracking area
+- Small tags issued to visitors (badge or lanyard)
+- Accurate to ~10cm
+
+Option B: Computer Vision
+- Overhead cameras (2-4 depending on space)
+- No tags required
+- Requires ceiling mounting points
+
+Computing
+- 1x workstation (provided by artist)
+- Running custom software (Processing/openFrameworks)
+- Connected to tracking system and display
+
+Power
+- Standard outlets for computer, projector/display
+
+Space
+- Minimum tracking area: 10m x 10m
+- Can scale up depending on venue
+
+Setup Time
+- 2-3 days for installation and calibration
+
+Images, Sketches, Drafts
+
+[Image 1 - Concept Visualization]
+A white circle on black. Inside: thousands of hair-thin white lines, overlapping and intersecting. Denser in some areas, sparser in others. Resembles a nest, a neural network, or a star cluster.
+
+[Image 2 - System Diagram]
+Simple flowchart:
+VISITORS → TRACKING SENSORS → SERVER → CIRCULAR PROJECTION
+Arrow labeled "feedback" loops back from PROJECTION to VISITORS
+
+[Image 3 - Reference]
+Side-by-side comparison: a historical celestial map (circular, with constellations) next to the proposed visualization (circular, with movement paths). Caption: "Then and now."
+
+Links to Video Documentation Online
+[Insert links to previous work, e.g., Meditative Clocks demo, Pixelated Soul site]
+
+CV / Portfolio
+See attached or visit: https://pxsoul.selà.com/
+
+
+

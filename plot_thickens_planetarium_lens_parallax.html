@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Plot Thickens — Lens + Parallax Stars Mockup</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .hud {
+            position: fixed;
+            left: 16px;
+            top: 14px;
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 13px;
+            line-height: 1.35;
+            pointer-events: none;
+            user-select: none;
+            text-shadow: 0 1px 12px rgba(0, 0, 0, 0.85);
+        }
+
+        .hint {
+            position: fixed;
+            left: 16px;
+            bottom: 14px;
+            color: rgba(255, 255, 255, 0.62);
+            font-size: 12px;
+            pointer-events: none;
+            user-select: none;
+            text-shadow: 0 1px 12px rgba(0, 0, 0, 0.85);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hud">
+        The Plot Thickens — lens + parallax mockup<br />
+        Option C: subtle barrel distortion + vignette. Option D: multi-radius star shells (parallax).
+    </div>
+    <div class="hint">Drag to look. (A tiny body-sway translation is added to reveal parallax.)</div>
+
+    <!-- three.js r182 -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.js"
+        }
+      }
+    </script>
+
+    <script type="module">
+        import * as THREE from "three";
+
+        // ----------------------------
+        // Base scene (adapted from plot_thickens_planetarium_stars.html)
+        // ----------------------------
+        const DOME_RADIUS = 10;
+        const CAMERA_EYE_HEIGHT = 1.55;
+        const DOME_PHI_MAX = Math.PI * 0.86;
+
+        const STAR_COUNT = 6500;
+        const STAR_LAYERS = [
+            { fraction: 0.46, size: 0.012 },
+            { fraction: 0.26, size: 0.017 },
+            { fraction: 0.14, size: 0.024 },
+            { fraction: 0.08, size: 0.034 },
+            { fraction: 0.045, size: 0.050 },
+            { fraction: 0.015, size: 0.082 }
+        ];
+
+        // Option D: stars on multiple shells (nearer/farther) to create parallax with tiny camera sway.
+        const STAR_SHELLS = [
+            { fraction: 0.20, radiusMul: 0.92 },
+            { fraction: 0.34, radiusMul: 0.965 },
+            { fraction: 0.46, radiusMul: 0.995 }
+        ];
+
+        // Behavior tuning
+        const CLUSTER_COUNT = 6;
+        const CLUSTER_FRACTION = 0.62;
+        const CLUSTER_SIGMA_THETA = 0.22;
+        const CLUSTER_SIGMA_PHI = 0.16;
+        const HUMAN_SPEED = [0.00007, 0.00040];
+        const GROUPED_FRACTION = 0.82;
+        const GROUP_SIZE_WEIGHTS = [
+            { n: 2, w: 0.46 },
+            { n: 3, w: 0.34 },
+            { n: 4, w: 0.20 }
+        ];
+
+        // Option C: lens distortion (barrel) + vignette (screen-space)
+        const LENS_DISTORT = 0.11; // barrel strength (subtle)
+        const LENS_VIGNETTE = 0.35; // vignette strength
+        const LENS_SHARPNESS = 0.88; // lower = stronger edge falloff
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000006);
+
+        const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.05, 200);
+        camera.position.set(0, CAMERA_EYE_HEIGHT, 0);
+        camera.lookAt(0, CAMERA_EYE_HEIGHT + 0.4, -1);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        document.body.appendChild(renderer.domElement);
+
+        // Dome backdrop
+        const skyTex = createSkyTexture(1024, 512);
+        skyTex.wrapS = THREE.RepeatWrapping;
+        skyTex.wrapT = THREE.ClampToEdgeWrapping;
+        skyTex.anisotropy = 4;
+
+        const domeGeo = new THREE.SphereGeometry(DOME_RADIUS, 64, 48, 0, Math.PI * 2, 0, DOME_PHI_MAX);
+        const domeMat = new THREE.MeshBasicMaterial({ side: THREE.BackSide, map: skyTex, transparent: false });
+        const dome = new THREE.Mesh(domeGeo, domeMat);
+        dome.position.y = CAMERA_EYE_HEIGHT;
+        dome.renderOrder = -10;
+        domeMat.depthWrite = false;
+        scene.add(dome);
+
+        // Horizon glow
+        const horizonBand = 0.32;
+        const horizonStart = Math.max(0, DOME_PHI_MAX - horizonBand);
+        const horizonGeo = new THREE.SphereGeometry(DOME_RADIUS * 0.98, 64, 16, 0, Math.PI * 2, horizonStart, horizonBand);
+        const horizonMat = new THREE.ShaderMaterial({
+            transparent: true,
+            side: THREE.BackSide,
+            depthWrite: false,
+            depthTest: false,
+            uniforms: { color: { value: new THREE.Color(0x1a2b44) } },
+            vertexShader: `
+          varying vec3 vNormal;
+          void main() {
+            vNormal = normalize(normalMatrix * normal);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+            fragmentShader: `
+          varying vec3 vNormal;
+          uniform vec3 color;
+          void main() {
+            float intensity = pow(0.7 - dot(vNormal, vec3(0, 1, 0)), 3.0);
+            gl_FragColor = vec4(color, intensity * 0.6);
+          }
+        `
+        });
+        const horizon = new THREE.Mesh(horizonGeo, horizonMat);
+        horizon.renderOrder = -5;
+        scene.add(horizon);
+
+        // Stars
+        const STAR_SPRITE_TEX = makeStarSpriteTexture();
+        const starGroups = [];
+        buildStarsAcrossShells();
+        starGroups.forEach((g) => scene.add(g.points));
+
+        // ----------------------------
+        // Post: lens distortion + vignette
+        // ----------------------------
+        const post = {
+            rt: null,
+            scene: new THREE.Scene(),
+            cam: new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1),
+            mat: null,
+            quad: null
+        };
+
+        post.rt = new THREE.WebGLRenderTarget(1, 1, {
+            format: THREE.RGBAFormat,
+            minFilter: THREE.LinearFilter,
+            magFilter: THREE.LinearFilter,
+            depthBuffer: true,
+            stencilBuffer: false
+        });
+
+        post.mat = new THREE.ShaderMaterial({
+            depthTest: false,
+            depthWrite: false,
+            uniforms: {
+                tScene: { value: post.rt.texture },
+                resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                k: { value: LENS_DISTORT },
+                vignette: { value: LENS_VIGNETTE },
+                sharpness: { value: LENS_SHARPNESS }
+            },
+            vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = vec4(position.xy, 0.0, 1.0);
+          }
+        `,
+            fragmentShader: `
+          precision highp float;
+          uniform sampler2D tScene;
+          uniform vec2 resolution;
+          uniform float k;
+          uniform float vignette;
+          uniform float sharpness;
+          varying vec2 vUv;
+
+          float smoothstep01(float a, float b, float x) {
+            float t = clamp((x - a) / (b - a), 0.0, 1.0);
+            return t * t * (3.0 - 2.0 * t);
+          }
+
+          void main() {
+            vec2 uv = vUv;
+            vec2 c = vec2(0.5);
+            vec2 d = uv - c;
+            float r2 = dot(d, d);
+
+            // Option C: subtle barrel distortion.
+            // Think of it as looking through a curved planetarium lens: edges bend slightly.
+            vec2 warped = c + d * (1.0 + k * r2);
+
+            // IMPORTANT: don't clamp UVs. Clamping makes edge texels get sampled repeatedly,
+            // which smears point-sprites into “lines” that pop in/out near the borders.
+            // Instead, fade out as we approach/outside the render target edge.
+            vec2 q = abs(warped - c) * 2.0; // 0 at center, 1 at edge
+            float edge = max(q.x, q.y);
+            float edgeMask = smoothstep01(1.04, 0.98, edge);
+
+            vec3 col = texture2D(tScene, warped).rgb * edgeMask;
+
+            // Soft vignette to reduce "flat screen" feel.
+            float r = sqrt(r2) / 0.7071; // 0..1 from center to corner
+            float vig = smoothstep01(1.0, sharpness, r);
+            col *= mix(1.0, vig, vignette);
+
+            gl_FragColor = vec4(col, 1.0);
+          }
+        `
+        });
+
+        post.quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post.mat);
+        post.scene.add(post.quad);
+
+        // ----------------------------
+        // Interaction: drag to look around (yaw/pitch). Tiny translation adds parallax cues.
+        // ----------------------------
+        const look = { yaw: 0, pitch: 0.62, targetYaw: 0, targetPitch: 0.62 };
+        let isDragging = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        renderer.domElement.addEventListener("pointerdown", (e) => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            renderer.domElement.setPointerCapture(e.pointerId);
+        });
+        renderer.domElement.addEventListener("pointerup", (e) => {
+            isDragging = false;
+            try {
+                renderer.domElement.releasePointerCapture(e.pointerId);
+            } catch (_) { }
+        });
+        renderer.domElement.addEventListener("pointermove", (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - lastX;
+            const dy = e.clientY - lastY;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            look.targetYaw += dx * 0.004;
+            look.targetPitch += dy * 0.004;
+            look.targetPitch = Math.max(-0.05, Math.min(1.25, look.targetPitch));
+        });
+
+        // ----------------------------
+        // Animate
+        // ----------------------------
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const dt = Math.min(clock.getDelta(), 0.05);
+            const t = clock.elapsedTime;
+
+            for (const g of starGroups) updateStars(g, dt, t);
+
+            // Ease look (more "human head" than perfect mouse tracking)
+            look.yaw += (look.targetYaw - look.yaw) * (1 - Math.pow(0.0007, dt));
+            look.pitch += (look.targetPitch - look.pitch) * (1 - Math.pow(0.0007, dt));
+
+            // Option D: tiny sway translation (a metaphor for your body shifting while standing).
+            // This is what makes different star shells show parallax cues.
+            const swayX = Math.sin(t * 0.35) * 0.025 + Math.sin(t * 0.11) * 0.012;
+            const swayZ = Math.cos(t * 0.29) * 0.018;
+            camera.position.set(swayX, CAMERA_EYE_HEIGHT + Math.sin(t * 0.23) * 0.006, swayZ);
+
+            const dir = new THREE.Vector3(0, 0, -1).applyEuler(new THREE.Euler(look.pitch, look.yaw, 0, "YXZ"));
+            camera.lookAt(camera.position.clone().add(dir));
+
+            // Render scene to RT, then apply lens warp.
+            renderer.setRenderTarget(post.rt);
+            renderer.render(scene, camera);
+            renderer.setRenderTarget(null);
+            renderer.render(post.scene, post.cam);
+        }
+        animate();
+
+        window.addEventListener("resize", () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            post.mat.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+            resizeRenderTarget();
+        });
+        resizeRenderTarget();
+
+        function resizeRenderTarget() {
+            const pr = renderer.getPixelRatio();
+            const w = Math.max(1, Math.floor(window.innerWidth * pr));
+            const h = Math.max(1, Math.floor(window.innerHeight * pr));
+            post.rt.setSize(w, h);
+        }
+
+        // ----------------------------
+        // Stars: build across shells, keeping size layers for variety
+        // ----------------------------
+        function buildStarsAcrossShells() {
+            // Distribute total stars across shells (near/mid/far), then within each shell across size layers.
+            let shellRemaining = STAR_COUNT;
+            for (let si = 0; si < STAR_SHELLS.length; si++) {
+                const shellCount = si === STAR_SHELLS.length - 1 ? shellRemaining : Math.floor(STAR_COUNT * STAR_SHELLS[si].fraction);
+                shellRemaining -= shellCount;
+
+                let rem = shellCount;
+                for (let li = 0; li < STAR_LAYERS.length; li++) {
+                    const count = li === STAR_LAYERS.length - 1 ? rem : Math.floor(shellCount * STAR_LAYERS[li].fraction);
+                    rem -= count;
+                    starGroups.push(createStars(count, STAR_LAYERS[li].size, DOME_RADIUS * STAR_SHELLS[si].radiusMul));
+                }
+            }
+        }
+
+        function createStars(count, size, radius) {
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+            const baseColors = new Float32Array(count * 3);
+
+            const theta = new Float32Array(count);
+            const phi = new Float32Array(count);
+            const clusterId = new Int16Array(count);
+
+            const groupId = new Int32Array(count);
+            const offTheta = new Float32Array(count);
+            const offPhi = new Float32Array(count);
+
+            const jitterPhaseA = new Float32Array(count);
+            const jitterPhaseB = new Float32Array(count);
+            const jitterSpd = new Float32Array(count);
+
+            const baseB = new Float32Array(count);
+            const twinkleSpd = new Float32Array(count);
+            const twinklePhase = new Float32Array(count);
+
+            const clustersTheta = new Float32Array(CLUSTER_COUNT);
+            const clustersPhi = new Float32Array(CLUSTER_COUNT);
+            const clustersDriftA = new Float32Array(CLUSTER_COUNT);
+            const clustersDriftB = new Float32Array(CLUSTER_COUNT);
+            for (let c = 0; c < CLUSTER_COUNT; c++) {
+                clustersTheta[c] = Math.random() * Math.PI * 2;
+                const cosPhiMax = Math.cos(DOME_PHI_MAX);
+                const cosPhi = cosPhiMax + (1 - cosPhiMax) * Math.random();
+                clustersPhi[c] = Math.acos(cosPhi);
+                clustersDriftA[c] = Math.random() * Math.PI * 2;
+                clustersDriftB[c] = Math.random() * Math.PI * 2;
+            }
+
+            let i = 0;
+            let gCount = 0;
+            const gAnchorTheta = [];
+            const gAnchorPhi = [];
+            const gVelTheta = [];
+            const gVelPhi = [];
+            const gCluster = [];
+            const gAct = [];
+            const gActBase = [];
+
+            while (i < count) {
+                const makeGroup = Math.random() < GROUPED_FRACTION;
+                const groupSize = makeGroup ? pickGroupSize() : 1;
+                const actualSize = Math.min(groupSize, count - i);
+
+                const inCluster = Math.random() < CLUSTER_FRACTION;
+                let cid = -1;
+                if (inCluster) cid = Math.floor(Math.random() * CLUSTER_COUNT);
+                gCluster[gCount] = cid;
+
+                let aTheta, aPhi;
+                if (cid >= 0) {
+                    aTheta = wrapAngle(clustersTheta[cid] + randn() * (CLUSTER_SIGMA_THETA * 0.6));
+                    aPhi = clampPhi(clustersPhi[cid] + randn() * (CLUSTER_SIGMA_PHI * 0.6));
+                } else {
+                    aTheta = Math.random() * Math.PI * 2;
+                    const cosPhiMax = Math.cos(DOME_PHI_MAX);
+                    const cosPhi = cosPhiMax + (1 - cosPhiMax) * Math.random();
+                    aPhi = Math.acos(cosPhi);
+                }
+
+                gAnchorTheta[gCount] = aTheta;
+                gAnchorPhi[gCount] = aPhi;
+                gAct[gCount] = Math.random();
+                gActBase[gCount] = 0.22 + Math.random() * 0.28;
+
+                const sp = randRange(HUMAN_SPEED[0], HUMAN_SPEED[1]);
+                gVelTheta[gCount] = (Math.random() - 0.5) * sp * 2.0;
+                gVelPhi[gCount] = (Math.random() - 0.5) * sp * 1.6;
+
+                for (let k = 0; k < actualSize; k++) {
+                    const idx = i + k;
+                    groupId[idx] = gCount;
+                    clusterId[idx] = cid;
+
+                    offTheta[idx] = randn() * (0.035 + Math.random() * 0.05);
+                    offPhi[idx] = randn() * (0.025 + Math.random() * 0.04);
+
+                    theta[idx] = wrapAngle(aTheta + offTheta[idx]);
+                    phi[idx] = clampPhi(aPhi + offPhi[idx]);
+
+                    jitterSpd[idx] = 0.12 + Math.random() * 0.65;
+                    jitterPhaseA[idx] = Math.random() * Math.PI * 2;
+                    jitterPhaseB[idx] = Math.random() * Math.PI * 2;
+
+                    const b = Math.pow(Math.random(), 2.2);
+                    baseB[idx] = 0.18 + b * 0.9;
+                    twinkleSpd[idx] = 0.08 + Math.random() * 0.55;
+                    twinklePhase[idx] = Math.random() * Math.PI * 2;
+
+                    const temp = Math.random();
+                    let r = 1,
+                        g = 1,
+                        bcol = 1;
+                    if (temp < 0.14) {
+                        r = 1.0; g = 0.94; bcol = 0.86;
+                    } else if (temp < 0.30) {
+                        r = 0.86; g = 0.92; bcol = 1.0;
+                    } else {
+                        r = 0.98; g = 0.99; bcol = 1.0;
+                    }
+
+                    const p = sphericalToCartesian(theta[idx], phi[idx], radius);
+                    positions[idx * 3 + 0] = p.x;
+                    positions[idx * 3 + 1] = p.y + CAMERA_EYE_HEIGHT;
+                    positions[idx * 3 + 2] = p.z;
+
+                    baseColors[idx * 3 + 0] = r;
+                    baseColors[idx * 3 + 1] = g;
+                    baseColors[idx * 3 + 2] = bcol;
+
+                    const bright = baseB[idx];
+                    colors[idx * 3 + 0] = r * bright;
+                    colors[idx * 3 + 1] = g * bright;
+                    colors[idx * 3 + 2] = bcol * bright;
+                }
+
+                i += actualSize;
+                gCount++;
+            }
+
+            const geom = new THREE.BufferGeometry();
+            geom.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+            geom.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+            const mat = new THREE.PointsMaterial({
+                size: size * 2.0,
+                map: STAR_SPRITE_TEX,
+                transparent: true,
+                alphaTest: 0.12,
+                opacity: 1.0,
+                depthWrite: false,
+                depthTest: false,
+                blending: THREE.AdditiveBlending,
+                vertexColors: true
+            });
+
+            const points = new THREE.Points(geom, mat);
+            points.renderOrder = 10;
+
+            return {
+                points,
+                theta,
+                phi,
+                groupId,
+                offTheta,
+                offPhi,
+                gAnchorTheta: Float32Array.from(gAnchorTheta),
+                gAnchorPhi: Float32Array.from(gAnchorPhi),
+                gVelTheta: Float32Array.from(gVelTheta),
+                gVelPhi: Float32Array.from(gVelPhi),
+                gCluster: Int16Array.from(gCluster),
+                gAct: Float32Array.from(gAct),
+                gActBase: Float32Array.from(gActBase),
+                jitterSpd,
+                jitterPhaseA,
+                jitterPhaseB,
+                clustersTheta,
+                clustersPhi,
+                clustersDriftA,
+                clustersDriftB,
+                baseColors,
+                baseB,
+                twinkleSpd,
+                twinklePhase,
+                radius
+            };
+        }
+
+        function updateStars(g, dt, t) {
+            const posAttr = g.points.geometry.getAttribute("position");
+            const colAttr = g.points.geometry.getAttribute("color");
+
+            for (let c = 0; c < g.clustersTheta.length; c++) {
+                const drift = 0.00008;
+                g.clustersTheta[c] = wrapAngle(
+                    g.clustersTheta[c] + Math.sin(t * 0.07 + g.clustersDriftA[c]) * drift * dt * 60
+                );
+                g.clustersPhi[c] = clampPhi(
+                    g.clustersPhi[c] + Math.cos(t * 0.05 + g.clustersDriftB[c]) * (drift * 0.6) * dt * 60
+                );
+            }
+
+            for (let gi = 0; gi < g.gAnchorTheta.length; gi++) {
+                const kAct = 0.25;
+                const nAct = 0.18 * Math.sqrt(dt);
+                g.gAct[gi] = clamp01(g.gAct[gi] + (g.gActBase[gi] - g.gAct[gi]) * kAct * dt + randn() * nAct);
+
+                if (Math.random() < dt * 0.03) {
+                    g.gActBase[gi] = clamp01(g.gActBase[gi] + (Math.random() - 0.5) * 0.18);
+                    g.gActBase[gi] = 0.12 + g.gActBase[gi] * 0.55;
+                }
+
+                const kV = 0.55;
+                const sp = randRange(HUMAN_SPEED[0], HUMAN_SPEED[1]);
+                const noise = sp * 0.9 * Math.sqrt(dt);
+                g.gVelTheta[gi] = g.gVelTheta[gi] * (1 - kV * dt) + randn() * noise;
+                g.gVelPhi[gi] = g.gVelPhi[gi] * (1 - kV * dt) + randn() * (noise * 0.75);
+
+                const throttle = 0.10 + g.gAct[gi] * 0.95;
+                let dTh = g.gVelTheta[gi] * throttle * dt;
+                let dPh = g.gVelPhi[gi] * throttle * dt;
+
+                const cid = g.gCluster[gi];
+                if (cid >= 0) {
+                    const pull = 0.07;
+                    dTh += angleDelta(g.gAnchorTheta[gi], g.clustersTheta[cid]) * pull * dt;
+                    dPh += (g.clustersPhi[cid] - g.gAnchorPhi[gi]) * pull * dt;
+                }
+
+                g.gAnchorTheta[gi] = wrapAngle(g.gAnchorTheta[gi] + dTh);
+                g.gAnchorPhi[gi] = clampPhi(g.gAnchorPhi[gi] + dPh);
+            }
+
+            for (let i = 0; i < g.theta.length; i++) {
+                const gi = g.groupId[i];
+                const desiredTheta = wrapAngle(g.gAnchorTheta[gi] + g.offTheta[i]);
+                const desiredPhi = clampPhi(g.gAnchorPhi[gi] + g.offPhi[i]);
+
+                const spring = 0.85;
+                const dTh = angleDelta(g.theta[i], desiredTheta);
+                const dPh = desiredPhi - g.phi[i];
+
+                const j = 0.00005;
+                const ja = Math.sin(t * g.jitterSpd[i] + g.jitterPhaseA[i]) * j;
+                const jb = Math.cos(t * (g.jitterSpd[i] * 0.83 + 0.03) + g.jitterPhaseB[i]) * j;
+
+                g.theta[i] = wrapAngle(g.theta[i] + (dTh * spring + ja) * dt);
+                g.phi[i] = clampPhi(g.phi[i] + (dPh * spring + jb) * dt);
+
+                if (g.phi[i] < 0.02) g.phi[i] = 0.02;
+                if (g.phi[i] > DOME_PHI_MAX) g.phi[i] = DOME_PHI_MAX;
+
+                const p = sphericalToCartesian(g.theta[i], g.phi[i], g.radius);
+                posAttr.array[i * 3 + 0] = p.x;
+                posAttr.array[i * 3 + 1] = p.y + CAMERA_EYE_HEIGHT;
+                posAttr.array[i * 3 + 2] = p.z;
+
+                const tw = 0.04 * Math.sin(t * g.twinkleSpd[i] + g.twinklePhase[i]);
+                const bright = clamp01(g.baseB[i] + tw);
+                colAttr.array[i * 3 + 0] = g.baseColors[i * 3 + 0] * bright;
+                colAttr.array[i * 3 + 1] = g.baseColors[i * 3 + 1] * bright;
+                colAttr.array[i * 3 + 2] = g.baseColors[i * 3 + 2] * bright;
+            }
+
+            posAttr.needsUpdate = true;
+            colAttr.needsUpdate = true;
+        }
+
+        function sphericalToCartesian(theta, phi, r) {
+            const sinPhi = Math.sin(phi);
+            return new THREE.Vector3(r * sinPhi * Math.cos(theta), r * Math.cos(phi), r * sinPhi * Math.sin(theta));
+        }
+
+        function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+        function clampPhi(p) { return Math.max(0.02, Math.min(DOME_PHI_MAX, p)); }
+        function wrapAngle(a) { const twoPi = Math.PI * 2; a = a % twoPi; return a < 0 ? a + twoPi : a; }
+        function angleDelta(from, to) { let d = (to - from) % (Math.PI * 2); if (d > Math.PI) d -= Math.PI * 2; if (d < -Math.PI) d += Math.PI * 2; return d; }
+        function randRange(a, b) { return a + Math.random() * (b - a); }
+        function pickGroupSize() {
+            const r = Math.random();
+            let acc = 0;
+            for (const it of GROUP_SIZE_WEIGHTS) { acc += it.w; if (r <= acc) return it.n; }
+            return GROUP_SIZE_WEIGHTS[GROUP_SIZE_WEIGHTS.length - 1].n;
+        }
+        function randn() {
+            let u = 0, v = 0;
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+
+        // ----------------------------
+        // Textures
+        // ----------------------------
+        function createSkyTexture(w, h) {
+            const c = document.createElement("canvas");
+            c.width = w;
+            c.height = h;
+            const ctx = c.getContext("2d", { willReadFrequently: false });
+
+            const g = ctx.createLinearGradient(0, 0, 0, h);
+            g.addColorStop(0, "#00010a");
+            g.addColorStop(0.55, "#000008");
+            g.addColorStop(1, "#000004");
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, w, h);
+
+            const vg = ctx.createRadialGradient(w * 0.5, h * 0.25, h * 0.05, w * 0.5, h * 0.35, h * 0.9);
+            vg.addColorStop(0, "rgba(0,0,0,0)");
+            vg.addColorStop(1, "rgba(0,0,0,0.55)");
+            ctx.fillStyle = vg;
+            ctx.fillRect(0, 0, w, h);
+
+            const img = ctx.getImageData(0, 0, w, h);
+            const data = img.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const n = (Math.random() - 0.5) * 14;
+                data[i + 0] = clamp255(data[i + 0] + n);
+                data[i + 1] = clamp255(data[i + 1] + n);
+                data[i + 2] = clamp255(data[i + 2] + n);
+            }
+            ctx.putImageData(img, 0, 0);
+
+            const tex = new THREE.CanvasTexture(c);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            return tex;
+        }
+
+        function clamp255(x) { return Math.max(0, Math.min(255, x)); }
+
+        function makeStarSpriteTexture() {
+            // Crisp-ish sprite: higher-res + sharper falloff (still not a harsh pixel dot).
+            const size = 128;
+            const canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext("2d");
+
+            const c = size / 2;
+            const grad = ctx.createRadialGradient(c, c, 0, c, c, c);
+            grad.addColorStop(0.0, "rgba(255,255,255,1)");
+            grad.addColorStop(0.12, "rgba(255,255,255,1)");
+            grad.addColorStop(0.26, "rgba(255,255,255,0.72)");
+            grad.addColorStop(0.42, "rgba(255,255,255,0.16)");
+            grad.addColorStop(1.0, "rgba(255,255,255,0)");
+
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, size, size);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.minFilter = THREE.LinearFilter;
+            tex.magFilter = THREE.LinearFilter;
+            tex.generateMipmaps = false;
+            tex.needsUpdate = true;
+            return tex;
+        }
+    </script>
+</body>
+
+</html>

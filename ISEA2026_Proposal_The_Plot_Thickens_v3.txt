@@ -1,0 +1,84 @@
+ISEA2026 Artistic Proposal (Version 3)
+
+Basic Contact Details
+Name: Selà
+Year of Birth: 1977
+Country: Israel
+Email: contact@sela.art
+Website: https://pxsoul.selà.com/
+
+Artist Biography (within 300 words)
+Selà (b. 1977, Israel) is a conceptual artist and programmer. He builds works with code, generative systems, and interactive installations that use simple rules to produce complex results. Recent projects include “Pixelated Soul,” a daily log of a synthetic narrator published as a long-running series, and “Meditative Clocks,” a set of alternative timepieces that change how time is felt rather than measured. His work often focuses on the residue of digital life—records, traces, archives—and what they do to our sense of self. Available for installations and collaborations.
+
+Thematic Statement (200–500 words)
+Sub-theme: Charting Constellations – Digital Geographies
+
+ISEA2026 frames Dubai as a place where “desert meets data,” and asks how place, data, and identity get “constellated.” Today we live inside tracking systems. They don’t just watch; they steer. When you check your own steps, your route changes. When you watch a crowd metric, the crowd changes. Data becomes a kind of compass.
+
+“The Plot Thickens” treats this reality as material. It takes the most ordinary thing at a symposium—walking around—and turns it into a living map. The map is not a tool. It does not optimize flows, measure engagement, or make predictions. It exists for one reason: to be seen.
+
+The format echoes celestial charts: a circle holding a field of marks. But instead of distant lights, it shows the moving traces of people in the venue. The work asks what it means that we now look to aggregated data for orientation the way earlier generations looked to stars. It also asks what identity becomes when it is reduced to motion patterns: a line, a density, an intersection.
+
+The project is designed to be self-reflexive. Visitors can watch the drawing while they generate it. That visibility creates a loop: people change their movement because they see the map; the map changes because people change their movement. The “plot” literally thickens as participation accumulates. What remains at the end is a fossil: a record of presence without faces, names, or stories—only a trace.
+
+Artwork Proposal (300–800 words)
+Title: The Plot Thickens
+Format: Site-specific installation / live visualization
+
+What the audience sees
+A large circular projection (or LED wall) fills with fine lines over time. Each line is a visitor’s path through the venue, drawn live. Early in the day the circle is mostly empty. As hours pass, paths overlap, knot, fan out, and form dense regions. The image becomes an abstract map of the event’s behavior.
+
+How it works (plain description)
+1) A tracking system estimates visitor positions inside the venue.
+2) Custom software converts those positions into continuous paths.
+3) Each path is mapped into a circular coordinate system and rendered on the display.
+4) The drawing accumulates through the event. It can be reset daily, or kept as one continuous build-up across the symposium (curatorial choice).
+
+Why a circle
+The circle is a container with no “north.” It nods to star charts, but it also avoids pretending to be an architectural plan. The work isn’t saying “this is where the coffee was.” It’s saying “this is what happened,” the way a tree ring says a year was dry without describing every day.
+
+Data ethics (simple, review-friendly)
+The work is designed to minimize personal data.
+- The system can run without collecting names, faces, phone IDs, or audio.
+- Paths can be stored only as anonymous point sequences (or not stored at all, rendered live only).
+- If the symposium prefers, participation can be opt-in via lanyard tags; otherwise the system can be configured to track anonymous movement without identification.
+- If any “self-identification” is offered, it can be local-only (e.g., a temporary code that lets a visitor find their own line on the screen, without creating an external account).
+
+Rarity, tokenization, and the artifact
+No one knows what the final image will look like. The crowd writes it. That makes the result rare: tied to this venue and this time. The final drawing can exist as a high-resolution still, a time-lapse video, and/or a minted token (optional). The point is not to sell a souvenir; it’s to show how easily the trace of collective life becomes an object once it’s captured.
+
+Technical and Logistical Requirements
+Display
+- Projection or LED wall, minimum 2m x 2m (larger preferred)
+- Clean wall surface (for projection) and controlled ambient light if needed
+
+Tracking (choose one based on venue constraints)
+Option A: UWB (preferred for accuracy)
+- 4–8 anchors mounted around the tracked area
+- Small tags on badges/lanyards for participants (opt-in is possible)
+
+Option B: Overhead computer vision (no tags)
+- 2–6 ceiling-mounted cameras depending on area size and height
+- Clear ceiling mounting points and a stable lighting baseline
+
+Computing
+- 1 workstation (provided by artist) running the visualization and ingest
+- Video output to projector/LED (HDMI/DisplayPort)
+
+Space and schedule
+- Tracking area: flexible; works best starting around 10m x 10m and up
+- Setup and calibration: 2–3 days (can be adjusted with venue access)
+
+Images, Sketches, Drafts
+1) Concept render: a white circle on black, filled with thousands of hair-thin lines that form dense clusters and open gaps.
+2) Simple diagram: VENUE → TRACKING → SOFTWARE → CIRCULAR DISPLAY, with a loop arrow from DISPLAY back to VISITORS.
+3) Reference pairing: historical circular star chart beside a screenshot mockup of the circular path map.
+
+Links to the Video Documentation Online (If Applicable)
+[Add links to previous work documentation if desired]
+
+CV / Portfolio
+Portfolio link: https://pxsoul.selà.com/
+
+
+

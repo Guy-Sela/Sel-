@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Plot Thickens - Mockup</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: 'JosefinSans', sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            font-size: 14px;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        #title {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 24px;
+            text-align: center;
+            opacity: 0.9;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">The Plot Thickens<br>ISEA2026 Concept Mockup</div>
+    <div id="title">Each line is a visitor's path through the venue</div>
+    
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.js"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        let camera, scene, renderer;
+        let paths = [];
+        const MAX_PATHS = 150;
+        const DOME_RADIUS = 10;
+
+        init();
+        animate();
+
+        function init() {
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+
+            // Camera - positioned to look at the dome from inside/slightly outside
+            camera = new THREE.PerspectiveCamera(
+                60,
+                window.innerWidth / window.innerHeight,
+                0.1,
+                1000
+            );
+            camera.position.set(0, 5, 15);
+            camera.lookAt(0, 0, 0);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+
+            // Create dome structure (wireframe)
+            const domeGeometry = new THREE.SphereGeometry(DOME_RADIUS, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2);
+            const domeMaterial = new THREE.MeshBasicMaterial({
+                color: 0x111111,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.1
+            });
+            const dome = new THREE.Mesh(domeGeometry, domeMaterial);
+            scene.add(dome);
+
+            // Create circular base ring
+            const ringGeometry = new THREE.RingGeometry(DOME_RADIUS - 0.05, DOME_RADIUS, 64);
+            const ringMaterial = new THREE.MeshBasicMaterial({
+                color: 0x222222,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.3
+            });
+            const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+            ring.rotation.x = -Math.PI / 2;
+            scene.add(ring);
+
+            // Create visitor paths
+            createInitialPaths();
+
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function createInitialPaths() {
+            for (let i = 0; i < MAX_PATHS; i++) {
+                setTimeout(() => createNewPath(), i * 100);
+            }
+        }
+
+        function createNewPath() {
+            // Random starting point on the dome base
+            const startAngle = Math.random() * Math.PI * 2;
+            const startRadius = Math.random() * DOME_RADIUS * 0.9;
+            
+            const points = [];
+            const maxPoints = Math.floor(50 + Math.random() * 150);
+            
+            let currentX = Math.cos(startAngle) * startRadius;
+            let currentZ = Math.sin(startAngle) * startRadius;
+            let currentY = 0.05;
+
+            // Generate wandering path
+            for (let i = 0; i < maxPoints; i++) {
+                // Random walk with slight tendency toward center and edges
+                const angle = Math.random() * Math.PI * 2;
+                const step = 0.1 + Math.random() * 0.2;
+                
+                currentX += Math.cos(angle) * step;
+                currentZ += Math.sin(angle) * step;
+                
+                // Keep within dome radius
+                const dist = Math.sqrt(currentX * currentX + currentZ * currentZ);
+                if (dist > DOME_RADIUS * 0.95) {
+                    const scale = (DOME_RADIUS * 0.95) / dist;
+                    currentX *= scale;
+                    currentZ *= scale;
+                }
+
+                // Project onto dome surface
+                const distFromCenter = Math.sqrt(currentX * currentX + currentZ * currentZ);
+                currentY = Math.sqrt(Math.max(0, DOME_RADIUS * DOME_RADIUS - distFromCenter * distFromCenter)) * (Math.random() * 0.3);
+                
+                points.push(new THREE.Vector3(currentX, currentY, currentZ));
+            }
+
+            // Create line from points
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            
+            // Color variations - mostly white/light with occasional color
+            const colorChoice = Math.random();
+            let lineColor;
+            if (colorChoice < 0.7) {
+                lineColor = new THREE.Color(0xffffff);
+            } else if (colorChoice < 0.85) {
+                lineColor = new THREE.Color(0x88ccff);
+            } else {
+                lineColor = new THREE.Color(0xffaa66);
+            }
+
+            const material = new THREE.LineBasicMaterial({
+                color: lineColor,
+                transparent: true,
+                opacity: 0.3 + Math.random() * 0.4,
+                linewidth: 1
+            });
+
+            const line = new THREE.Line(geometry, material);
+            line.userData.createdAt = Date.now();
+            line.userData.lifetime = 15000 + Math.random() * 10000; // 15-25 seconds
+            
+            scene.add(line);
+            paths.push(line);
+
+            // Add a dot at the "current" position (end of path)
+            const dotGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+            const dotMaterial = new THREE.MeshBasicMaterial({
+                color: lineColor,
+                transparent: true,
+                opacity: 0.8
+            });
+            const dot = new THREE.Mesh(dotGeometry, dotMaterial);
+            dot.position.copy(points[points.length - 1]);
+            dot.userData.parentLine = line;
+            scene.add(dot);
+            line.userData.dot = dot;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const now = Date.now();
+
+            // Slowly rotate the view
+            camera.position.x = Math.cos(now * 0.00005) * 15;
+            camera.position.z = Math.sin(now * 0.00005) * 15;
+            camera.lookAt(0, 2, 0);
+
+            // Fade out and remove old paths
+            for (let i = paths.length - 1; i >= 0; i--) {
+                const path = paths[i];
+                const age = now - path.userData.createdAt;
+                
+                if (age > path.userData.lifetime) {
+                    scene.remove(path);
+                    if (path.userData.dot) {
+                        scene.remove(path.userData.dot);
+                    }
+                    path.geometry.dispose();
+                    path.material.dispose();
+                    paths.splice(i, 1);
+                    
+                    // Create new path to replace it
+                    createNewPath();
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+    </script>
+</body>
+</html>
+

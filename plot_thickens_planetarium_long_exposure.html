@@ -48,11 +48,11 @@
 </head>
 
 <body>
-    <div class="hud">
+    <!-- <div class="hud">
         The Plot Thickens — Long Exposure<br />
         Stars leave permanent trails as they move.
-    </div>
-    <div class="hint">Drag to look. ↑/↓ arrows to speed up/slow down.</div>
+    </div> -->
+    <div class="hint">Drag to look around. ↑/↓ arrows to speed up/slow down.</div>
 
     <script type="importmap">
       {
@@ -106,7 +106,7 @@
 
         // Scene for stars only (no dome) - this gets accumulated
         const starsScene = new THREE.Scene();
-        
+
         // Scene for dome backdrop (rendered fresh each frame)
         const domeScene = new THREE.Scene();
         domeScene.background = new THREE.Color(0x000006);
@@ -307,6 +307,8 @@
             lastX = e.clientX;
             lastY = e.clientY;
             renderer.domElement.setPointerCapture(e.pointerId);
+            // Clear accumulation when starting to drag - trails restart after looking around
+            firstFrame = true;
         });
         renderer.domElement.addEventListener("pointerup", (e) => {
             isDragging = false;
@@ -358,19 +360,25 @@
             camera.lookAt(camera.position.clone().add(dir));
 
             // Accumulate stars into accum.rt (never clear it)
+            // Only accumulate when NOT dragging to avoid screen-space smearing
             renderer.setRenderTarget(accum.rt);
             if (firstFrame) {
                 renderer.clear();
                 firstFrame = false;
             }
-            // Render stars additively on top of what's already there
-            renderer.render(starsScene, camera);
+            if (!isDragging) {
+                renderer.render(starsScene, camera);
+            }
 
             // Render dome + accumulated trails to post.rt
             renderer.setRenderTarget(post.rt);
             renderer.clear();
             renderer.render(domeScene, camera);
-            renderer.render(accum.scene, accum.cam); // Overlay accumulated stars
+            if (!isDragging) {
+                renderer.render(accum.scene, accum.cam); // Overlay accumulated stars
+            } else {
+                renderer.render(starsScene, camera); // Just show current stars while dragging
+            }
 
             // Apply lens distortion
             renderer.setRenderTarget(null);

@@ -103,6 +103,9 @@
 
         // Speed control
         let timeScale = 1.0;
+        
+        // Sub-steps per frame for continuous trails (higher = smoother lines)
+        const TRAIL_SUBSTEPS = 4;
 
         // Scene for stars only (no dome) - this gets accumulated
         const starsScene = new THREE.Scene();
@@ -344,13 +347,11 @@
 
         function animate() {
             requestAnimationFrame(animate);
-            const dt = Math.min(clock.getDelta(), 0.05) * timeScale;
+            const rawDt = Math.min(clock.getDelta(), 0.05) * timeScale;
             const t = clock.elapsedTime;
 
-            for (const g of starGroups) updateStars(g, dt, t);
-
-            look.yaw += (look.targetYaw - look.yaw) * (1 - Math.pow(0.0007, dt));
-            look.pitch += (look.targetPitch - look.pitch) * (1 - Math.pow(0.0007, dt));
+            look.yaw += (look.targetYaw - look.yaw) * (1 - Math.pow(0.0007, rawDt));
+            look.pitch += (look.targetPitch - look.pitch) * (1 - Math.pow(0.0007, rawDt));
 
             const swayX = Math.sin(t * 0.35) * 0.025 + Math.sin(t * 0.11) * 0.012;
             const swayZ = Math.cos(t * 0.29) * 0.018;
@@ -360,14 +361,21 @@
             camera.lookAt(camera.position.clone().add(dir));
 
             // Accumulate stars into accum.rt (never clear it)
-            // Only accumulate when NOT dragging to avoid screen-space smearing
             renderer.setRenderTarget(accum.rt);
             if (firstFrame) {
                 renderer.clear();
                 firstFrame = false;
             }
+            
+            // Render multiple sub-steps per frame for continuous trails
             if (!isDragging) {
-                renderer.render(starsScene, camera);
+                const subDt = rawDt / TRAIL_SUBSTEPS;
+                for (let step = 0; step < TRAIL_SUBSTEPS; step++) {
+                    for (const g of starGroups) updateStars(g, subDt, t);
+                    renderer.render(starsScene, camera);
+                }
+            } else {
+                for (const g of starGroups) updateStars(g, rawDt, t);
             }
 
             // Render dome + accumulated trails to post.rt

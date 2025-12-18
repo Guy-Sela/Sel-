@@ -8,7 +8,6 @@ html,
 body {
   height: 100%;
   background-color: #000000;
-  overflow: hidden;
 }
 
 .container {
@@ -35,4 +34,17 @@ body {
 .gif-frame {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+}
+
+.coming-soon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #000000;
+  color: #ffffff;
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 300;
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
 }

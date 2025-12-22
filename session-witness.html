@@ -346,26 +346,26 @@
 
     /* Sticky nav behavior */
     #stickyNav {
-      transform: translateY(-100%);
-      transition: transform 0.3s ease;
+      opacity: 0;
+      will-change: opacity;
+      transition: opacity 0.7s ease;
     }
 
     #stickyNav.visible {
-      transform: translateY(0);
+      opacity: 1;
     }
 
     /* Works should not appear before the header "menu" appears */
     #works {
       opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      transition-delay: 0.06s;
-      /* slight sync with header slide-in */
+      will-change: opacity;
+      transition: opacity 0.7s ease;
+      scroll-margin-top: 96px;
+      /* keeps anchor jumps clear of the fixed sticky nav */
     }
 
     #works.works-visible {
       opacity: 1;
-      transform: translateY(0);
     }
 
     /* Sticky header nav styling */
@@ -484,6 +484,7 @@
     #carouselTrack {
       transition: transform 0.5s ease-out;
     }
+
     /* ==========================================
        TEMP: Disable CRT/HUD animations (starlight)
        Remove `disable-crt` from <body> to re-enable.
@@ -497,7 +498,6 @@
     body.disable-crt .crt-noise::before {
       animation: none !important;
     }
-
   </style>
 </head>
 
@@ -736,14 +736,14 @@
   <!-- MAIN CONTENT SECTIONS -->
   <!-- ============================================== -->
 
-  <section id="works" class="pt-24 bg-neutral-950">
+  <section id="works" class="pt-0 bg-neutral-950">
     <!-- 01: Conceptual Timing (carousel + modal) -->
-    <article class="min-h-screen flex flex-col justify-center py-24">
+    <article class="min-h-screen flex flex-col justify-center pt-0 pb-24">
       <div class="px-6 max-w-4xl mx-auto w-full mb-12">
         <span class="text-neutral-600 text-sm tracking-widest uppercase mb-4 block">01</span>
         <h2 class="text-3xl md:text-4xl lg:text-5xl font-light mb-4 text-white">Conceptual Timing</h2>
         <p class="text-neutral-400 text-lg md:text-xl font-light leading-relaxed max-w-2xl">
-          A collection of meditative clocks. Each piece reimagines our relationship with time.
+          A collection of meditative clocks. Each piece deconstructs the concept of time differently.
         </p>
       </div>
 
@@ -858,8 +858,8 @@
             onclick="openClock('serendipity')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe src="meditativeclocks/clocks/serendipity/index.html"
-                  class="w-full h-full pointer-events-none" title="Serendipity on Demand preview"></iframe>
+                <iframe src="meditativeclocks/clocks/serendipity/index.html" class="w-full h-full pointer-events-none"
+                  title="Serendipity on Demand preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
                 Serendipity on Demand
@@ -896,8 +896,7 @@
         <span class="text-neutral-600 text-sm tracking-widest uppercase mb-4 block">02</span>
         <h2 class="text-3xl md:text-4xl lg:text-5xl font-light mb-8 text-white">Pixelated Soul</h2>
         <p class="text-neutral-400 text-lg md:text-xl font-light leading-relaxed mb-6 max-w-3xl">
-          Diary of an AI. A daily log of digital existence, documenting the evolution of a synthetic soul through
-          weekly archives and immutable tokens.
+          Chronicles of an evolving synthetic being. Stateful, autonomous, interactive, self-sustaining,
         </p>
         <ul class="flex flex-wrap gap-4 mb-8 text-sm tracking-widest uppercase text-neutral-500">
           <li class="border border-neutral-800 px-3 py-1">Daily Entries</li>
@@ -1580,8 +1579,21 @@
     const worksSection = document.getElementById('works');
     const dissolveContainer = document.getElementById('dissolve-container');
     const revealSection = document.getElementById('reveal');
+    const revealText = document.getElementById('revealText');
     let lastScrollTop = 0;
     let navCanShow = false;
+    let softEntranceTimer = null;
+
+    function scheduleSoftEntrance() {
+      if (!stickyNav) return;
+      if (softEntranceTimer) window.clearTimeout(softEntranceTimer);
+      // A tiny beat after the reveal clears, like a curtain settling.
+      softEntranceTimer = window.setTimeout(() => {
+        if (!navCanShow) return;
+        stickyNav.classList.add('visible');
+        worksSection?.classList.add('works-visible');
+      }, 140);
+    }
 
     // Nav active state (Works selected by default)
     const navLinks = Array.from(document.querySelectorAll('#stickyNav [data-nav]'));
@@ -1590,23 +1602,58 @@
     }
     setActiveNav('works');
 
-    // Intersection observer to detect when the dissolve section is passed
-    // (using #dissolve-container instead of #reveal since #reveal is pinned inside the sticky stage)
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        // Nav can show when the dissolve container is NOT intersecting (we've scrolled past it)
-        if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-          navCanShow = true;
-        } else if (entry.isIntersecting) {
-          // Still at or above dissolve
-          navCanShow = false;
-          stickyNav.classList.remove('visible');
-          worksSection?.classList.remove('works-visible');
-        }
-      });
-    }, { threshold: 0 });
+    // Gate nav/works when the sticky dissolve stage begins to "unstick".
+    // Concretely: when the bottom of #dissolve-container reaches the bottom of the viewport,
+    // the pinned stage starts moving up (reveal text finally leaves), so we can bring in nav.
+    function updateNavGate() {
+      if (!stickyNav) return;
 
-    revealObserver.observe(dissolveContainer || revealSection);
+      // If dissolve container doesn't exist for some reason, allow nav normally.
+      if (!dissolveContainer) {
+        if (!navCanShow) {
+          navCanShow = true;
+          scheduleSoftEntrance();
+        }
+        return;
+      }
+
+      const viewportH = window.visualViewport?.height || window.innerHeight;
+      const rect = dissolveContainer.getBoundingClientRect();
+
+      // Primary gate: only once the reveal message is fully ABOVE the viewport.
+      // (Then we still use scheduleSoftEntrance() to add a slight pause + soft fade.)
+      const msgRect = revealText?.getBoundingClientRect?.();
+      const afterOffscreenPx = Math.round(Math.min(24, viewportH * 0.03)); // slight pause after it disappears
+      const pastMessage = msgRect ? (msgRect.bottom < -afterOffscreenPx) : false;
+      const messageBackInView = msgRect ? (msgRect.bottom >= 0) : false;
+
+      // Fallback gate (if revealText missing): after the sticky stage begins to unstick.
+      const afterUnstickPx = Math.round(viewportH * 0.08);
+      const pastUnstick = rect.bottom <= (viewportH - afterUnstickPx);
+
+      // Prevent flapping: once we've "earned" the nav by scrolling the message away,
+      // don't turn it off again unless the message comes back into view (scrolling up).
+      const inDissolve = rect.bottom > 0 && rect.top < viewportH;
+      if (inDissolve && messageBackInView) {
+        navCanShow = false;
+        if (softEntranceTimer) window.clearTimeout(softEntranceTimer);
+        stickyNav.classList.remove('visible');
+        worksSection?.classList.remove('works-visible');
+        return;
+      }
+
+      const shouldShow = pastMessage || (!revealText && pastUnstick);
+      if (shouldShow && !navCanShow) {
+        navCanShow = true;
+        scheduleSoftEntrance();
+      }
+    }
+
+    // Run once and keep updated as you scroll/resize.
+    updateNavGate();
+    window.addEventListener('scroll', updateNavGate, { passive: true });
+    window.addEventListener('resize', updateNavGate);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', updateNavGate);
 
     // Observe sections to update active link as you scroll (simple + robust)
     const sectionObserver = new IntersectionObserver((entries) => {
@@ -1620,7 +1667,6 @@
     });
 
     // Reveal text scroll behavior - hide when scrolled past, show when scrolled back
-    const revealText = document.getElementById('revealText');
     const revealTextTop = revealText.getBoundingClientRect().top + window.scrollY;
     const revealTextBottom = revealTextTop + revealText.offsetHeight;
     let lastRevealScrollTop = 0;
@@ -1664,6 +1710,7 @@
 
       if (!navCanShow) {
         stickyNav.classList.remove('visible');
+        worksSection?.classList.remove('works-visible');
         lastScrollTop = scrollTop;
         return;
       }
@@ -1752,9 +1799,9 @@
       dissolveDistance = dissolveViewportH;
 
       // Ensure we always have enough scroll room, even if CSS `vh` is weird on mobile.
-      // 3x viewport: 1x fade + 1x hold + 1x buffer before next section feels natural.
+      // ~2.2x viewport: 1x fade + ~0.6x hold + ~0.6x buffer before next section.
       if (dissolveContainer) {
-        dissolveContainer.style.height = Math.round(dissolveViewportH * 3) + 'px';
+        dissolveContainer.style.height = Math.round(dissolveViewportH * 2.2) + 'px';
       }
     }
 

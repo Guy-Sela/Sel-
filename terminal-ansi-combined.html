@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selà — Terminal + ANSI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400&family=Josefin+Sans:wght@300;400&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --panel: rgba(0, 0, 0, 0.45);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: rgba(255, 255, 255, 0.92);
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Josefin Sans', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    .terminal {
+      width: min(980px, 92vw);
+      height: min(720px, 86vh);
+      border: 1px solid var(--border);
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 20px 70px rgba(0, 0, 0, 0.6);
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .terminal-body {
+      width: 100%;
+      height: 100%;
+      padding: clamp(18px, 2.5vw, 42px);
+      box-sizing: border-box;
+      font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.01em;
+      line-height: 1.7;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Prompt + wrapped text alignment */
+    .typedline {
+      display: grid;
+      grid-template-columns: 2ch minmax(0, 1fr);
+      align-items: start;
+      font-size: clamp(1.0rem, 0.95rem + 0.3vw, 1.1rem);
+      flex: 0 0 auto;
+    }
+
+    .prompt {
+      color: rgba(255, 255, 255, 0.92);
+      font-weight: 600;
+      user-select: none;
+    }
+
+    .line {
+      min-width: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .cursor {
+      display: inline;
+      color: var(--text);
+      font-weight: 700;
+      opacity: 0.95;
+      vertical-align: baseline;
+    }
+
+    .cursor.is-hidden {
+      visibility: hidden;
+    }
+
+    @keyframes blink {
+      0%,
+      50% {
+        opacity: 1;
+      }
+
+      51%,
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .cursor.blink {
+      animation: blink 1s infinite step-end;
+    }
+
+    .fake-tm {
+      font-size: 0.72em;
+      vertical-align: super;
+      letter-spacing: 0.02em;
+      opacity: 0.9;
+      margin-left: 0.1ch;
+    }
+
+    .pop-num {
+      white-space: nowrap;
+    }
+
+    /* ANSI stage: starts ~two lines below the typed text */
+    .ansi-stage {
+      margin-top: calc(2 * 1.7em);
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ansi-art {
+      white-space: pre;
+      font-family: Menlo, Monaco, 'Courier New', monospace;
+      /* Will be set dynamically: start at terminal font-size then shrink via transform */
+      font-size: 10px;
+      line-height: 10px;
+      transform-origin: center center;
+      will-change: transform;
+      color: #fff;
+    }
+
+    .ansi-cursor {
+      display: inline;
+      color: #fff;
+      font-weight: 700;
+      opacity: 0.95;
+    }
+
+    .ansi-cursor.blink {
+      animation: blink 1s infinite step-end;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cursor {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="terminal" role="region" aria-label="Terminal combined mock">
+    <div class="terminal-body">
+      <div class="typedline" aria-label="Terminal output">
+        <span class="prompt">❯</span>
+        <span class="line"><span id="typedText"></span><span id="cursor" class="cursor">_</span></span>
+      </div>
+
+      <div class="ansi-stage" aria-label="ANSI portrait stage">
+        <div id="ansiArt" class="ansi-art" aria-label="ANSI art"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function init() {
+      const typedText = document.getElementById('typedText');
+      const cursor = document.getElementById('cursor');
+      const ansiEl = document.getElementById('ansiArt');
+      if (!typedText || !cursor || !ansiEl) return;
+
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function sleep(ms) { return new Promise(r => window.setTimeout(r, ms)); }
+      function setCursorVisible(v) { cursor.classList.toggle('is-hidden', !v); }
+
+      // ------------------------------
+      // World population (single ticker, multiple subscribers)
+      // ------------------------------
+      function initWorldPop() {
+        const state = {
+          text: '—',
+          ready: false,
+          readyPromise: null,
+          _resolveReady: null,
+          _pop: NaN,
+          _rate: NaN,
+          _timer: null,
+          listeners: [],
+          subscribe: (fn) => { state.listeners.push(fn); },
+          start: () => { },
+          stop: () => { }
+        };
+
+        state.readyPromise = new Promise((resolve) => { state._resolveReady = resolve; });
+        const markReady = () => {
+          if (state.ready) return;
+          state.ready = true;
+          state._resolveReady?.();
+          state._resolveReady = null;
+        };
+        const format = (n) => Number(n).toLocaleString('en-US');
+
+        state.start = () => {
+          if (state._timer) return;
+          if (!Number.isFinite(state._pop) || !Number.isFinite(state._rate)) return;
+          state._timer = window.setInterval(() => {
+            state._pop += state._rate;
+            state.text = format(Math.floor(state._pop));
+            state.listeners.forEach(fn => fn(state.text));
+          }, 1000);
+        };
+
+        state.stop = () => {
+          if (!state._timer) return;
+          window.clearInterval(state._timer);
+          state._timer = null;
+        };
+
+        const url = `https://www.census.gov/popclock/data/population.php/world?_=${Date.now()}`;
+        fetch(url, { cache: 'no-store' })
+          .then(r => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+          .then(data => {
+            state._pop = Number(data?.world?.population);
+            state._rate = Number(data?.world?.population_rate);
+            if (!Number.isFinite(state._pop) || !Number.isFinite(state._rate)) throw new Error('bad payload');
+            state.text = format(Math.floor(state._pop));
+            markReady();
+          })
+          .catch(() => {
+            state.text = '8,000,000,000';
+            markReady();
+          });
+
+        return state;
+      }
+
+      // ------------------------------
+      // Text typing (120wpm-ish + pauses)
+      // ------------------------------
+      async function typeInto(container, text, opts = {}) {
+        // 120 WPM ~ 600 CPM ~ ~100ms/char
+        const min = opts.minDelay ?? 60;
+        const max = opts.maxDelay ?? 100;
+        const pausePunct = opts.pausePunct ?? 250;
+        const pauseNewline = opts.pauseNewline ?? 250;
+        const jitter = () => Math.floor(min + Math.random() * (max - min));
+
+        for (let i = 0; i < text.length; i++) {
+          const ch = text[i];
+          container.append(ch);
+          container.appendChild(cursor);
+          if (ch === '\n') await sleep(pauseNewline);
+          else if (ch === '.' || ch === '!' || ch === '?') await sleep(pausePunct + 200);
+          else if (ch === ',' || ch === ';' || ch === ':') await sleep(pausePunct);
+          else await sleep(jitter());
+        }
+      }
+
+      async function blinkIdle(ms = 3200) {
+        cursor.classList.add('blink');
+        setCursorVisible(true);
+        await sleep(ms);
+        cursor.classList.remove('blink');
+        setCursorVisible(true);
+      }
+
+      // ------------------------------
+      // ANSI -> HTML (grayscale + brightened)
+      // ------------------------------
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/\"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function ansiToHtml(text) {
+        const pattern = /(\x1b\[38;2;\d+;\d+;\d+m)|(\x1b\[0m)/g;
+        let html = '';
+        let active = false;
+        let lastIndex = 0;
+        let match;
+
+        while ((match = pattern.exec(text)) !== null) {
+          const tag = match[0];
+          const idx = match.index;
+          if (idx > lastIndex) html += escapeHtml(text.substring(lastIndex, idx));
+
+          if (tag === '\x1b[0m') {
+            if (active) {
+              html += '</span>';
+              active = false;
+            }
+          } else {
+            const rgbMatch = tag.match(/(\d+);(\d+);(\d+)/);
+            if (rgbMatch) {
+              const r = Number(rgbMatch[1]);
+              const g = Number(rgbMatch[2]);
+              const b = Number(rgbMatch[3]);
+
+              // grayscale + brightness boost (same "middle" tuning)
+              let gray = Math.floor(0.299 * r + 0.587 * g + 0.114 * b);
+              gray = Math.min(255, Math.floor(gray * 2.1 + 70));
+
+              if (active) html += '</span>';
+              html += `<span style="color: rgb(${gray},${gray},${gray})">`;
+              active = true;
+            }
+          }
+
+          lastIndex = pattern.lastIndex;
+        }
+
+        if (lastIndex < text.length) html += escapeHtml(text.substring(lastIndex));
+        if (active) html += '</span>';
+        return html;
+      }
+
+      // ------------------------------
+      // Fit ANSI art in its box (scale)
+      // ------------------------------
+      function computeAnsiFitScale() {
+        const stage = ansiEl.parentElement;
+        if (!stage) return;
+        const rect = stage.getBoundingClientRect();
+        const pad = 4;
+        const availW = Math.max(120, rect.width - pad);
+        const availH = Math.max(120, rect.height - pad);
+
+        // Measure using a temp span matching ansiEl font.
+        const meas = document.createElement('span');
+        meas.style.position = 'absolute';
+        meas.style.visibility = 'hidden';
+        meas.style.fontFamily = getComputedStyle(ansiEl).fontFamily;
+        meas.style.fontSize = getComputedStyle(ansiEl).fontSize;
+        meas.textContent = 'M';
+        document.body.appendChild(meas);
+        const m = meas.getBoundingClientRect();
+        meas.remove();
+        const cw = m.width || 6;
+        const ch = m.height || 10;
+
+        // Estimate dimensions from plain-text version (strip tags).
+        const plain = ansiEl.textContent || '';
+        const lines = plain.split('\n');
+        const cols = Math.max(1, ...lines.map(l => l.length));
+        const rows = Math.max(1, lines.length);
+
+        const fullW = cols * cw;
+        const fullH = rows * ch;
+        const scale = Math.min(availW / fullW, availH / fullH, 1);
+        return (scale > 0 && scale < 100) ? scale : 0.2;
+      }
+
+      function fitAnsiToScale(scale) {
+        ansiEl.style.transform = `scale(${scale})`;
+      }
+
+      window.addEventListener('resize', () => {
+        // Recompute final scale on resize; keep current scale if we're mid-animation.
+        const s = computeAnsiFitScale();
+        if (typeof s === 'number') fitAnsiToScale(s);
+      }, { passive: true });
+      if (window.visualViewport) window.visualViewport.addEventListener('resize', () => {
+        const s = computeAnsiFitScale();
+        if (typeof s === 'number') fitAnsiToScale(s);
+      });
+
+      // ------------------------------
+      // ANSI animation:
+      // - wait a few seconds after text finishes
+      // - start ~120wpm pace with pauses
+      // - after some time, ramp into ~200 visible chars/frame
+      // ------------------------------
+      function tokenizeHtml(fullHtml) {
+        return fullHtml.match(/<[^>]+>|&[^;]+;|[^<>&]/g) || [];
+      }
+
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - Math.max(0, Math.min(1, t)), 3);
+      }
+
+      function countVisible(tokens) {
+        let n = 0;
+        for (const t of tokens) if (!t.startsWith('<')) n++;
+        return n;
+      }
+
+      async function animateAnsi(fullHtml, finalScale) {
+        ansiEl.innerHTML = '';
+        const ANSI_CURSOR_HTML = '<span class="ansi-cursor blink">_</span>';
+        const tokens = tokenizeHtml(fullHtml);
+        let i = 0;
+        let current = '';
+
+        // Stage 1: human pace for a short while (with a few "what is going on" hesitations)
+        const stage1MaxVisible = 80; // "a moment" at 120wpm-ish
+        let visibleCount = 0;
+        let visibleDone = 0;
+        const totalVisible = Math.max(1, countVisible(tokens));
+        const speed120 = { minDelay: 60, maxDelay: 100, pausePunct: 250, pauseNewline: 280 };
+        // Hold full-size for a bit before shrink begins, to create continuity + tension.
+        const shrinkStartVisible = 220;
+        const pauseMarks = new Set([18, 45, 72, 110, 155, 205]);
+
+        while (i < tokens.length && visibleCount < stage1MaxVisible) {
+          const t = tokens[i++];
+          current += t;
+          ansiEl.innerHTML = current + ANSI_CURSOR_HTML;
+
+          if (!t.startsWith('<')) {
+            visibleCount++;
+            visibleDone++;
+            // Shrink gradually, but only after a "hold" period.
+            const denom = Math.max(1, (totalVisible - shrinkStartVisible));
+            const pRaw = visibleDone <= shrinkStartVisible ? 0 : ((visibleDone - shrinkStartVisible) / denom);
+            const p = easeOutCubic(pRaw);
+            fitAnsiToScale((1 - p) * 1 + p * finalScale);
+
+            // A few deliberate hesitations early on.
+            if (pauseMarks.has(visibleDone)) {
+              await sleep(520 + Math.floor(Math.random() * 680));
+            }
+            // treat actual newlines as a punctuation-like pause
+            if (t === '\n') await sleep(speed120.pauseNewline);
+            else await sleep(Math.floor(speed120.minDelay + Math.random() * (speed120.maxDelay - speed120.minDelay)));
+          }
+        }
+
+        // Stage 2: ramp up batch size until ~200 chars/frame
+        let batch = 8;
+        const maxBatch = 1000;
+        const ramp = 60;
+
+        return new Promise((resolve) => {
+          function step() {
+            if (i >= tokens.length) {
+              ansiEl.innerHTML = current + ANSI_CURSOR_HTML;
+              fitAnsiToScale(finalScale);
+              resolve();
+              return;
+            }
+
+            let visibleProcessed = 0;
+            while (i < tokens.length && visibleProcessed < batch) {
+              const t = tokens[i++];
+              current += t;
+              if (!t.startsWith('<')) visibleProcessed++;
+            }
+            ansiEl.innerHTML = current + ANSI_CURSOR_HTML;
+
+            visibleDone += visibleProcessed;
+            const denom = Math.max(1, (totalVisible - shrinkStartVisible));
+            const pRaw = visibleDone <= shrinkStartVisible ? 0 : ((visibleDone - shrinkStartVisible) / denom);
+            const p = easeOutCubic(pRaw);
+            fitAnsiToScale((1 - p) * 1 + p * finalScale);
+
+            batch = Math.min(maxBatch, batch + ramp);
+            requestAnimationFrame(step);
+          }
+          requestAnimationFrame(step);
+        });
+      }
+
+      async function run() {
+        const wp = initWorldPop();
+        ansiEl.textContent = ''; // keep blank until we start
+        setCursorVisible(true);
+        await blinkIdle(900);
+
+        const speed120 = { minDelay: 60, maxDelay: 100, pausePunct: 250 };
+
+        await typeInto(typedText, 'Born 1977, Israel.', speed120);
+        await sleep(1300);
+        await typeInto(typedText, ' On a good day, one in ', speed120);
+
+        const popSpan1 = document.createElement('span');
+        popSpan1.className = 'pop-num';
+        typedText.appendChild(popSpan1);
+
+        await Promise.race([wp.readyPromise, sleep(2000)]);
+        const initialVal = wp.text;
+        await typeInto(popSpan1, initialVal, { minDelay: 80, maxDelay: 120, pausePunct: 240 });
+        typedText.appendChild(cursor);
+        wp.subscribe((val) => { popSpan1.textContent = val; });
+        wp.start();
+
+        await typeInto(typedText, '.', speed120);
+        await sleep(1150);
+        await typeInto(typedText, ' On a bad day, one of ', speed120);
+
+        const popSpan2 = document.createElement('span');
+        popSpan2.className = 'pop-num';
+        typedText.appendChild(popSpan2);
+
+        // Prevent number drift while typing the second counter
+        wp.stop();
+        const currentVal = wp.text;
+        await typeInto(popSpan2, currentVal, { minDelay: 80, maxDelay: 120, pausePunct: 240 });
+        typedText.appendChild(cursor);
+        wp.subscribe((val) => { popSpan2.textContent = val; });
+        wp.start();
+
+        await typeInto(typedText, '.', speed120);
+        await sleep(1800);
+        await typeInto(typedText, ' Code for Consciousness', speed120);
+
+        const tm = document.createElement('span');
+        tm.className = 'fake-tm';
+        tm.textContent = 'TM';
+        typedText.appendChild(tm);
+        typedText.appendChild(cursor);
+        await typeInto(typedText, '.', speed120);
+
+        // A few seconds after the text finishes animating...
+        await sleep(3200);
+
+        // Move attention to ANSI: stop terminal cursor once the terminal line is done.
+        cursor.classList.remove('blink');
+        setCursorVisible(false);
+
+        // Load ANSI portrait
+        let ansiRaw = '';
+        try {
+          const res = await fetch('ascii-profile.txt', { cache: 'no-store' });
+          if (!res.ok) throw new Error(String(res.status));
+          ansiRaw = await res.text();
+        } catch (e) {
+          ansiEl.textContent = 'Could not load ascii-profile.txt';
+          return;
+        }
+
+        const html = ansiToHtml(ansiRaw);
+        // Start ANSI at the same font size as the terminal text, then shrink via transform as it draws.
+        const typedLineEl = document.querySelector('.typedline');
+        const typedFontPx = typedLineEl ? parseFloat(getComputedStyle(typedLineEl).fontSize || '16') : 16;
+        ansiEl.style.fontSize = `${typedFontPx}px`;
+        ansiEl.style.lineHeight = `${typedFontPx}px`;
+
+        // Set a quick plain text snapshot for sizing; actual HTML comes during animation.
+        ansiEl.textContent = ansiRaw.replace(/\x1b\[[0-9;]*m/g, '').replace(/\r/g, '');
+        const finalScale = computeAnsiFitScale() ?? 0.2;
+        fitAnsiToScale(1); // start same size as the terminal text
+
+        // Suspense prelude: show only the ANSI cursor for a moment, then begin drawing.
+        ansiEl.innerHTML = '<span class="ansi-cursor blink">_</span>';
+        await sleep(900);
+        await sleep(520);
+
+        // Now animate the actual colored HTML
+        await animateAnsi(html, finalScale);
+        fitAnsiToScale(finalScale);
+      }
+
+      if (reduce) {
+        // Minimal static render for reduced motion
+        typedText.textContent = 'Born 1977, Israel. On a good day, one in —. On a bad day, one of —. Code for consciousness';
+        const tm = document.createElement('span');
+        tm.className = 'fake-tm';
+        tm.textContent = 'TM';
+        typedText.appendChild(tm);
+        typedText.appendChild(document.createTextNode('.'));
+        setCursorVisible(false);
+        fetch('ascii-profile.txt').then(r => r.text()).then(t => {
+          ansiEl.innerHTML = ansiToHtml(t);
+          fitAnsi();
+        }).catch(() => { });
+        return;
+      }
+
+      run().catch(() => { /* no-op */ });
+    })();
+  </script>
+</body>
+
+</html>
+
+

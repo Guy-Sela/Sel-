@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400&family=Josefin+Sans:wght@300;400&display=swap"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400&family=Roboto+Mono:wght@300;400&family=Josefin+Sans:wght@300;400&display=swap"
     rel="stylesheet">
   <style>
     :root {
@@ -54,7 +54,8 @@
       height: 100%;
       padding: clamp(18px, 2.5vw, 42px);
       box-sizing: border-box;
-      font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      /* Match Session Witness HUD mono */
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-variant-numeric: tabular-nums;
       letter-spacing: 0.01em;
       line-height: 1.7;
@@ -99,6 +100,7 @@
     }
 
     @keyframes blink {
+
       0%,
       50% {
         opacity: 1;
@@ -126,33 +128,39 @@
       white-space: nowrap;
     }
 
-    /* ANSI stage: starts ~two lines below the typed text */
+    /* ANSI stage: starts ~3 lines below the typed text */
     .ansi-stage {
-      margin-top: calc(2 * 1.7em);
+      margin-top: 1.2em;
       flex: 1 1 auto;
       min-height: 0;
       overflow: hidden;
       display: flex;
+      /* Always centered for smooth zoom-to-fit scaling */
       align-items: center;
       justify-content: center;
+      padding: 0;
     }
 
     .ansi-art {
       white-space: pre;
-      font-family: Menlo, Monaco, 'Courier New', monospace;
+      /* Keep ANSI portrait in the same mono family for continuity */
+      font-family: 'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace;
       /* Will be set dynamically: start at terminal font-size then shrink via transform */
       font-size: 10px;
       line-height: 10px;
+      /* Center origin for smooth scaling */
       transform-origin: center center;
       will-change: transform;
       color: #fff;
+      overflow: visible;
     }
 
     .ansi-cursor {
-      display: inline;
+      display: inline-block;
       color: #fff;
       font-weight: 700;
       opacity: 0.95;
+      width: 1ch;
     }
 
     .ansi-cursor.blink {
@@ -160,7 +168,9 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .cursor {
+
+      .cursor,
+      .ansi-cursor {
         animation: none !important;
       }
     }
@@ -187,11 +197,26 @@
       const cursor = document.getElementById('cursor');
       const ansiEl = document.getElementById('ansiArt');
       if (!typedText || !cursor || !ansiEl) return;
-
+      const ansiStage = ansiEl.parentElement;
       const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+      // --- HELPER WRAPPERS ---
       function sleep(ms) { return new Promise(r => window.setTimeout(r, ms)); }
       function setCursorVisible(v) { cursor.classList.toggle('is-hidden', !v); }
+
+      // Entry point
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+          if (reduce) runReduce();
+          else run().catch(() => { });
+        });
+      } else {
+        if (reduce) runReduce();
+        else run().catch(() => { });
+      }
+
+      // --- COMPONENT LOGIC ---
+
 
       // ------------------------------
       // World population (single ticker, multiple subscribers)
@@ -320,9 +345,9 @@
               const g = Number(rgbMatch[2]);
               const b = Number(rgbMatch[3]);
 
-              // grayscale + brightness boost (same "middle" tuning)
+              // grayscale + brightness boost
               let gray = Math.floor(0.299 * r + 0.587 * g + 0.114 * b);
-              gray = Math.min(255, Math.floor(gray * 2.1 + 70));
+              gray = Math.min(255, Math.floor(gray * 2.4 + 95));
 
               if (active) html += '</span>';
               html += `<span style="color: rgb(${gray},${gray},${gray})">`;
@@ -341,13 +366,17 @@
       // ------------------------------
       // Fit ANSI art in its box (scale)
       // ------------------------------
+      function alignAnsiToTextColumn(centered) {
+        // Always centered now for smooth zoom-to-fit
+        if (ansiStage) ansiStage.classList.add('ansi-centered');
+      }
+
       function computeAnsiFitScale() {
-        const stage = ansiEl.parentElement;
+        const stage = ansiStage || ansiEl.parentElement;
         if (!stage) return;
-        const rect = stage.getBoundingClientRect();
-        const pad = 4;
-        const availW = Math.max(120, rect.width - pad);
-        const availH = Math.max(120, rect.height - pad);
+        const pad = 16;
+        const availW = Math.max(120, stage.clientWidth - pad);
+        const availH = Math.max(120, stage.clientHeight - pad);
 
         // Measure using a temp span matching ansiEl font.
         const meas = document.createElement('span');
@@ -359,27 +388,37 @@
         document.body.appendChild(meas);
         const m = meas.getBoundingClientRect();
         meas.remove();
-        const cw = m.width || 6;
-        const ch = m.height || 10;
+        const cw = m.width || 7;
+        const ch = m.height || 12;
 
         // Estimate dimensions from plain-text version (strip tags).
         const plain = ansiEl.textContent || '';
         const lines = plain.split('\n');
-        const cols = Math.max(1, ...lines.map(l => l.length));
+        const cols = Math.max(1, ...lines.map(l => l.length)) + 1;
         const rows = Math.max(1, lines.length);
 
         const fullW = cols * cw;
         const fullH = rows * ch;
         const scale = Math.min(availW / fullW, availH / fullH, 1);
-        return (scale > 0 && scale < 100) ? scale : 0.2;
+        const safe = Math.max(0, Math.min(1, scale * 0.95));
+        return (safe > 0 && safe < 100) ? safe : 0.2;
       }
 
       function fitAnsiToScale(scale) {
         ansiEl.style.transform = `scale(${scale})`;
       }
 
+      function forceAnsiCursorBlink() {
+        // Ensure the ANSI cursor is blinking at rest by replacing it.
+        const c = ansiEl.querySelector('.ansi-cursor');
+        if (!c) return;
+        const newCursor = document.createElement('span');
+        newCursor.className = 'ansi-cursor blink';
+        newCursor.textContent = '_';
+        c.parentNode.replaceChild(newCursor, c);
+      }
+
       window.addEventListener('resize', () => {
-        // Recompute final scale on resize; keep current scale if we're mid-animation.
         const s = computeAnsiFitScale();
         if (typeof s === 'number') fitAnsiToScale(s);
       }, { passive: true });
@@ -415,41 +454,79 @@
         let i = 0;
         let current = '';
 
-        // Stage 1: human pace for a short while (with a few "what is going on" hesitations)
-        const stage1MaxVisible = 80; // "a moment" at 120wpm-ish
-        let visibleCount = 0;
-        let visibleDone = 0;
-        const totalVisible = Math.max(1, countVisible(tokens));
-        const speed120 = { minDelay: 60, maxDelay: 100, pausePunct: 250, pauseNewline: 280 };
-        // Hold full-size for a bit before shrink begins, to create continuity + tension.
-        const shrinkStartVisible = 220;
-        const pauseMarks = new Set([18, 45, 72, 110, 155, 205]);
+        // Always keep it centered so nothing ever jumps
+        alignAnsiToTextColumn(true);
 
+        // Get stage dimensions for continuous fit calculation
+        const stage = ansiStage || ansiEl.parentElement;
+        const pad = 16;
+        const availW = Math.max(100, (stage?.clientWidth || 300) - pad);
+        const availH = Math.max(100, (stage?.clientHeight || 400) - pad);
+
+        // Measure char dimensions
+        const meas = document.createElement('span');
+        meas.style.fontFamily = getComputedStyle(ansiEl).fontFamily;
+        meas.style.fontSize = getComputedStyle(ansiEl).fontSize;
+        meas.style.visibility = 'hidden';
+        meas.style.position = 'absolute';
+        meas.textContent = 'M';
+        document.body.appendChild(meas);
+        const cw = meas.getBoundingClientRect().width || 7;
+        const ch = meas.getBoundingClientRect().height || 12;
+        meas.remove();
+
+        // Track content dimensions as we draw
+        let maxCols = 1;
+        let currentCol = 0;
+        let rows = 1;
+
+        // Compute scale to fit current content (only shrink when needed)
+        function computeLiveScale() {
+          const contentW = (maxCols + 2) * cw; // +2 for cursor + margin
+          const contentH = rows * ch;
+          const scaleW = availW / contentW;
+          const scaleH = availH / contentH;
+          // Only scale down when content exceeds viewport, no preemptive shrink
+          return Math.min(1, scaleW, scaleH);
+        }
+
+        const stage1MaxVisible = 100;
+        let visibleCount = 0;
+        const speed120 = { minDelay: 60, maxDelay: 100 };
+        const pauseMarks = new Set([18, 45, 72]);
+
+        // Stage 1: human pace
         while (i < tokens.length && visibleCount < stage1MaxVisible) {
           const t = tokens[i++];
           current += t;
+
+          // Track dimensions
+          if (!t.startsWith('<')) {
+            if (t === '\n') {
+              rows++;
+              currentCol = 0;
+            } else {
+              currentCol++;
+              if (currentCol > maxCols) maxCols = currentCol;
+            }
+          }
+
           ansiEl.innerHTML = current + ANSI_CURSOR_HTML;
 
           if (!t.startsWith('<')) {
             visibleCount++;
-            visibleDone++;
-            // Shrink gradually, but only after a "hold" period.
-            const denom = Math.max(1, (totalVisible - shrinkStartVisible));
-            const pRaw = visibleDone <= shrinkStartVisible ? 0 : ((visibleDone - shrinkStartVisible) / denom);
-            const p = easeOutCubic(pRaw);
-            fitAnsiToScale((1 - p) * 1 + p * finalScale);
+            // Continuously fit as we go
+            fitAnsiToScale(computeLiveScale());
 
-            // A few deliberate hesitations early on.
-            if (pauseMarks.has(visibleDone)) {
-              await sleep(520 + Math.floor(Math.random() * 680));
+            if (pauseMarks.has(visibleCount)) {
+              await sleep(400 + Math.floor(Math.random() * 500));
             }
-            // treat actual newlines as a punctuation-like pause
-            if (t === '\n') await sleep(speed120.pauseNewline);
-            else await sleep(Math.floor(speed120.minDelay + Math.random() * (speed120.maxDelay - speed120.minDelay)));
+            const baseDelay = Math.floor(speed120.minDelay + Math.random() * (speed120.maxDelay - speed120.minDelay));
+            await sleep(t === '\n' ? 8 : baseDelay);
           }
         }
 
-        // Stage 2: ramp up batch size until ~200 chars/frame
+        // Stage 2: ramp up batch size
         let batch = 8;
         const maxBatch = 1000;
         const ramp = 60;
@@ -458,6 +535,7 @@
           function step() {
             if (i >= tokens.length) {
               ansiEl.innerHTML = current + ANSI_CURSOR_HTML;
+              forceAnsiCursorBlink();
               fitAnsiToScale(finalScale);
               resolve();
               return;
@@ -467,15 +545,19 @@
             while (i < tokens.length && visibleProcessed < batch) {
               const t = tokens[i++];
               current += t;
-              if (!t.startsWith('<')) visibleProcessed++;
+              if (!t.startsWith('<')) {
+                if (t === '\n') {
+                  rows++;
+                  currentCol = 0;
+                } else {
+                  currentCol++;
+                  if (currentCol > maxCols) maxCols = currentCol;
+                }
+                visibleProcessed++;
+              }
             }
             ansiEl.innerHTML = current + ANSI_CURSOR_HTML;
-
-            visibleDone += visibleProcessed;
-            const denom = Math.max(1, (totalVisible - shrinkStartVisible));
-            const pRaw = visibleDone <= shrinkStartVisible ? 0 : ((visibleDone - shrinkStartVisible) / denom);
-            const p = easeOutCubic(pRaw);
-            fitAnsiToScale((1 - p) * 1 + p * finalScale);
+            fitAnsiToScale(computeLiveScale());
 
             batch = Math.min(maxBatch, batch + ramp);
             requestAnimationFrame(step);
@@ -484,7 +566,24 @@
         });
       }
 
+      function runReduce() {
+        // Minimal static render for reduced motion
+        typedText.textContent = 'Born 1977, Israel. On a good day, one in —. On a bad day, one of —. Code for consciousness';
+        const tm = document.createElement('span');
+        tm.className = 'fake-tm';
+        tm.textContent = 'TM';
+        typedText.appendChild(tm);
+        typedText.appendChild(document.createTextNode('.'));
+        setCursorVisible(false);
+        fetch('ascii-profile.txt').then(r => r.text()).then(t => {
+          ansiEl.innerHTML = ansiToHtml(t);
+          const finalScale = computeAnsiFitScale() ?? 0.2;
+          fitAnsiToScale(finalScale);
+        }).catch(() => { });
+      }
+
       async function run() {
+        if (reduce) return;
         const wp = initWorldPop();
         ansiEl.textContent = ''; // keep blank until we start
         setCursorVisible(true);
@@ -559,10 +658,12 @@
         ansiEl.style.fontSize = `${typedFontPx}px`;
         ansiEl.style.lineHeight = `${typedFontPx}px`;
 
+        // Always centered from the start for smooth scaling
+        alignAnsiToTextColumn(true);
+
         // Set a quick plain text snapshot for sizing; actual HTML comes during animation.
         ansiEl.textContent = ansiRaw.replace(/\x1b\[[0-9;]*m/g, '').replace(/\r/g, '');
         const finalScale = computeAnsiFitScale() ?? 0.2;
-        fitAnsiToScale(1); // start same size as the terminal text
 
         // Suspense prelude: show only the ANSI cursor for a moment, then begin drawing.
         ansiEl.innerHTML = '<span class="ansi-cursor blink">_</span>';
@@ -573,28 +674,8 @@
         await animateAnsi(html, finalScale);
         fitAnsiToScale(finalScale);
       }
-
-      if (reduce) {
-        // Minimal static render for reduced motion
-        typedText.textContent = 'Born 1977, Israel. On a good day, one in —. On a bad day, one of —. Code for consciousness';
-        const tm = document.createElement('span');
-        tm.className = 'fake-tm';
-        tm.textContent = 'TM';
-        typedText.appendChild(tm);
-        typedText.appendChild(document.createTextNode('.'));
-        setCursorVisible(false);
-        fetch('ascii-profile.txt').then(r => r.text()).then(t => {
-          ansiEl.innerHTML = ansiToHtml(t);
-          fitAnsi();
-        }).catch(() => { });
-        return;
-      }
-
-      run().catch(() => { /* no-op */ });
     })();
   </script>
 </body>
 
 </html>
-
-

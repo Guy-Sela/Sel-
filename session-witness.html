@@ -520,8 +520,8 @@
        ========================================== */
     .about-grid {
       width: 100%;
-      max-width: 48rem;
-      /* similar to max-w-4xl */
+      max-width: 56rem;
+      /* match Tailwind max-w-4xl used in Works sections for left-edge alignment */
       margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr;
@@ -593,6 +593,15 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
       position: relative;
       /* Context for absolute controls */
+    }
+
+    /* About: embed the standalone terminal page without CSS/JS collisions */
+    .about-terminal-embed {
+      width: 100%;
+      height: min(720px, 78vh);
+      border: 0;
+      display: block;
+      background: transparent;
     }
 
     .about-terminal-controls {
@@ -1240,21 +1249,7 @@
     <div class="about-grid about-grid--no-pic">
       <div class="about-textcol">
         <div class="about-terminal" id="aboutTerminal">
-          <div class="about-terminal-controls">
-            <button class="ascii-btn active" data-style="classic" aria-label="Classic Style"></button>
-            <button class="ascii-btn" data-style="dots" aria-label="Dots Style"></button>
-            <button class="ascii-btn" data-style="minimal" aria-label="Minimal Style"></button>
-          </div>
-          <div class="about-terminal-body">
-            <div id="aboutTypedLine" class="term-typedline" aria-label="About terminal output"><span
-                id="aboutTypedText"><span id="aboutCursor" class="term-cursor">_</span></span></div>
-
-            <div class="term-editor" role="region" aria-label="Monospace editor: profile.ascii">
-              <pre id="aboutAsciiPre" class="term-editor-pre"></pre>
-              <!-- Source for "classic" ASCII is loaded from ascii-profile.txt at runtime. -->
-              <template id="aboutAsciiSource"></template>
-            </div>
-          </div>
+          <iframe class="about-terminal-embed" src="terminal-ansi-combined.html" title="About session terminal"></iframe>
         </div>
       </div>
     </div>

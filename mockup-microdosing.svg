@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 580" fill="none" style="background:#050507">
+  <defs>
+    <!-- Desert Titanium frame - warm sand/gold tone -->
+    <linearGradient id="phoneFrame" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c4a882"/>
+      <stop offset="50%" stop-color="#a08968"/>
+      <stop offset="100%" stop-color="#786850"/>
+    </linearGradient>
+    
+    <!-- Desert Titanium edge highlight -->
+    <linearGradient id="edgeHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d8c8a8"/>
+      <stop offset="50%" stop-color="#b8a078"/>
+      <stop offset="100%" stop-color="#c8b898"/>
+    </linearGradient>
+    
+    <!-- Screen backgrounds -->
+    <linearGradient id="screenBg1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a22"/>
+      <stop offset="100%" stop-color="#0f0f14"/>
+    </linearGradient>
+    <linearGradient id="screenBg2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a22"/>
+      <stop offset="100%" stop-color="#0f0f14"/>
+    </linearGradient>
+    <linearGradient id="screenBg3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a22"/>
+      <stop offset="100%" stop-color="#0f0f14"/>
+    </linearGradient>
+    
+    <!-- Glows -->
+    <radialGradient id="gongGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12"/>
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="insightGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fef3c7" stop-opacity="0.6"/>
+      <stop offset="40%" stop-color="#fef3c7" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#fef3c7" stop-opacity="0"/>
+    </radialGradient>
+    
+    <!-- Shadow -->
+    <filter id="phoneShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="10" stdDeviation="20" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="900" height="580" fill="#050507"/>
+  
+  <!-- Ambient glows -->
+  <ellipse cx="150" cy="260" rx="130" ry="170" fill="url(#gongGlow)" opacity="0.5"/>
+  <ellipse cx="450" cy="260" rx="160" ry="190" fill="url(#gongGlow)" opacity="0.6"/>
+  <ellipse cx="750" cy="260" rx="130" ry="170" fill="url(#gongGlow)" opacity="0.5"/>
+  
+  <!-- ============================================ -->
+  <!-- PHONE 1: Gong Notification -->
+  <!-- ============================================ -->
+  <g transform="translate(60, 50)" filter="url(#phoneShadow)">
+    <rect x="0" y="0" width="180" height="390" rx="25" fill="url(#phoneFrame)"/>
+    <rect x="0" y="0" width="180" height="390" rx="25" fill="none" stroke="url(#edgeHighlight)" stroke-width="1.5"/>
+    <rect x="3" y="3" width="174" height="384" rx="23" fill="#000000"/>
+    <rect x="5" y="5" width="170" height="380" rx="22" fill="url(#screenBg1)"/>
+    
+    <!-- Dynamic Island -->
+    <rect x="62" y="10" width="56" height="17" rx="8.5" fill="#000000"/>
+    
+    <!-- Lock screen time -->
+    <text x="90" y="80" text-anchor="middle" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif" font-size="36" font-weight="200">14:10</text>
+    <text x="90" y="96" text-anchor="middle" fill="#a0a0a0" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="8">Thursday, December 26</text>
+    
+    <!-- Notification -->
+    <rect x="8" y="120" width="164" height="72" rx="14" fill="rgba(40,40,48,0.92)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+    <circle cx="26" cy="140" r="9" fill="#252530"/>
+    <circle cx="26" cy="140" r="5.5" fill="none" stroke="#7a7a90" stroke-width="0.75"/>
+    <circle cx="26" cy="140" r="2" fill="#9999bb"/>
+    <text x="40" y="137" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="6" font-weight="600">MICRODOSING</text>
+    <text x="40" y="146" fill="#909090" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="5.5">now</text>
+    <text x="16" y="164" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="7" font-weight="500">🔔 Gong</text>
+    <text x="16" y="178" fill="#c0c0c0" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="6.5">A moment for reflection</text>
+    
+    <!-- Home indicator -->
+    <rect x="60" y="374" width="60" height="2.5" rx="1.25" fill="#888888"/>
+  </g>
+  <text x="150" y="480" text-anchor="middle" fill="#707070" font-family="system-ui, sans-serif" font-size="11" letter-spacing="0.15em">GONG</text>
+  
+  <!-- ============================================ -->
+  <!-- PHONE 2: Collect Moments -->
+  <!-- ============================================ -->
+  <g transform="translate(360, 50)" filter="url(#phoneShadow)">
+    <rect x="0" y="0" width="180" height="390" rx="25" fill="url(#phoneFrame)"/>
+    <rect x="0" y="0" width="180" height="390" rx="25" fill="none" stroke="url(#edgeHighlight)" stroke-width="1.5"/>
+    <rect x="3" y="3" width="174" height="384" rx="23" fill="#000000"/>
+    <rect x="5" y="5" width="170" height="380" rx="22" fill="url(#screenBg2)"/>
+    
+    <!-- Dynamic Island -->
+    <rect x="62" y="10" width="56" height="17" rx="8.5" fill="#000000"/>
+    
+    <!-- Nav bar title -->
+    <text x="90" y="52" text-anchor="middle" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="8" font-weight="600">Today's Moments</text>
+    
+    <!-- Timer -->
+    <circle cx="90" cy="80" r="14" fill="none" stroke="#3a3a45" stroke-width="2"/>
+    <circle cx="90" cy="80" r="14" fill="none" stroke="#7a7a90" stroke-width="2" stroke-dasharray="66" stroke-dashoffset="16.5" transform="rotate(-90, 90, 80)"/>
+    <text x="90" y="84" text-anchor="middle" fill="#a0a0a0" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="7" font-weight="500">18h</text>
+    
+    <!-- List items -->
+    <rect x="8" y="110" width="164" height="50" rx="10" fill="rgba(35,35,42,0.95)" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+    <circle cx="22" cy="124" r="4" fill="#4a4a60"/>
+    <text x="32" y="126" fill="#909090" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="5.5">9:41 AM</text>
+    <text x="18" y="146" fill="#e8e8e8" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="7">Noticed the silence</text>
+    
+    <rect x="8" y="168" width="164" height="50" rx="10" fill="rgba(35,35,42,0.95)" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+    <circle cx="22" cy="182" r="4" fill="#4a4a60"/>
+    <text x="32" y="184" fill="#909090" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="5.5">2:17 PM</text>
+    <text x="18" y="204" fill="#e8e8e8" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="7">Breath felt different</text>
+    
+    <rect x="8" y="226" width="164" height="50" rx="10" fill="rgba(45,45,55,0.98)" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+    <circle cx="22" cy="240" r="4" fill="#7a7aa0"/>
+    <text x="32" y="242" fill="#a0a0a0" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="5.5">5:33 PM</text>
+    <text x="18" y="262" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="7">Everything connected</text>
+    
+    <!-- Progress bar -->
+    <rect x="40" y="295" width="100" height="3" rx="1.5" fill="#2a2a35"/>
+    <rect x="40" y="295" width="75" height="3" rx="1.5" fill="#7a7a90"/>
+    <text x="90" y="315" text-anchor="middle" fill="#808080" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="5">3 of 3 moments</text>
+    
+    <!-- Home indicator -->
+    <rect x="60" y="374" width="60" height="2.5" rx="1.25" fill="#888888"/>
+  </g>
+  <text x="450" y="480" text-anchor="middle" fill="#707070" font-family="system-ui, sans-serif" font-size="11" letter-spacing="0.15em">COLLECT</text>
+  
+  <!-- ============================================ -->
+  <!-- PHONE 3: Connect / Insight -->
+  <!-- ============================================ -->
+  <g transform="translate(660, 50)" filter="url(#phoneShadow)">
+    <rect x="0" y="0" width="180" height="390" rx="25" fill="url(#phoneFrame)"/>
+    <rect x="0" y="0" width="180" height="390" rx="25" fill="none" stroke="url(#edgeHighlight)" stroke-width="1.5"/>
+    <rect x="3" y="3" width="174" height="384" rx="23" fill="#000000"/>
+    <rect x="5" y="5" width="170" height="380" rx="22" fill="url(#screenBg3)"/>
+    
+    <!-- Dynamic Island -->
+    <rect x="62" y="10" width="56" height="17" rx="8.5" fill="#000000"/>
+    
+    <!-- Nav title -->
+    <text x="90" y="52" text-anchor="middle" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="8" font-weight="600">Your Insight</text>
+    
+    <!-- Triangle visualization -->
+    <line x1="50" y1="90" x2="130" y2="90" stroke="#4a4a60" stroke-width="1"/>
+    <line x1="130" y1="90" x2="90" y2="150" stroke="#4a4a60" stroke-width="1"/>
+    <line x1="90" y1="150" x2="50" y2="90" stroke="#4a4a60" stroke-width="1"/>
+    <circle cx="50" cy="90" r="8" fill="#252535" stroke="#5a5a70" stroke-width="1"/>
+    <circle cx="130" cy="90" r="8" fill="#252535" stroke="#5a5a70" stroke-width="1"/>
+    <circle cx="90" cy="150" r="8" fill="#252535" stroke="#5a5a70" stroke-width="1"/>
+    
+    <!-- Center glow -->
+    <ellipse cx="90" cy="110" rx="24" ry="20" fill="url(#insightGlow)"/>
+    <circle cx="90" cy="110" r="5" fill="#fef3c7" opacity="0.9"/>
+    <circle cx="90" cy="110" r="3" fill="#ffffff"/>
+    
+    <!-- Quote card -->
+    <rect x="12" y="175" width="156" height="90" rx="12" fill="rgba(30,30,38,0.98)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+    <text x="90" y="205" text-anchor="middle" fill="#f0f0f0" font-family="Georgia, 'New York', serif" font-size="8" font-style="italic">
+      <tspan x="90" dy="0">"Stillness isn't the</tspan>
+      <tspan x="90" dy="13">absence of sound—</tspan>
+      <tspan x="90" dy="13">it's presence itself."</tspan>
+    </text>
+    <text x="90" y="256" text-anchor="middle" fill="#808080" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="5" letter-spacing="0.1em">DECEMBER 26, 2025</text>
+    
+    <!-- Action buttons -->
+    <rect x="24" y="285" width="60" height="24" rx="8" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+    <text x="54" y="301" text-anchor="middle" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="6" font-weight="500">Save</text>
+    
+    <rect x="96" y="285" width="60" height="24" rx="8" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+    <text x="126" y="301" text-anchor="middle" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif" font-size="6" font-weight="500">Share</text>
+    
+    <!-- Home indicator -->
+    <rect x="60" y="374" width="60" height="2.5" rx="1.25" fill="#888888"/>
+  </g>
+  <text x="750" y="480" text-anchor="middle" fill="#707070" font-family="system-ui, sans-serif" font-size="11" letter-spacing="0.15em">CONNECT</text>
+  
+  <!-- Arrows -->
+  <g opacity="0.5">
+    <path d="M 255 260 L 340 260" stroke="#5a5a70" stroke-width="1.5" fill="none"/>
+    <polygon points="340,260 333,255 333,265" fill="#5a5a70"/>
+    <path d="M 555 260 L 640 260" stroke="#5a5a70" stroke-width="1.5" fill="none"/>
+    <polygon points="640,260 633,255 633,265" fill="#5a5a70"/>
+  </g>
+  
+  <!-- Tagline -->
+  <text x="450" y="540" text-anchor="middle" fill="#606060" font-family="system-ui, sans-serif" font-size="11" letter-spacing="0.25em">RANDOM MOMENTS · EMERGENT MEANING</text>
+</svg>

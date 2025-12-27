@@ -47,6 +47,9 @@
       height: 100%;
       max-width: none;
       max-height: none;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
     }
 
     html.embed .terminal-body {
@@ -224,21 +227,45 @@
       if (!typedText || !cursor || !ansiEl) return;
       const ansiStage = ansiEl.parentElement;
       const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isEmbed = document.documentElement.classList.contains('embed');
+      let started = false;
 
       // --- HELPER WRAPPERS ---
       function sleep(ms) { return new Promise(r => window.setTimeout(r, ms)); }
       function setCursorVisible(v) { cursor.classList.toggle('is-hidden', !v); }
 
-      // Entry point
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(() => {
+      function start() {
+        if (started) return;
+        started = true;
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(() => {
+            if (reduce) runReduce();
+            else run().catch(() => { });
+          });
+        } else {
           if (reduce) runReduce();
           else run().catch(() => { });
-        });
-      } else {
-        if (reduce) runReduce();
-        else run().catch(() => { });
+        }
       }
+
+      // Embedded behavior:
+      // show an idle prompt + blinking cursor, then wait for the parent page to tell us to start.
+      if (isEmbed && !reduce) {
+        typedText.textContent = '';
+        ansiEl.textContent = '';
+        setCursorVisible(true);
+        cursor.classList.add('blink');
+
+        window.__startCombinedTerminal = start;
+        window.addEventListener('message', (e) => {
+          const d = e && e.data;
+          if (d && typeof d === 'object' && d.type === 'START_TERMINAL_ANSI_COMBINED') start();
+        });
+        return;
+      }
+
+      // Standalone (or reduced motion): start immediately.
+      start();
 
       // --- COMPONENT LOGIC ---
 

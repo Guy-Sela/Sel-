@@ -55,7 +55,6 @@
     html.embed .terminal-body {
       padding: 0;
     }
-
     .terminal {
       width: min(980px, 92vw);
       height: min(720px, 86vh);
@@ -152,6 +151,7 @@
 
     /* ANSI stage: starts ~3 lines below the typed text */
     .ansi-stage {
+      /* ANSI stage: starts a few lines below the typed text */
       margin-top: 1.2em;
       flex: 1 1 auto;
       min-height: 0;
@@ -639,7 +639,8 @@
         const wp = initWorldPop();
         ansiEl.textContent = ''; // keep blank until we start
         setCursorVisible(true);
-        await blinkIdle(900);
+        // Idle cursor blink before any typing begins (About section prelude).
+        await blinkIdle(5000);
 
         const speed120 = { minDelay: 60, maxDelay: 100, pausePunct: 250 };
 
@@ -684,12 +685,17 @@
         typedText.appendChild(tm);
         typedText.appendChild(cursor);
         await typeInto(typedText, '.', speed120);
-
-        // A few seconds after the text finishes animating...
         await sleep(3200);
 
-        // Move attention to ANSI: stop terminal cursor once the terminal line is done.
+        // Move attention to ANSI: cursor descends line by line
         cursor.classList.remove('blink');
+        const lineEl = typedText.parentElement; // .line container
+        const descentLines = 3;
+        for (let d = 0; d < descentLines; d++) {
+          lineEl.appendChild(document.createTextNode('\n'));
+          lineEl.appendChild(cursor);
+          await sleep(1000);
+        }
         setCursorVisible(false);
 
         // Load ANSI portrait

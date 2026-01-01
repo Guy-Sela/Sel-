@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" aria-label="Selà classic wave yin-yang favicon">
+  <defs>
+    <clipPath id="clipCircle">
+      <circle cx="64" cy="64" r="56" />
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#clipCircle)">
+    <!-- Base: Light -->
+    <rect width="128" height="128" fill="#F5F5F5" />
+    
+    <!-- The Wave: Black "invades" the right half at the top, retreats at the bottom -->
+    <path d="M64 8 
+             A28 28 0 0 1 64 64 
+             A28 28 0 0 0 64 120 
+             A56 56 0 0 1 64 8 Z" 
+          fill="#0B0B0B" />
+
+    <!-- "Eye" 1: White Heavy Chevron in the Black bulge -->
+    <path 
+      d="M60 26 L74 36 L60 46 L52 46 L66 36 L52 26 Z" 
+      fill="#F5F5F5" 
+    />
+
+    <!-- "Eye" 2: Black Heavy Chevron in the White bulge -->
+    <path 
+      d="M68 82 L54 92 L68 102 L76 102 L62 92 L76 82 Z" 
+      fill="#0B0B0B" 
+    />
+  </g>
+</svg>
+

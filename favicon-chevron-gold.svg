@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" aria-label="Golden chevron (U+276F) favicon">
+  <!-- Simple golden chevron, centered with padding, no glow -->
+  <path
+    d="M985 711 440 0H57L602 711L57 1421H440Z"
+    transform="translate(64 64) scale(0.056 -0.056) translate(-521 -710.5)"
+    fill="#FFC457"
+    stroke="#E3A535"
+    stroke-width="2"
+    stroke-linejoin="round"
+  />
+</svg>
+

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" aria-label="Selà chevron (U+276F) with annular halo">
+  <defs>
+    <!-- Radial gradient: starts at r=50 (inner edge) and goes to r=64 (outer edge) -->
+    <!-- To make it radiate properly from 50 outwards, we adjust stops or mask. -->
+    <!-- Using a large gradient and masking the center is easier. -->
+    <radialGradient id="haloGrad" gradientUnits="userSpaceOnUse" cx="64" cy="64" r="64">
+      <stop offset="0%" stop-color="#FFD9A6" stop-opacity="0"/>
+      <stop offset="70%" stop-color="#FFD9A6" stop-opacity="0"/> 
+      <!-- The gradient naturally interpolates. We want it bright starting at r=50 (~78%) -->
+      <!-- Let's actually adjust the gradient to have the "hot" color start further out? -->
+      <!-- Better: Use the mask to cut the hole, and let the gradient be hot in the center if needed, 
+           but since we want it to "radiate outwards" from the circle, 
+           we can just use the mask and a simple gradient that is bright in that band. -->
+      <stop offset="75%" stop-color="#FFD9A6" stop-opacity="0.95"/> <!-- r=48 -->
+      <stop offset="85%" stop-color="#FFBE55" stop-opacity="0.80"/>
+      <stop offset="100%" stop-color="#FFBE55" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Mask: A hole in the middle. White outer = show halo, Black inner = hide halo. -->
+    <mask id="haloHoleMask">
+      <rect x="0" y="0" width="128" height="128" fill="white"/>
+      <!-- Exclusion circle: r=50 encloses the chevron fully (furthest corner is ~48px) -->
+      <circle cx="64" cy="64" r="50" fill="black"/>
+    </mask>
+  </defs>
+
+  <!-- The Halo: A full circle masked to be a ring -->
+  <circle cx="64" cy="64" r="64" fill="url(#haloGrad)" mask="url(#haloHoleMask)"/>
+
+  <!-- Pure White Chevron (centered, on top) -->
+  <path d="M985 711 440 0H57L602 711L57 1421H440Z" transform="translate(64,64) scale(0.056,-0.056) translate(-521,-710.5)" fill="#FFFFFF"/>
+  
+  <!-- Testing Border: 1px gray line around the frame -->
+  <rect x="0.5" y="0.5" width="127" height="127" fill="none" stroke="#888888" stroke-width="1" opacity="0.5"/>
+</svg>

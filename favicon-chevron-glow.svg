@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" aria-label="Selà chevron with shape glow">
+  <defs>
+    <!-- Glow Filter -->
+    <filter id="shapeGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <!-- 1. Create the gold shadow -->
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#FFD9A6" flood-opacity="1.0" result="glow1"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#FFBE55" flood-opacity="0.8" result="glow2"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="20" flood-color="#FFBE55" flood-opacity="0.5" result="glow3"/>
+      
+      <!-- 2. Merge glows -->
+      <feMerge>
+        <feMergeNode in="glow3"/>
+        <feMergeNode in="glow2"/>
+        <feMergeNode in="glow1"/>
+        <!-- 3. Place the original white shape on top -->
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- The Chevron with the filter applied -->
+  <!-- Note: scale adjusted slightly to ensure glow fits in 128x128 -->
+  <path 
+    d="M985 711 440 0H57L602 711L57 1421H440Z" 
+    transform="translate(64,64) scale(0.052,-0.052) translate(-521,-710.5)" 
+    fill="#FFFFFF" 
+    filter="url(#shapeGlow)"
+  />
+  
+  <!-- Optional: Test Border (remove for production) -->
+  <!-- <rect x="0.5" y="0.5" width="127" height="127" stroke="#333" stroke-width="1" fill="none" opacity="0.3"/> -->
+</svg>
+

@@ -1985,6 +1985,7 @@
             class="text-neutral-300 text-2xl md:text-3xl lg:text-4xl tracking-wide max-w-2xl transition-opacity duration-300">
             Every session is completely unique, even from the machine's perspective. FWIW.
           </p>
+          <div class="mt-8 w-32 h-px bg-white/25"></div>
         </section>
       </div>
 
@@ -1995,7 +1996,7 @@
   <!-- STICKY NAV: Appears after menu, hides on scroll up -->
   <!-- ============================================== -->
   <nav id="stickyNav"
-    class="fixed top-0 left-0 right-0 z-40 bg-neutral-950/90 backdrop-blur-sm border-b border-neutral-800">
+    class="fixed top-0 left-0 right-0 z-40 bg-neutral-950/90 backdrop-blur-sm">
     <div class="max-w-6xl mx-auto flex items-center justify-between px-5 sm:px-10 py-4">
       <a href="#works"
         class="nav-link text-xs sm:text-sm md:text-base uppercase tracking-wider transition-colors">SELÀ</a>
@@ -2455,7 +2456,7 @@
     </article>
   </section>
 
-  <section id="about" class="px-6 bg-neutral-900">
+  <section id="about" class="px-6 bg-neutral-950">
     <div class="about-grid about-grid--no-pic">
       <div class="about-textcol">
         <div class="about-terminal" id="aboutTerminal">
@@ -2512,7 +2513,7 @@
     </div>
   </section>
 
-  <footer class="text-center text-sm py-12 border-t border-neutral-800 bg-neutral-950" style="color: #737373;">
+  <footer class="text-center text-sm py-12 bg-neutral-950" style="color: #737373;">
     © <span id="year"></span> Selà
   </footer>
 
@@ -4059,6 +4060,23 @@
     let lastScrollTop = 0;
     let navCanShow = false;
     let softEntranceTimer = null;
+    const NAV_IDLE_MS = 5000;
+    let navIdleTimer = null;
+
+    function resetNavIdleTimer() {
+      if (!stickyNav) return;
+      if (!stickyNav.classList.contains('visible')) return;
+      if (navIdleTimer) window.clearTimeout(navIdleTimer);
+      navIdleTimer = window.setTimeout(() => {
+        stickyNav.classList.remove('visible');
+      }, NAV_IDLE_MS);
+    }
+
+    function clearNavIdleTimer() {
+      if (!navIdleTimer) return;
+      window.clearTimeout(navIdleTimer);
+      navIdleTimer = null;
+    }
 
     function scheduleSoftEntrance() {
       if (!stickyNav) return;
@@ -4068,6 +4086,7 @@
         if (!navCanShow) return;
         stickyNav.classList.add('visible');
         worksSection?.classList.add('works-visible');
+        resetNavIdleTimer();
       }, 140);
     }
 
@@ -4332,6 +4351,7 @@
 
       if (!navCanShow) {
         stickyNav.classList.remove('visible');
+        clearNavIdleTimer();
         worksSection?.classList.remove('works-visible');
         lastScrollTop = scrollTop;
         return;
@@ -4341,14 +4361,21 @@
       if (scrollTop > lastScrollTop) {
         stickyNav.classList.add('visible');
         worksSection?.classList.add('works-visible');
+        resetNavIdleTimer();
       }
       // Scrolling up: hide nav
       else {
         stickyNav.classList.remove('visible');
+        clearNavIdleTimer();
       }
 
       lastScrollTop = scrollTop;
     }, { passive: true });
+
+    // Also auto-hide after inactivity (not just scroll direction).
+    ['mousemove', 'pointerdown', 'keydown', 'touchstart', 'scroll'].forEach((type) => {
+      window.addEventListener(type, resetNavIdleTimer, { passive: true });
+    });
 
     // ==========================================
     // CROSS-DISSOLVE: Hero → Reveal (scroll-driven)

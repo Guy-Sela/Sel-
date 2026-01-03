@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas ANSI Terminal Test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --text: rgba(255, 255, 255, 0.92);
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .terminal-container {
+      position: relative;
+      width: min(980px, 92vw);
+      height: min(720px, 86vh);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      background: rgba(0,0,0,0.45);
+      padding: 24px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    canvas {
+      /* The canvas will be sized by CSS (the "window") but render at high resolution */
+      transform-origin: center center;
+      image-rendering: high-quality; /* Better downscaling */
+      /* We will manipulate width/height/transform via JS for the animation */
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    .controls {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 10;
+    }
+    button {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+    }
+    button:hover { background: rgba(255,255,255,0.2); }
+  </style>
+</head>
+<body>
+
+<div class="terminal-container">
+  <canvas id="ansiCanvas"></canvas>
+  <div class="controls">
+    <button onclick="startDemo()">Re-Run</button>
+  </div>
+</div>
+
+<script>
+// ==========================================
+// CANVAS ANSI RENDERER
+// ==========================================
+const canvas = document.getElementById('ansiCanvas');
+const ctx = canvas.getContext('2d', { alpha: true }); // optimize for simple text
+
+// Config
+const BASE_FONT_SIZE = 16;
+const LINE_HEIGHT_MULT = 1.0; // Compact line height for ASCII art
+let CHAR_W = 0;
+let CHAR_H = 0;
+
+// State
+let tokens = [];
+let cursor = { x: 0, y: 0 };
+let maxCol = 0;
+let maxRow = 0;
+let animReq = null;
+
+// Parse ANSI colors (simplified for the specific ASCII art format)
+function parseAnsi(text) {
+  const result = [];
+  const pattern = /(\x1b\[38;2;\d+;\d+;\d+m)|(\x1b\[0m)/g;
+  let lastIndex = 0;
+  let currentColor = '#ffffff';
+  let match;
+
+  while ((match = pattern.exec(text)) !== null) {
+    const tag = match[0];
+    const idx = match.index;
+    
+    // Push preceding text
+    if (idx > lastIndex) {
+      const part = text.substring(lastIndex, idx);
+      for (const char of part) {
+        result.push({ char, color: currentColor });
+      }
+    }
+
+    if (tag === '\x1b[0m') {
+      currentColor = '#ffffff';
+    } else {
+      const rgb = tag.match(/(\d+);(\d+);(\d+)/);
+      if (rgb) {
+        // Boost brightness for dark backgrounds
+        let r = parseInt(rgb[1]);
+        let g = parseInt(rgb[2]);
+        let b = parseInt(rgb[3]);
+        // Simple grayscale boost
+        let gray = (0.299*r + 0.587*g + 0.114*b);
+        gray = Math.min(255, gray * 2.4 + 95);
+        currentColor = `rgb(${gray},${gray},${gray})`;
+      }
+    }
+    lastIndex = pattern.lastIndex;
+  }
+  // Remaining text
+  if (lastIndex < text.length) {
+    const part = text.substring(lastIndex);
+    for (const char of part) {
+      result.push({ char, color: currentColor });
+    }
+  }
+  return result;
+}
+
+// Measure exact metrics of the font
+function measureFont() {
+  ctx.font = `bold ${BASE_FONT_SIZE}px "JetBrains Mono"`;
+  const m = ctx.measureText('M');
+  CHAR_W = m.width;
+  CHAR_H = BASE_FONT_SIZE * LINE_HEIGHT_MULT;
+}
+
+async function loadArt() {
+  const res = await fetch('ascii-profile.txt');
+  const text = await res.text();
+  return parseAnsi(text);
+}
+
+// Main Draw Loop
+function render(drawnTokens, showCursor) {
+  // Clear
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Set font
+  ctx.font = `bold ${BASE_FONT_SIZE}px "JetBrains Mono"`;
+  ctx.textBaseline = 'top';
+
+  let col = 0;
+  let row = 0;
+
+  // Draw tokens
+  for (const t of drawnTokens) {
+    if (t.char === '\n') {
+      row++;
+      col = 0;
+      continue;
+    }
+    ctx.fillStyle = t.color;
+    ctx.fillText(t.char, col * CHAR_W, row * CHAR_H);
+    col++;
+  }
+
+  // Draw Cursor
+  if (showCursor) {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText('_', col * CHAR_W, row * CHAR_H);
+  }
+}
+
+async function startDemo() {
+  if (animReq) cancelAnimationFrame(animReq);
+  
+  // 1. Setup
+  measureFont();
+  tokens = await loadArt();
+
+  // 2. Pre-calculate Dimensions
+  maxCol = 0;
+  maxRow = 0;
+  let c = 0, r = 0;
+  for (const t of tokens) {
+    if (t.char === '\n') {
+      r++;
+      c = 0;
+    } else {
+      c++;
+      if (c > maxCol) maxCol = c;
+    }
+  }
+  maxRow = r + 1;
+
+  // 3. Size the logical canvas to fit the FULL art at 16px
+  const logicalWidth = Math.ceil((maxCol + 1) * CHAR_W);
+  const logicalHeight = Math.ceil((maxRow + 1) * CHAR_H);
+  
+  // High-DPI support
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = logicalWidth * dpr;
+  canvas.height = logicalHeight * dpr;
+  ctx.scale(dpr, dpr); // Normalize coord system
+
+  // 4. Animation State
+  let index = 0;
+  const container = canvas.parentElement;
+  
+  // Animation loop
+  const speed = 2; // chars per frame base
+  let batch = 1; // Start slow (char by char)
+  
+  function step() {
+    // Determine how many chars to add this frame (accelerating)
+    batch += 0.05; // Accelerate very slowly
+    const end = Math.min(tokens.length, Math.floor(index + batch));
+    
+    // Optimize: Only draw NEW tokens, don't clear rect every time
+    // But we need to handle newlines correctly.
+    // For simplicity/robustness in this demo, we redraw all visible.
+    const currentSlice = tokens.slice(0, end);
+    index = end;
+
+    // --- SCALING LOGIC ---
+    // Calculate current content size based on ACTUAL rendered rows/cols
+    let curC = 0, curR = 0;
+    let curMaxC = 0;
+    for (const t of currentSlice) {
+      if (t.char === '\n') { curR++; curC = 0; }
+      else { curC++; if(curC > curMaxC) curMaxC = curC; }
+    }
+    // Add margin for cursor
+    const contentW = (curMaxC + 2) * CHAR_W;
+    const contentH = (curR + 1) * CHAR_H;
+
+    // Available space
+    const availW = container.clientWidth - 48;
+    const availH = container.clientHeight - 48;
+
+    // Scale to fit: min(1, fitRatio)
+    // We limit the visible "window" of the canvas using CSS width/height
+    let scaleX = availW / contentW;
+    let scaleY = availH / contentH;
+    let scale = Math.min(1, scaleX, scaleY);
+    
+    // FORCE ASPECT RATIO CORRECTION
+    // If the canvas aspect ratio doesn't match the content aspect ratio,
+    // stretching width/height independently distorts it.
+    // We must set width/height to match the logical aspect ratio * scale.
+    canvas.style.width = `${contentW * scale}px`;
+    canvas.style.height = `${contentH * scale}px`;
+    
+    // Draw
+    render(currentSlice, true);
+
+    if (index < tokens.length) {
+      animReq = requestAnimationFrame(step);
+    } else {
+      // Done - blink cursor or remove
+      render(currentSlice, false);
+    }
+  }
+  
+  step();
+}
+
+// Initial Load
+document.fonts.ready.then(startDemo);
+
+</script>
+</body>
+</html>

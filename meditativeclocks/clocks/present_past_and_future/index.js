@@ -371,7 +371,7 @@ let alpha = 1
 let xPastAndFuture, yPastAndFuture
 
 function pastAndFuture() {
-
+    const seconds = new Date().getSeconds();
     xPastAndFuture = where[t].x1 + gap / 2
     yPastAndFuture = where[t].y1
 

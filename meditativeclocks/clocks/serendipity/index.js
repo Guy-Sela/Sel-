@@ -96,7 +96,7 @@ function mainAnimation() {
     c.translate(-centerX, -centerY)
     c.beginPath()
     c.moveTo(centerX, centerY)
-    c.lineTo(centerX, centerY - smallerAspect / 2.5)
+    c.lineTo(centerX, centerY - smallerAspect / 3)
     c.lineWidth = handWidth
     c.strokeStyle = color
     c.stroke()

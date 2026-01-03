@@ -7,7 +7,18 @@ const c = canvas.getContext('2d')
 //        canvas size
 
 window.onload = resizeCanvas
-window.onresize = () => location.reload(true)
+// In iframes, a resize can fire during initial layout/scrollbar settling.
+// Reloading causes a visible "blink" (appears → disappears → reappears).
+// Instead, just resize the canvas and recompute frame geometry.
+window.onresize = () => {
+    try {
+        // Clear cached frame lines so setFrameValues() doesn't append duplicates.
+        linesSeconds.length = 0
+        linesMinutes.length = 0
+        linesHours.length = 0
+    } catch (e) { }
+    resizeCanvas()
+}
 
 let smallerAspect, centerX, centerY
 

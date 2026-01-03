@@ -439,6 +439,13 @@
       background: #171717;
     }
 
+    /* Clock preview iframes */
+    .clock-preview-iframe {
+      background: #000;
+      /* Let the whole Works section fade in as one unit (no per-iframe pop-in). */
+      opacity: 1;
+    }
+
     /* ==========================================
        Section layout: full viewport, centered content
        Each section fills at least viewport minus nav, content centered
@@ -2076,8 +2083,9 @@
             onclick="openClock('semi-linear')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe loading="eager" src="meditativeclocks/clocks/semi-linear_clock/index.html"
-                  class="w-full h-full pointer-events-none" title="Semi-linear Clock preview"></iframe>
+                <iframe loading="eager" src="about:blank"
+                  data-src="meditativeclocks/clocks/semi-linear_clock_svg/index.html"
+                  class="clock-preview-iframe w-full h-full pointer-events-none" title="Semi-linear Clock preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
                 Semi-linear Clock
@@ -2094,8 +2102,10 @@
             onclick="openClock('ebb-flow')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe loading="eager" src="meditativeclocks/clocks/the_ebb_and_flow_of_time/index.html"
-                  class="w-full h-full pointer-events-none" title="The Ebb and Flow of Time preview"></iframe>
+                <iframe loading="eager" src="about:blank"
+                  data-src="meditativeclocks/clocks/the_ebb_and_flow_of_time/index.html"
+                  class="clock-preview-iframe w-full h-full pointer-events-none"
+                  title="The Ebb and Flow of Time preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
                 The Ebb and Flow of Time
@@ -2112,8 +2122,10 @@
             onclick="openClock('past-present-future')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe loading="eager" src="meditativeclocks/clocks/present_past_and_future/index.html"
-                  class="w-full h-full pointer-events-none" title="Present, Past and Future preview"></iframe>
+                <iframe loading="eager" src="about:blank"
+                  data-src="meditativeclocks/clocks/present_past_and_future/index.html"
+                  class="clock-preview-iframe w-full h-full pointer-events-none"
+                  title="Present, Past and Future preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
                 Present, Past and Future
@@ -2130,8 +2142,10 @@
             onclick="openClock('hourglass')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe loading="eager" src="meditativeclocks/clocks/abstract_hourglass/index.html"
-                  class="w-full h-full pointer-events-none" title="Abstract Hourglass preview"></iframe>
+                <iframe loading="eager" src="about:blank"
+                  data-src="meditativeclocks/clocks/abstract_hourglass/index.html"
+                  class="clock-preview-iframe w-full h-full pointer-events-none"
+                  title="Abstract Hourglass preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
                 Abstract Hourglass
@@ -2148,8 +2162,9 @@
             onclick="openClock('universe')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe loading="eager" src="meditativeclocks/clocks/universe_clock/index.html"
-                  class="w-full h-full pointer-events-none" title="Universe Clock preview"></iframe>
+                <iframe loading="eager" src="about:blank"
+                  data-src="meditativeclocks/clocks/universe_clock/index.html"
+                  class="clock-preview-iframe w-full h-full pointer-events-none" title="Universe Clock preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
                 Universe Clock
@@ -2166,8 +2181,10 @@
             onclick="openClock('serendipity')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe loading="eager" src="meditativeclocks/clocks/serendipity/index.html"
-                  class="w-full h-full pointer-events-none" title="Serendipity on Demand preview"></iframe>
+                <iframe loading="eager" src="about:blank"
+                  data-src="meditativeclocks/clocks/serendipity/index.html"
+                  class="clock-preview-iframe w-full h-full pointer-events-none"
+                  title="Serendipity on Demand preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
                 Serendipity on Demand
@@ -3449,7 +3466,7 @@
     // ==========================================
     const clockData = {
       'semi-linear': {
-        src: 'meditativeclocks/clocks/semi-linear_clock/index.html',
+        src: 'meditativeclocks/clocks/semi-linear_clock_svg/index.html',
         title: 'Semi-linear Clock',
         description: 'Always the right time, never in the same way. The next "moment" is selected randomly.'
       },
@@ -3578,22 +3595,6 @@
       function update() {
         track.style.transform = `translateX(-${currentIndex * 100}%)`;
         dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
-
-        // OPTIMIZATION: Hide inactive iframes to prevent iOS scroll stutter.
-        // Keeping 6 WebGL/Canvas iframes active (even off-screen) kills performance.
-        items.forEach((item, i) => {
-          const iframe = item.querySelector('iframe');
-          if (iframe) {
-            // using visibility:hidden instead of display:none to avoid full reload/flicker if possible,
-            // but display:none is more effective for GPU. Let's try visibility first combined with opacity.
-            // Actually, for maximum perf, display: none is best.
-            if (i === currentIndex) {
-              iframe.style.display = 'block';
-            } else {
-              iframe.style.display = 'none';
-            }
-          }
-        });
       }
 
       function goTo(index) {
@@ -3618,6 +3619,46 @@
       }, { passive: true });
 
       update();
+    })();
+
+    // ==========================================
+    // Works: preload all clock preview iframes when Works nears viewport
+    // (avoids iPhone showing "blank/gray" frames mid-scroll)
+    // ==========================================
+    (function initWorksClockPreload() {
+      const works = document.getElementById('works');
+      if (!works) return;
+
+      const iframes = Array.from(works.querySelectorAll('iframe.clock-preview-iframe'));
+      if (!iframes.length) return;
+
+      function loadAll() {
+        iframes.forEach((iframe) => {
+          const desired = iframe.getAttribute('data-src');
+          const current = iframe.getAttribute('src') || '';
+          if (!desired) return;
+          if (current && current !== 'about:blank') return;
+
+          iframe.setAttribute('src', desired);
+        });
+      }
+
+      if (!('IntersectionObserver' in window)) {
+        // Fallback: load as soon as we can.
+        loadAll();
+        return;
+      }
+
+      const io = new IntersectionObserver((entries) => {
+        const e = entries && entries[0];
+        if (!e) return;
+        if (e.isIntersecting) {
+          loadAll();
+          io.disconnect();
+        }
+      }, { rootMargin: '2000px 0px 2000px 0px', threshold: 0 });
+
+      io.observe(works);
     })();
 
     // ==========================================
@@ -4490,44 +4531,6 @@
     }
     const handleStickyNavScrollRaf = rafThrottle(handleStickyNavScroll);
     window.addEventListener('scroll', handleStickyNavScrollRaf, { passive: true });
-
-    // ==========================================
-    // CAROUSEL INITIALIZATION
-    // ==========================================
-    const carouselTrack = document.getElementById('carouselTrack');
-    const dots = Array.from(document.querySelectorAll('.carousel-dot'));
-    let currentSlide = 0;
-    const totalSlides = dots.length;
-
-    function updateCarousel() {
-      if (!carouselTrack) return;
-      carouselTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
-      dots.forEach((dot, i) => dot.classList.toggle('bg-white', i === currentSlide));
-      dots.forEach((dot, i) => dot.classList.toggle('bg-neutral-700', i !== currentSlide));
-    }
-
-    dots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        currentSlide = parseInt(dot.dataset.index);
-        updateCarousel();
-      });
-    });
-
-    let touchStartX = 0;
-    carouselTrack?.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    carouselTrack?.addEventListener('touchend', (e) => {
-      const touchEndX = e.changedTouches[0].screenX;
-      if (touchStartX - touchEndX > 50 && currentSlide < totalSlides - 1) {
-        currentSlide++;
-        updateCarousel();
-      } else if (touchEndX - touchStartX > 50 && currentSlide > 0) {
-        currentSlide--;
-        updateCarousel();
-      }
-    }, { passive: true });
 
     // ==========================================
     // CROSS-DISSOLVE: Hero → Reveal (scroll-driven)

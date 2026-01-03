@@ -390,12 +390,35 @@
     /* Sticky nav behavior */
     #stickyNav {
       opacity: 0;
-      will-change: opacity;
-      transition: opacity 1.2s ease;
+      visibility: hidden;
+      transform: translateY(-100%);
+      will-change: transform, opacity;
+      /* Like your snippet: slide+fade, with visibility delayed until the fade/slide completes */
+      transition: transform 0.5s ease, opacity 0.5s ease, visibility 0s linear 0.5s;
+
+      /* Base background (always present) */
+      background: rgba(0, 0, 0, 0.35);
+      border-bottom: 1px solid var(--border);
+      pointer-events: none;
+    }
+
+    /* Blur: Only on non-touch devices or when performance permits.
+       On iOS/Touch, we skip backdrop-filter entirely to prevent scroll stutter. */
+    @media (hover: hover) and (pointer: fine) {
+      #stickyNav {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        background: rgba(0, 0, 0, 0.35);
+        /* Lighter bg when blur is active */
+      }
     }
 
     #stickyNav.visible {
       opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+      transition: transform 0.5s ease, opacity 0.5s ease, visibility 0s linear 0s;
     }
 
     /* Works should not appear before the header "menu" appears */
@@ -1866,7 +1889,7 @@
                   <div>ONLINE: <span id="m_online">—</span></div>
                   <div>CONNECTION: <span id="m_connection">—</span></div>
                   <div>NET_REQ: <span id="m_netRequests">0</span></div>
-                  <div>FPS: <span id="m_frameRate">—</span></div>
+                  <!-- FPS removed (unnecessary continuous work on iOS) -->
                   <div>DOM_MUTATIONS: <span id="m_domMutations">0</span></div>
                   <div>ELEMENTS_SEEN: <span id="m_elementsSeen">0</span></div>
                   <div>RESIZE_EVENTS: <span id="m_resizeEvents">0</span></div>
@@ -1959,7 +1982,7 @@
               <div>ONLINE: <span id="d_online">—</span></div>
               <div>CONNECTION: <span id="d_connection">—</span></div>
               <div>NET_REQ: <span id="d_netRequests">0</span></div>
-              <div>FPS: <span id="d_frameRate">—</span></div>
+              <!-- FPS removed (unnecessary continuous work on iOS) -->
               <div>DOM_MUTATIONS: <span id="d_domMutations">0</span></div>
               <div>ELEMENTS_SEEN: <span id="d_elementsSeen">0</span></div>
               <div>RESIZE_EVENTS: <span id="d_resizeEvents">0</span></div>
@@ -1995,8 +2018,7 @@
   <!-- ============================================== -->
   <!-- STICKY NAV: Appears after menu, hides on scroll up -->
   <!-- ============================================== -->
-  <nav id="stickyNav"
-    class="fixed top-0 left-0 right-0 z-40 bg-neutral-950/90 backdrop-blur-sm">
+  <nav id="stickyNav" class="fixed top-0 left-0 right-0 z-40 bg-neutral-950/90 backdrop-blur-sm">
     <div class="max-w-6xl mx-auto flex items-center justify-between px-5 sm:px-10 py-4">
       <a href="#works"
         class="nav-link text-xs sm:text-sm md:text-base uppercase tracking-wider transition-colors">SELÀ</a>
@@ -2047,7 +2069,7 @@
             onclick="openClock('semi-linear')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe src="meditativeclocks/clocks/semi-linear_clock/index.html"
+                <iframe loading="eager" src="meditativeclocks/clocks/semi-linear_clock/index.html"
                   class="w-full h-full pointer-events-none" title="Semi-linear Clock preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
@@ -2065,7 +2087,7 @@
             onclick="openClock('ebb-flow')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe src="meditativeclocks/clocks/the_ebb_and_flow_of_time/index.html"
+                <iframe loading="eager" src="meditativeclocks/clocks/the_ebb_and_flow_of_time/index.html"
                   class="w-full h-full pointer-events-none" title="The Ebb and Flow of Time preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
@@ -2083,7 +2105,7 @@
             onclick="openClock('past-present-future')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe src="meditativeclocks/clocks/present_past_and_future/index.html"
+                <iframe loading="eager" src="meditativeclocks/clocks/present_past_and_future/index.html"
                   class="w-full h-full pointer-events-none" title="Present, Past and Future preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
@@ -2101,7 +2123,7 @@
             onclick="openClock('hourglass')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe src="meditativeclocks/clocks/abstract_hourglass/index.html"
+                <iframe loading="eager" src="meditativeclocks/clocks/abstract_hourglass/index.html"
                   class="w-full h-full pointer-events-none" title="Abstract Hourglass preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
@@ -2119,7 +2141,7 @@
             onclick="openClock('universe')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe src="meditativeclocks/clocks/universe_clock/index.html"
+                <iframe loading="eager" src="meditativeclocks/clocks/universe_clock/index.html"
                   class="w-full h-full pointer-events-none" title="Universe Clock preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
@@ -2137,8 +2159,8 @@
             onclick="openClock('serendipity')">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe src="meditativeclocks/clocks/serendipity/index.html" class="w-full h-full pointer-events-none"
-                  title="Serendipity on Demand preview"></iframe>
+                <iframe loading="eager" src="meditativeclocks/clocks/serendipity/index.html"
+                  class="w-full h-full pointer-events-none" title="Serendipity on Demand preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
                 Serendipity on Demand
@@ -2460,7 +2482,7 @@
     <div class="about-grid about-grid--no-pic">
       <div class="about-textcol">
         <div class="about-terminal" id="aboutTerminal">
-          <iframe class="about-terminal-embed" src="about:blank" data-src="terminal-ansi-combined.html"
+          <iframe class="about-terminal-embed" loading="eager" src="about:blank" data-src="terminal-ansi-combined.html"
             title="About session terminal"></iframe>
         </div>
       </div>
@@ -2527,7 +2549,7 @@
     </button>
     <div class="w-full max-w-5xl px-4">
       <div class="w-full h-[50vh] md:h-[60vh] mx-auto mb-8 overflow-hidden">
-        <iframe id="modalIframe" src="" class="w-full h-full" title="Clock"></iframe>
+        <iframe id="modalIframe" loading="eager" src="" class="w-full h-full" title="Clock"></iframe>
       </div>
       <div class="text-center">
         <h3 id="modalTitle" class="text-2xl md:text-3xl text-white mb-4"></h3>
@@ -3549,6 +3571,22 @@
       function update() {
         track.style.transform = `translateX(-${currentIndex * 100}%)`;
         dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
+
+        // OPTIMIZATION: Hide inactive iframes to prevent iOS scroll stutter.
+        // Keeping 6 WebGL/Canvas iframes active (even off-screen) kills performance.
+        items.forEach((item, i) => {
+          const iframe = item.querySelector('iframe');
+          if (iframe) {
+            // using visibility:hidden instead of display:none to avoid full reload/flicker if possible,
+            // but display:none is more effective for GPU. Let's try visibility first combined with opacity.
+            // Actually, for maximum perf, display: none is best.
+            if (i === currentIndex) {
+              iframe.style.display = 'block';
+            } else {
+              iframe.style.display = 'none';
+            }
+          }
+        });
       }
 
       function goTo(index) {
@@ -3593,8 +3631,11 @@
       lastPointerTime: Date.now(),
       pointerVelocity: 0,
       lastScrollY: 0,
+      scrollY: 0,
+      scrollDepth: 0,
       scrollDir: null,
-      frames: [],
+      viewport: '',
+      orientation: '',
       netRequests: 0,
       maxScrollY: 0,
       clipboardEvents: 0,
@@ -3801,6 +3842,14 @@
       state.lastPointerTime = now;
 
       recordActivity();
+      scheduleHudRender();
+
+      // Decay velocity after movement stops (no per-frame loop needed).
+      if (velocityDecayTimer) window.clearTimeout(velocityDecayTimer);
+      velocityDecayTimer = window.setTimeout(() => {
+        state.pointerVelocity = 0;
+        scheduleHudRender();
+      }, 160);
     }
     document.addEventListener('mousemove', handlePointer);
     document.addEventListener('touchmove', handlePointer);
@@ -3812,6 +3861,7 @@
       state.clicks++;
       state.lastClickTime = Date.now();
       recordActivity();
+      scheduleHudRender();
     });
 
     // ==========================================
@@ -3821,6 +3871,7 @@
       state.keysPressed++;
       state.lastKey = e.key.length === 1 ? e.key : `[${e.key}]`;
       recordActivity();
+      scheduleHudRender();
     });
 
     // ==========================================
@@ -3829,14 +3880,15 @@
     document.addEventListener('touchstart', () => {
       state.touches++;
       recordActivity();
+      scheduleHudRender();
     });
 
     // ==========================================
     // CLIPBOARD
     // ==========================================
-    document.addEventListener('copy', () => { state.clipboardEvents++; recordActivity(); });
-    document.addEventListener('paste', () => { state.clipboardEvents++; recordActivity(); });
-    document.addEventListener('cut', () => { state.clipboardEvents++; recordActivity(); });
+    document.addEventListener('copy', () => { state.clipboardEvents++; recordActivity(); scheduleHudRender(); });
+    document.addEventListener('paste', () => { state.clipboardEvents++; recordActivity(); scheduleHudRender(); });
+    document.addEventListener('cut', () => { state.clipboardEvents++; recordActivity(); scheduleHudRender(); });
 
     // ==========================================
     // SELECTION
@@ -3848,6 +3900,7 @@
         state.selections++;
         state.lastSelection = text.substring(0, 30) + (text.length > 30 ? '...' : '');
         recordActivity();
+        scheduleHudRender();
       }
     });
 
@@ -3855,8 +3908,9 @@
     // VIEWPORT
     // ==========================================
     function updateViewport() {
-      setEl('viewport', `${window.innerWidth}×${window.innerHeight}`);
-      setEl('orientation', window.innerWidth > window.innerHeight ? 'LAND' : 'PORT');
+      state.viewport = `${window.innerWidth}×${window.innerHeight}`;
+      state.orientation = window.innerWidth > window.innerHeight ? 'LAND' : 'PORT';
+      scheduleHudRender();
     }
     updateViewport();
     window.addEventListener('resize', () => {
@@ -3887,18 +3941,34 @@
         state.scrollDir = '↑';
       }
       state.lastScrollY = y;
+      state.scrollY = y;
+      state.scrollDepth = depth;
 
       if (y > state.maxScrollY) {
         state.maxScrollY = y;
       }
 
-      setEl('scrollDepth', depth + '%');
-      setEl('scrollY', y + 'px');
-      setEl('scrollDir', state.scrollDir || '—');
-
       recordActivity();
+      scheduleHudRender();
     }
     document.addEventListener('scroll', updateScroll, { passive: true });
+
+    // Mark "actively scrolling" for iOS perf (temporarily disables backdrop blur on sticky nav).
+    // Like taking weight off the suspension while you’re bouncing over bumps.
+    // REMOVED: body.is-scrolling toggle was causing global style invalidation and stutter.
+    // Instead we use CSS media queries to disable backdrop-filter on touch devices.
+    /*
+    var __scrollingClassTimer = 0;
+    (function initScrollingClass() {
+      document.addEventListener('scroll', () => {
+        document.body.classList.add('is-scrolling');
+        if (__scrollingClassTimer) window.clearTimeout(__scrollingClassTimer);
+        __scrollingClassTimer = window.setTimeout(() => {
+          document.body.classList.remove('is-scrolling');
+        }, 140);
+      }, { passive: true });
+    })();
+    */
 
     // ==========================================
     // FOCUS & VISIBILITY
@@ -3963,20 +4033,10 @@
     if (desktopHud) hudResizeObserver.observe(desktopHud);
 
     // ==========================================
-    // FRAME RATE
-    // ==========================================
-    function measureFPS() {
-      const now = performance.now();
-      state.frames.push(now);
-      while (state.frames.length > 0 && state.frames[0] < now - 1000) {
-        state.frames.shift();
-      }
-      requestAnimationFrame(measureFPS);
-    }
-    requestAnimationFrame(measureFPS);
-
-    // ==========================================
-    // MAIN UPDATE LOOP
+    // HUD RENDERING
+    // - No always-on rAF loop (helps iOS scroll smoothness)
+    // - Render is event-driven + a light 1Hz tick for time-based fields
+    // - Rendering is gated to when the HUD is actually in view
     // ==========================================
     function formatTime(ms) {
       const s = Math.floor(ms / 1000);
@@ -3986,7 +4046,19 @@
       return `${hrs}:${mins}:${secs}`;
     }
 
-    function update() {
+    // NOTE: These may be referenced by earlier event setup (e.g. viewport/scroll init),
+    // so avoid TDZ by using `var` (prevents iOS/Safari from hard-crashing on early calls).
+    var hudInView = true;
+    var renderRaf = 0;
+    var velocityDecayTimer = 0;
+
+    function isHudRenderable() {
+      return hudInView && document.visibilityState === 'visible';
+    }
+
+    function renderHudNow() {
+      if (!isHudRenderable()) return;
+
       const now = Date.now();
 
       setEl('sessionTime', formatTime(now - state.startTime));
@@ -3999,9 +4071,13 @@
       setEl('clicks', state.clicks);
       setEl('keysPressed', state.keysPressed);
       setEl('touches', state.touches);
-      setEl('frameRate', state.frames.length);
       setEl('netRequests', state.netRequests);
       setEl('domMutations', state.domMutations);
+      setEl('scrollY', state.scrollY + 'px');
+      setEl('scrollDepth', state.scrollDepth + '%');
+      setEl('scrollDir', state.scrollDir || '—');
+      setEl('viewport', state.viewport || `${window.innerWidth}×${window.innerHeight}`);
+      setEl('orientation', state.orientation || (window.innerWidth > window.innerHeight ? 'LAND' : 'PORT'));
 
       // Additional dynamic data (now for both mobile and desktop)
       setEl('pointerVelocity', state.pointerVelocity + ' px/s');
@@ -4013,15 +4089,49 @@
       setEl('resizeEvents', state.resizeEvents);
       setEl('lastSelection', state.lastSelection || '—');
 
-      // Decay velocity
-      if (now - state.lastPointerTime > 100) {
-        state.pointerVelocity = Math.max(0, state.pointerVelocity - 50);
-      }
-
       updateJsHeap();
-      requestAnimationFrame(update);
     }
-    requestAnimationFrame(update);
+
+    function scheduleHudRender() {
+      if (!isHudRenderable()) return;
+      if (renderRaf) return;
+      renderRaf = requestAnimationFrame(() => {
+        renderRaf = 0;
+        renderHudNow();
+      });
+    }
+
+    // Gate rendering: HUD only.
+    // "HUD" here means the top hero HUD layer (#heroLayer).
+    (function initHudVisibilityGate() {
+      const heroLayerEl = document.getElementById('heroLayer');
+      if (!heroLayerEl || !('IntersectionObserver' in window)) return;
+
+      const io = new IntersectionObserver((entries) => {
+        const e = entries && entries[0];
+        const visible = !!(e && e.isIntersecting && e.intersectionRatio > 0.12);
+        if (visible === hudInView) return;
+        hudInView = visible;
+        // When it becomes visible again, render immediately so values "catch up".
+        if (hudInView) renderHudNow();
+      }, { threshold: [0, 0.12, 0.25, 0.5] });
+
+      io.observe(heroLayerEl);
+    })();
+
+    // Light 1Hz tick for time-based fields ("once per second").
+    window.setInterval(() => {
+      if (!isHudRenderable()) return;
+      renderHudNow();
+    }, 1000);
+
+    // If the page becomes visible again, refresh instantly.
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') renderHudNow();
+    });
+
+    // Initial paint for the HUD readout (now that render helpers exist).
+    renderHudNow();
 
     // ==========================================
     // DESKTOP HUD TOGGLE
@@ -4198,121 +4308,56 @@
     }
     setActiveNav('works');
 
-    // Gate nav/works when the sticky dissolve stage begins to "unstick".
-    // Concretely: when the bottom of #dissolve-container reaches the bottom of the viewport,
-    // the pinned stage starts moving up (reveal text finally leaves), so we can bring in nav.
-    function updateNavGate() {
-      if (!stickyNav) return;
+    // ==========================================
+    // NAV GATE & ACTIVE SECTION (Optimized via IntersectionObserver)
+    // ==========================================
+    (function initNavObservers() {
+      if (!('IntersectionObserver' in window)) return;
 
-      // If dissolve container doesn't exist for some reason, allow nav normally.
-      if (!dissolveContainer) {
-        if (!navCanShow) {
-          navCanShow = true;
-          scheduleSoftEntrance();
+      const gateObserver = new IntersectionObserver((entries) => {
+        const e = entries[0];
+        const pastReveal = !e.isIntersecting && e.boundingClientRect.top < 0;
+        if (pastReveal !== navCanShow) {
+          navCanShow = pastReveal;
+          if (navCanShow) scheduleSoftEntrance();
+          else {
+            stickyNav?.classList.remove('visible');
+            worksSection?.classList.remove('works-visible');
+          }
         }
-        return;
-      }
+      }, { threshold: 0 });
+      if (revealSection) gateObserver.observe(revealSection);
 
-      const viewportH = window.visualViewport?.height || window.innerHeight;
-      const rect = dissolveContainer.getBoundingClientRect();
+      const activeObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+            setActiveNav(entry.target.id);
+          }
+        });
+      }, { threshold: [0.3, 0.6] });
+      ['works', 'about', 'contact'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) activeObserver.observe(el);
+      });
+    })();
 
-      // Primary gate: only once the reveal message is fully ABOVE the viewport.
-      // (Then we still use scheduleSoftEntrance() to add a slight pause + soft fade.)
-      const msgRect = revealText?.getBoundingClientRect?.();
-      const afterOffscreenPx = Math.round(Math.min(24, viewportH * 0.03)); // slight pause after it disappears
-      const pastMessage = msgRect ? (msgRect.bottom < -afterOffscreenPx) : false;
-      const messageBackInView = msgRect ? (msgRect.bottom >= 0) : false;
-
-      // Fallback gate (if revealText missing): after the sticky stage begins to unstick.
-      const afterUnstickPx = Math.round(viewportH * 0.08);
-      const pastUnstick = rect.bottom <= (viewportH - afterUnstickPx);
-
-      // Prevent flapping: once we've "earned" the nav by scrolling the message away,
-      // don't turn it off again unless the message comes back into view (scrolling up).
-      const inDissolve = rect.bottom > 0 && rect.top < viewportH;
-      if (inDissolve && messageBackInView) {
-        navCanShow = false;
-        if (softEntranceTimer) window.clearTimeout(softEntranceTimer);
-        stickyNav.classList.remove('visible');
-        worksSection?.classList.remove('works-visible');
-        return;
-      }
-
-      const shouldShow = pastMessage || (!revealText && pastUnstick);
-      if (shouldShow && !navCanShow) {
-        navCanShow = true;
-        scheduleSoftEntrance();
-      }
+    function rafThrottle(fn) {
+      let raf = 0;
+      return function throttled(...args) {
+        if (raf) return;
+        raf = requestAnimationFrame(() => {
+          raf = 0;
+          fn.apply(this, args);
+        });
+      };
     }
-
-    // Run once and keep updated as you scroll/resize.
-    updateNavGate();
-    window.addEventListener('scroll', updateNavGate, { passive: true });
-    window.addEventListener('resize', updateNavGate);
-    if (window.visualViewport) window.visualViewport.addEventListener('resize', updateNavGate);
-
-    // Active nav vs scroll:
-    // Flip when the *next section's content* first comes into view from the bottom.
-    // (We track the first "real content" element inside each section so padding doesn't cause early flips.)
-    function pickContentStartEl(sectionId, sectionEl) {
-      if (!sectionEl) return null;
-      if (sectionId === 'works') {
-        return sectionEl.querySelector('article:first-of-type') || sectionEl;
-      }
-      if (sectionId === 'about') {
-        return sectionEl.querySelector('.about-grid') || sectionEl;
-      }
-      if (sectionId === 'contact') {
-        // Contact currently has a single centered container.
-        return sectionEl.querySelector('div') || sectionEl;
-      }
-      return sectionEl;
-    }
-
-    const sectionOrder = ['works', 'about', 'contact'];
-    const trackedSections = sectionOrder
-      .map(id => {
-        const sectionEl = document.getElementById(id);
-        return sectionEl ? { id, sectionEl, startEl: pickContentStartEl(id, sectionEl) } : null;
-      })
-      .filter(Boolean);
-
-    let activeRaf = 0;
-    function updateActiveNavFromScroll() {
-      activeRaf = 0;
-      if (!trackedSections.length) return;
-
-      let activeIndex = 0;
-      const triggerY = window.innerHeight - 8; // bottom-of-viewport trigger
-
-      for (let i = 0; i < trackedSections.length; i++) {
-        const startEl = trackedSections[i].startEl || trackedSections[i].sectionEl;
-        const r = startEl.getBoundingClientRect();
-        // If this section's content has entered the viewport (at/above the trigger line),
-        // it becomes the active section.
-        if (r.top <= triggerY) activeIndex = i;
-      }
-
-      setActiveNav(trackedSections[activeIndex].id);
-    }
-
-    function scheduleActiveUpdate() {
-      if (activeRaf) return;
-      activeRaf = requestAnimationFrame(updateActiveNavFromScroll);
-    }
-
-    // Run once and keep updated as you scroll/resize.
-    updateActiveNavFromScroll();
-    window.addEventListener('scroll', scheduleActiveUpdate, { passive: true });
-    window.addEventListener('resize', scheduleActiveUpdate);
-    if (window.visualViewport) window.visualViewport.addEventListener('resize', scheduleActiveUpdate);
 
     // Reveal text scroll behavior - hide when scrolled past, show when scrolled back
     const revealTextTop = revealText.getBoundingClientRect().top + window.scrollY;
     const revealTextBottom = revealTextTop + revealText.offsetHeight;
     let lastRevealScrollTop = 0;
 
-    window.addEventListener('scroll', () => {
+    function updateRevealTextVisibility() {
       const scrollTop = window.scrollY;
       const viewportThird = window.innerHeight * 0.33;
 
@@ -4343,39 +4388,112 @@
       }
 
       lastRevealScrollTop = scrollTop;
-    }, { passive: true });
+    }
+    const updateRevealTextVisibilityRaf = rafThrottle(updateRevealTextVisibility);
+    window.addEventListener('scroll', updateRevealTextVisibilityRaf, { passive: true });
 
     // Scroll handler for show/hide behavior
-    window.addEventListener('scroll', () => {
-      const scrollTop = window.scrollY;
+    // Add hysteresis so fast direction changes don't "flap" the nav on iOS.
+    // Also: on iOS, inertial/bounce scroll can briefly reverse direction — don't hide the nav unless
+    // the user is actively touching/scrolling upward (otherwise the 5s idle timer handles hiding).
+    let navLastY = window.scrollY;
+    let navLastDir = 0; // 1 down, -1 up
+    let navDirChangeY = navLastY;
+    let navShownAtMs = 0;
+    let navUserTouching = false;
 
+    window.addEventListener('touchstart', () => { navUserTouching = true; }, { passive: true });
+    window.addEventListener('touchend', () => { navUserTouching = false; }, { passive: true });
+    window.addEventListener('touchcancel', () => { navUserTouching = false; }, { passive: true });
+
+    function handleStickyNavScroll() {
+      const scrollTop = window.scrollY;
       if (!navCanShow) {
-        stickyNav.classList.remove('visible');
-        clearNavIdleTimer();
-        worksSection?.classList.remove('works-visible');
+        navLastY = scrollTop;
         lastScrollTop = scrollTop;
         return;
       }
 
-      // Scrolling down: show nav
-      if (scrollTop > lastScrollTop) {
-        stickyNav.classList.add('visible');
-        worksSection?.classList.add('works-visible');
-        resetNavIdleTimer();
+      const dy = scrollTop - navLastY;
+      if (Math.abs(dy) < 4) return;
+
+      const dir = dy > 0 ? 1 : -1;
+      if (dir !== navLastDir) {
+        navLastDir = dir;
+        navDirChangeY = scrollTop;
       }
-      // Scrolling up: hide nav
-      else {
+
+      const hysteresisPx = 24;
+      if (Math.abs(scrollTop - navDirChangeY) < hysteresisPx) {
+        navLastY = scrollTop;
+        lastScrollTop = scrollTop;
+        return;
+      }
+
+      if (dir > 0) {
+        if (!stickyNav.classList.contains('visible')) {
+          stickyNav.classList.add('visible');
+          worksSection?.classList.add('works-visible');
+          navShownAtMs = Date.now();
+        }
+        resetNavIdleTimer();
+      } else {
+        const recentlyShown = navShownAtMs && (Date.now() - navShownAtMs < 450);
+        const isCoarsePointer = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+        // Touch devices: don't hide during inertia/bounce unless the user is actively swiping.
+        // Desktop: allow hide on scroll-up.
+        if (recentlyShown || (isCoarsePointer && !navUserTouching)) {
+          navLastY = scrollTop;
+          lastScrollTop = scrollTop;
+          return;
+        }
         stickyNav.classList.remove('visible');
         clearNavIdleTimer();
       }
 
+      navLastY = scrollTop;
       lastScrollTop = scrollTop;
+    }
+    const handleStickyNavScrollRaf = rafThrottle(handleStickyNavScroll);
+    window.addEventListener('scroll', handleStickyNavScrollRaf, { passive: true });
+
+    // ==========================================
+    // CAROUSEL INITIALIZATION
+    // ==========================================
+    const carouselTrack = document.getElementById('carouselTrack');
+    const dots = Array.from(document.querySelectorAll('.carousel-dot'));
+    let currentSlide = 0;
+    const totalSlides = dots.length;
+
+    function updateCarousel() {
+      if (!carouselTrack) return;
+      carouselTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+      dots.forEach((dot, i) => dot.classList.toggle('bg-white', i === currentSlide));
+      dots.forEach((dot, i) => dot.classList.toggle('bg-neutral-700', i !== currentSlide));
+    }
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        currentSlide = parseInt(dot.dataset.index);
+        updateCarousel();
+      });
+    });
+
+    let touchStartX = 0;
+    carouselTrack?.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
     }, { passive: true });
 
-    // Also auto-hide after inactivity (not just scroll direction).
-    ['mousemove', 'pointerdown', 'keydown', 'touchstart', 'scroll'].forEach((type) => {
-      window.addEventListener(type, resetNavIdleTimer, { passive: true });
-    });
+    carouselTrack?.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      if (touchStartX - touchEndX > 50 && currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateCarousel();
+      } else if (touchEndX - touchStartX > 50 && currentSlide > 0) {
+        currentSlide--;
+        updateCarousel();
+      }
+    }, { passive: true });
 
     // ==========================================
     // CROSS-DISSOLVE: Hero → Reveal (scroll-driven)
@@ -4480,13 +4598,49 @@
       handleDissolve();
     }
 
-    window.addEventListener('resize', onDissolveResize);
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', onDissolveResize);
-    }
-    window.addEventListener('scroll', handleDissolve, { passive: true });
+    // DEBUG: Cross-dissolve disabled for scroll performance isolation.
+    // NOTE: On iOS, `visualViewport.resize` can fire during scroll (URL bar collapse),
+    // which makes the dissolve "feel" like it's still running even without a scroll listener.
+    // window.addEventListener('resize', onDissolveResize);
+    // if (window.visualViewport) {
+    //   window.visualViewport.addEventListener('resize', onDissolveResize);
+    // }
+    const handleDissolveRaf = rafThrottle(handleDissolve);
+    // DEBUG: Cross-dissolve disabled for scroll performance isolation.
+    // window.addEventListener('scroll', handleDissolveRaf, { passive: true });
     updateDissolveMetrics();
     handleDissolve(); // Initial state
+
+    // OPTIMIZATION: Detach hero scroll listeners when out of view to free up main thread
+    if ('IntersectionObserver' in window && dissolveContainer) {
+      const heroObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const isVisible = entry.isIntersecting;
+          if (isVisible) {
+            // Re-attach if entering (idempotent)
+            // DEBUG: Cross-dissolve disabled for scroll performance isolation.
+            // window.addEventListener('scroll', handleDissolveRaf, { passive: true });
+            window.addEventListener('scroll', updateRevealTextVisibilityRaf, { passive: true });
+            // Sync states
+            // DEBUG: Cross-dissolve disabled for scroll performance isolation.
+            // handleDissolve();
+            updateRevealTextVisibility();
+          } else {
+            // Detach if leaving
+            window.removeEventListener('scroll', handleDissolveRaf);
+            window.removeEventListener('scroll', updateRevealTextVisibilityRaf);
+
+            // If scrolled past (top < 0), ensure final states
+            if (entry.boundingClientRect.top < 0) {
+              heroLayer.style.opacity = '0';
+              revealLayer.style.opacity = '1';
+              revealLayer.classList.add('active');
+            }
+          }
+        });
+      }, { rootMargin: '200px 0px 200px 0px' });
+      heroObserver.observe(dissolveContainer);
+    }
   </script>
 </body>
 

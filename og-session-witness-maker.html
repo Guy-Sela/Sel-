@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OG Template — Session Witness (SVG)</title>
+    <!-- MoMA/Tate style fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500&family=Space+Grotesk:wght@300;400;500&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            font-family: system-ui, sans-serif;
+            color: #eee;
+        }
+
+        h1 {
+            font-size: 14px;
+            font-weight: 400;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .stage {
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 600px;
+        }
+
+        svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: #222;
+            color: #eee;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #333;
+        }
+
+        .note {
+            margin-top: 20px;
+            font-size: 12px;
+            opacity: 0.5;
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>OG Template — 1200×630 (SVG → PNG)</h1>
+
+    <div class="stage">
+        <svg id="ogSvg" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Radial gradient background -->
+                <radialGradient id="bgGrad" cx="30%" cy="40%" r="80%">
+                    <stop offset="0%" stop-color="#1a1a24" />
+                    <stop offset="50%" stop-color="#0f0f16" />
+                    <stop offset="100%" stop-color="#06060a" />
+                </radialGradient>
+
+                <!-- Gold glow filter -->
+                <filter id="goldGlow" x="-100%" y="-100%" width="300%" height="300%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur1" />
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="16" result="blur2" />
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="32" result="blur3" />
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="48" result="blur4" />
+                    <feMerge>
+                        <feMergeNode in="blur4" />
+                        <feMergeNode in="blur3" />
+                        <feMergeNode in="blur2" />
+                        <feMergeNode in="blur1" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="1200" height="630" fill="url(#bgGrad)" />
+
+            <!-- Content block (JS will precisely vertical-center this group) -->
+            <g id="contentGroup" transform="translate(0 0)">
+                <!-- Brand -->
+                <text id="brandText" x="100" y="0" font-family="'Josefin Sans', sans-serif" font-size="110"
+                    font-weight="300" fill="#ffffff" letter-spacing="2" dominant-baseline="text-before-edge">SELÀ</text>
+
+                <!-- Tagline prefix -->
+                <text id="taglinePrefix" x="100" y="140" font-family="'JetBrains Mono', monospace" font-size="28"
+                    font-weight="400" fill="#ffffff" fill-opacity="0.75" letter-spacing="1"
+                    dominant-baseline="text-before-edge">❯ code for </text>
+
+                <!-- Glowing word: consciousness (fixed x like before) -->
+                <text id="glowGold" x="295" y="140" font-family="'JetBrains Mono', monospace" font-size="28"
+                    font-weight="400" fill="#d4b07a" letter-spacing="1" filter="url(#goldGlow)"
+                    dominant-baseline="text-before-edge">consciousness</text>
+
+                <text id="glowWhite" x="295" y="140" font-family="'JetBrains Mono', monospace" font-size="28"
+                    font-weight="400" fill="#ffffff" letter-spacing="1"
+                    dominant-baseline="text-before-edge">consciousness</text>
+            </g>
+        </svg>
+    </div>
+
+    <div class="actions">
+        <button id="downloadPng">Download PNG</button>
+        <button id="downloadSvg">Download SVG</button>
+    </div>
+
+    <p class="note">
+        Edit the SVG directly in the HTML to change text, fonts, positions, and colors.<br>
+        PNG export renders at 2x (2400×1260) then scales to 1200×630 for maximum crispness.
+    </p>
+
+    <script>
+        function layoutSvg() {
+            const group = document.getElementById('contentGroup');
+            if (!group) return;
+
+            // Precisely vertical-center the whole content group in the 1200×630 viewBox
+            // (bbox is in SVG user units; transform is applied after measurement)
+            const bbox = group.getBBox();
+            const targetCenterY = 630 / 2;
+            const currentCenterY = bbox.y + bbox.height / 2;
+            const dy = targetCenterY - currentCenterY;
+            group.setAttribute('transform', `translate(0 ${dy.toFixed(3)})`);
+        }
+
+        // Wait for webfonts so bbox/length measurements are accurate
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => requestAnimationFrame(layoutSvg));
+        } else {
+            window.addEventListener('load', () => requestAnimationFrame(layoutSvg));
+        }
+
+        // Download as PNG (high-res)
+        document.getElementById('downloadPng').addEventListener('click', async () => {
+            if (document.fonts && document.fonts.ready) await document.fonts.ready;
+            layoutSvg();
+            const svg = document.getElementById('ogSvg');
+            const svgData = new XMLSerializer().serializeToString(svg);
+
+            // Create a canvas at 2x resolution
+            const canvas = document.createElement('canvas');
+            canvas.width = 2400;
+            canvas.height = 1260;
+            const ctx = canvas.getContext('2d');
+
+            // Load SVG as image
+            const img = new Image();
+            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+
+            img.onload = () => {
+                // Draw at 2x
+                ctx.drawImage(img, 0, 0, 2400, 1260);
+                URL.revokeObjectURL(url);
+
+                // Downscale to 1200x630
+                const finalCanvas = document.createElement('canvas');
+                finalCanvas.width = 1200;
+                finalCanvas.height = 630;
+                const finalCtx = finalCanvas.getContext('2d');
+                finalCtx.imageSmoothingEnabled = true;
+                finalCtx.imageSmoothingQuality = 'high';
+                finalCtx.drawImage(canvas, 0, 0, 1200, 630);
+
+                const link = document.createElement('a');
+                link.download = 'session-witness-og-1200x630.png';
+                link.href = finalCanvas.toDataURL('image/png');
+                link.click();
+            };
+
+            img.src = url;
+        });
+
+        // Download as SVG
+        document.getElementById('downloadSvg').addEventListener('click', () => {
+            layoutSvg();
+            const svg = document.getElementById('ogSvg');
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const link = document.createElement('a');
+            link.download = 'session-witness-og.svg';
+            link.href = URL.createObjectURL(blob);
+            link.click();
+        });
+    </script>
+
+</body>
+
+</html>

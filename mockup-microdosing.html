@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microdosing on Enlightenment - Mockup</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #050507;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+body::before {
+      content: '';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 900px;
+      height: 600px;
+      transform: translate(-50%, -40%);
+      background: radial-gradient(ellipse at center,
+          rgba(176, 152, 112, 0.25) 0%,
+          rgba(138, 112, 80, 0.12) 30%,
+          rgba(80, 60, 40, 0.05) 60%,
+          transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+body::after {
+      content: '';
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40%;
+      background: linear-gradient(to top,
+          rgba(30, 25, 20, 0.9) 0%,
+          rgba(20, 18, 15, 0.5) 40%,
+          transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .swiper {
+      width: 100%;
+      max-width: 1200px;
+      padding: 60px 0 80px;
+      overflow: visible;
+      position: relative;
+      z-index: 1;
+    }
+
+    .swiper-wrapper {
+      padding-bottom: 120px;
+    }
+
+    .swiper-slide {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+
+.phone-frame::before {
+      content: '';
+      position: absolute;
+      top: calc(100% + 10px);
+      left: -20%;
+      width: 140%;
+      height: 60px;
+      background: radial-gradient(ellipse at center,
+          rgba(200, 170, 120, 0.6) 0%,
+          rgba(160, 130, 90, 0.35) 30%,
+          transparent 70%);
+      border-radius: 50%;
+      filter: blur(12px);
+      pointer-events: none;
+    }
+
+    .phone-frame {
+      width: 220px;
+      height: 476px;
+      background: linear-gradient(160deg, #b09870 0%, #8a7050 100%);
+      border-radius: 32px;
+      padding: 4px;
+      box-shadow: 8px 12px 24px rgba(0, 0, 0, 0.5);
+      position: relative;
+      border: 1px solid #a89060;
+    }
+
+    .phone-bezel {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      border-radius: 28px;
+      padding: 2px;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #1a1a22 0%, #0f0f14 100%);
+      border-radius: 26px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+.dynamic-island {
+      width: 70px;
+      height: 22px;
+      background: #000;
+      border-radius: 11px;
+      margin: 12px auto 0;
+      flex-shrink: 0;
+    }
+
+.home-indicator {
+      width: 75px;
+      height: 3px;
+      background: #888;
+      border-radius: 2px;
+      margin: auto auto 10px;
+      flex-shrink: 0;
+    }
+
+.screen-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+.entry-screen .screen-content {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .entry-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .entry-logo svg {
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+    }
+
+    .entry-title {
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      margin-bottom: 40px;
+      line-height: 1.4;
+    }
+
+    .entry-glow {
+      color: #ffffff;
+      text-shadow:
+        0 0 8px rgba(212, 176, 122, 0.8),
+        0 0 20px rgba(212, 176, 122, 0.7),
+        0 0 40px rgba(212, 176, 122, 0.6),
+        0 0 70px rgba(212, 176, 122, 0.5),
+        0 0 100px rgba(212, 176, 122, 0.4),
+        0 0 140px rgba(212, 176, 122, 0.3);
+    }
+
+    .entry-btn {
+      width: 80px;
+      height: 80px;
+      border: 2px solid #5a5a70;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .entry-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #8a8aa0;
+    }
+
+.gong-screen .screen-content {
+      padding-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .gong-time {
+      color: #fff;
+      font-size: 40px;
+      font-weight: 200;
+      text-align: center;
+      margin-bottom: 2px;
+    }
+
+    .gong-date {
+      color: #a0a0a0;
+      font-size: 10px;
+      text-align: center;
+      margin-bottom: 0;
+    }
+
+    .gong-main-block {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+
+    .gong-notification {
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      padding: 8px 0 20px;
+      margin-bottom: 0;
+      text-align: center;
+    }
+
+    .gong-icon-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+
+    .gong-icon-main {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .gong-body {
+      color: #c0c0c0;
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+
+    .gong-input-label {
+      color: #d0d0d0;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      margin-bottom: 14px;
+      margin-top: 8px;
+      margin-left: 12px;
+    }
+
+    .gong-input-wrap {
+      position: relative;
+      margin-bottom: 0;
+    }
+
+    .gong-input-icon {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      opacity: 0.7;
+    }
+
+    .gong-input {
+      width: 100%;
+      background: rgba(35, 35, 42, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      padding: 12px;
+      color: #a0a0a0;
+      font-size: 9px;
+      font-family: inherit;
+      resize: none;
+      height: 72px;
+    }
+
+    .gong-submit {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 10px;
+      padding: 12px;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+.moments-screen .screen-content {
+      padding-top: 8px;
+    }
+
+    .moments-title {
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .moments-timer {
+      width: 36px;
+      height: 36px;
+      border: 2.5px solid #3a3a45;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .moments-timer::before {
+      content: '';
+      position: absolute;
+      inset: -2.5px;
+      border: 2.5px solid transparent;
+      border-top-color: #7a7a90;
+      border-radius: 50%;
+      transform: rotate(-30deg);
+    }
+
+    .moments-timer-text {
+      color: #a0a0a0;
+      font-size: 8px;
+      font-weight: 500;
+    }
+
+    .moment-card {
+      background: rgba(35, 35, 42, 0.95);
+      border: 0.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .moment-card.active {
+      background: rgba(45, 45, 55, 0.98);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .moment-card.pending {
+      opacity: 0.7;
+      border-style: dashed;
+    }
+
+    .moment-dot {
+      width: 10px;
+      height: 10px;
+      background: #4a4a60;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .moment-card.active .moment-dot {
+      background: #7a7aa0;
+    }
+
+    .moment-card.pending .moment-dot {
+      background: transparent;
+      border: 1px dashed #4a4a60;
+    }
+
+    .moment-info {
+      flex: 1;
+    }
+
+    .moment-time {
+      color: #909090;
+      font-size: 7px;
+      margin-bottom: 4px;
+    }
+
+    .moment-text {
+      color: #e8e8e8;
+      font-size: 9px;
+    }
+
+    .moment-card.active .moment-text {
+      color: #fff;
+    }
+
+    .moment-card.pending .moment-text {
+      color: #909090;
+      font-style: italic;
+    }
+
+    .moments-progress {
+      margin-top: auto;
+      padding-top: 16px;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: #2a2a35;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #7a7a90;
+      border-radius: 2px;
+      width: 66%;
+    }
+
+    .progress-text {
+      color: #808080;
+      font-size: 7px;
+      text-align: center;
+    }
+
+.insight-screen .screen-content {
+      padding-top: 8px;
+    }
+
+    .insight-title {
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .insight-diagram {
+      position: relative;
+      height: 90px;
+      margin-bottom: 16px;
+    }
+
+    .insight-card {
+      background: rgba(30, 30, 38, 0.98);
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .insight-quote {
+      color: #f0f0f0;
+      font-family: Georgia, 'New York', serif;
+      font-size: 10px;
+      font-style: italic;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .insight-date {
+      color: #808080;
+      font-size: 7px;
+      letter-spacing: 0.1em;
+    }
+
+    .insight-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .insight-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 10px;
+      padding: 12px;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+.completion-screen .screen-content {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 32px;
+    }
+
+    .completion-message {
+      color: #c0c0c8;
+      font-family: Georgia, 'New York', serif;
+      font-size: 16px;
+      font-style: italic;
+      line-height: 1.7;
+      letter-spacing: 0.02em;
+    }
+
+.swiper-pagination-bullet {
+      background: #4a4a60;
+      opacity: 1;
+    }
+
+    .swiper-pagination-bullet-active {
+      background: #a08968;
+    }
+
+.screen-label {
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #d0d0d0;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="swiper">
+    <div class="swiper-wrapper">
+
+<div class="swiper-slide">
+        <div class="phone-frame">
+          <div class="phone-bezel">
+            <div class="phone-screen entry-screen">
+              <div class="dynamic-island"></div>
+              <div class="screen-content">
+                <div class="entry-logo">
+                  <svg width="60" height="60" viewBox="0 0 32 32" fill="none">
+                    <path d="M4 28 L8 8 L24 8 L28 28" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round"
+                      fill="none" />
+                    <line x1="6" y1="8" x2="26" y2="8" stroke="#c9a86c" stroke-width="2" stroke-linecap="round" />
+                    <path d="M16 8 L16 11" stroke="#c9a86c" stroke-width="1" stroke-linecap="round" />
+                    <circle cx="16" cy="18" r="7" fill="url(#gongGradEntry)" />
+                    <circle cx="16" cy="18" r="2.4" fill="url(#gongCenterEntry)" />
+                    <defs>
+                      <radialGradient id="gongCenterEntry" cx="50%" cy="50%">
+                        <stop offset="0%" stop-color="#0a0a0c" />
+                        <stop offset="70%" stop-color="#1a1510" />
+                        <stop offset="100%" stop-color="#3a2a18" />
+                      </radialGradient>
+                      <radialGradient id="gongGradEntry" cx="40%" cy="35%">
+                        <stop offset="0%" stop-color="#d4b07a" />
+                        <stop offset="70%" stop-color="#a07840" />
+                        <stop offset="100%" stop-color="#806030" />
+                      </radialGradient>
+                    </defs>
+                  </svg>
+                </div>
+                <div class="entry-title">MICRODOSING ON <span class="entry-glow">ENLIGHTENMENT</span></div>
+                <div class="entry-btn">GO</div>
+              </div>
+              <div class="home-indicator"></div>
+            </div>
+          </div>
+          <span class="screen-label">START</span>
+        </div>
+      </div>
+
+<div class="swiper-slide">
+        <div class="phone-frame">
+          <div class="phone-bezel">
+            <div class="phone-screen gong-screen">
+              <div class="dynamic-island"></div>
+              <div class="screen-content">
+                <div class="gong-time" id="gongTime">--:--</div>
+                <div class="gong-date" id="gongDate">---</div>
+
+                <div class="gong-main-block">
+                  <div class="gong-notification">
+                    <div class="gong-icon-wrap">
+                      <svg class="gong-icon-main" width="28" height="28" viewBox="0 0 32 32" fill="none">
+                        <path d="M4 28 L8 8 L24 8 L28 28" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round"
+                          fill="none" />
+                        <line x1="6" y1="8" x2="26" y2="8" stroke="#c9a86c" stroke-width="2" stroke-linecap="round" />
+                        <path d="M16 8 L16 11" stroke="#c9a86c" stroke-width="1" stroke-linecap="round" />
+                        <circle cx="16" cy="18" r="7" fill="url(#gongGradMain)" />
+                        <circle cx="16" cy="18" r="2.2" fill="url(#gongCenterMain)" />
+                        <defs>
+                          <radialGradient id="gongCenterMain" cx="50%" cy="50%">
+                            <stop offset="0%" stop-color="#0a0a0c" />
+                            <stop offset="70%" stop-color="#1a1510" />
+                            <stop offset="100%" stop-color="#3a2a18" />
+                          </radialGradient>
+                          <radialGradient id="gongGradMain" cx="40%" cy="35%">
+                            <stop offset="0%" stop-color="#d4b07a" />
+                            <stop offset="70%" stop-color="#a07840" />
+                            <stop offset="100%" stop-color="#806030" />
+                          </radialGradient>
+                        </defs>
+                      </svg>
+                    </div>
+                    <div class="gong-body">Wake up, Neo...</div>
+                  </div>
+
+                  <div class="gong-input-label">WHAT DO YOU NOTICE?</div>
+                  <div class="gong-input-wrap">
+                    <svg class="gong-input-icon" width="12" height="12" viewBox="0 0 24 24" fill="none">
+                      <rect x="9" y="2" width="6" height="12" rx="3" fill="#c9a86c" />
+                      <path d="M5 11v1a7 7 0 0 0 14 0v-1" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round" />
+                      <line x1="12" y1="19" x2="12" y2="22" stroke="#c9a86c" stroke-width="1.5"
+                        stroke-linecap="round" />
+                      <line x1="8" y1="22" x2="16" y2="22" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                    <textarea class="gong-input">The light feels different today...</textarea>
+                  </div>
+                </div>
+                <button class="gong-submit">Save Insight</button>
+              </div>
+              <div class="home-indicator"></div>
+            </div>
+          </div>
+          <span class="screen-label">GONG</span>
+        </div>
+      </div>
+
+<div class="swiper-slide">
+        <div class="phone-frame">
+          <div class="phone-bezel">
+            <div class="phone-screen moments-screen">
+              <div class="dynamic-island"></div>
+              <div class="screen-content">
+                <div class="moments-title">Today's Insights</div>
+
+                <div class="moments-timer">
+                  <span class="moments-timer-text">6h</span>
+                </div>
+
+                <div class="moment-card">
+                  <div class="moment-dot"></div>
+                  <div class="moment-info">
+                    <div class="moment-time" id="moment1Time">9:41 AM</div>
+                    <div class="moment-text" id="moment1Text">Noticed the silence</div>
+                  </div>
+                </div>
+
+                <div class="moment-card active">
+                  <div class="moment-dot"></div>
+                  <div class="moment-info">
+                    <div class="moment-time" id="moment2Time">2:17 PM</div>
+                    <div class="moment-text" id="moment2Text">Breath felt different</div>
+                  </div>
+                </div>
+
+                <div class="moment-card pending">
+                  <div class="moment-dot"></div>
+                  <div class="moment-info">
+                    <div class="moment-time">—</div>
+                    <div class="moment-text">Awaiting next gong...</div>
+                  </div>
+                </div>
+
+                <div class="moments-progress">
+                  <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                  </div>
+                  <div class="progress-text">2 of 3 insights</div>
+                </div>
+              </div>
+              <div class="home-indicator"></div>
+            </div>
+          </div>
+          <span class="screen-label">COLLECT</span>
+        </div>
+      </div>
+
+<div class="swiper-slide">
+        <div class="phone-frame">
+          <div class="phone-bezel">
+            <div class="phone-screen insight-screen">
+              <div class="dynamic-island"></div>
+              <div class="screen-content">
+                <div class="insight-title">Microdose on <span class="entry-glow">Enlightenment</span></div>
+
+                <div class="insight-diagram">
+                  <svg width="100%" height="100%" viewBox="0 0 180 90" fill="none">
+                    <line x1="35" y1="15" x2="145" y2="15" stroke="#4a4a60" stroke-width="1" />
+                    <line x1="145" y1="15" x2="90" y2="75" stroke="#4a4a60" stroke-width="1" />
+                    <line x1="90" y1="75" x2="35" y2="15" stroke="#4a4a60" stroke-width="1" />
+                    <circle cx="35" cy="15" r="10" fill="#252535" stroke="#5a5a70" stroke-width="1" />
+                    <circle cx="145" cy="15" r="10" fill="#252535" stroke="#5a5a70" stroke-width="1" />
+                    <circle cx="90" cy="75" r="10" fill="#252535" stroke="#5a5a70" stroke-width="1" />
+                    <circle cx="90" cy="35" r="20" fill="url(#insightGlow)" opacity="0.8" />
+                    <circle cx="90" cy="35" r="6" fill="#fef3c7" />
+                    <circle cx="90" cy="35" r="4" fill="#fff" />
+                    <defs>
+                      <radialGradient id="insightGlow">
+                        <stop offset="0%" stop-color="#fef3c7" stop-opacity="0.8" />
+                        <stop offset="100%" stop-color="#fef3c7" stop-opacity="0" />
+                      </radialGradient>
+                    </defs>
+                  </svg>
+                </div>
+
+                <div class="insight-card">
+                  <div class="insight-quote" id="insightQuote">
+                    "Stillness isn't the absence of sound—it's presence itself."
+                  </div>
+                  <div class="insight-date" id="insightDate">---</div>
+                </div>
+
+                <div class="insight-buttons">
+                  <button class="insight-btn">Save</button>
+                  <button class="insight-btn">Share</button>
+                </div>
+              </div>
+              <div class="home-indicator"></div>
+            </div>
+          </div>
+          <span class="screen-label">CONNECT</span>
+        </div>
+      </div>
+
+<div class="swiper-slide">
+        <div class="phone-frame">
+          <div class="phone-bezel">
+            <div class="phone-screen completion-screen">
+              <div class="dynamic-island"></div>
+              <div class="screen-content">
+                <div class="completion-message" id="completionMessage">
+                  Congrats, you're now a tiny step closer to <span class="entry-glow">enlightenment</span>.
+                </div>
+              </div>
+              <div class="home-indicator"></div>
+            </div>
+          </div>
+          <span class="screen-label">✧</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+const swiper = new Swiper('.swiper', {
+      effect: 'coverflow',
+      grabCursor: true,
+      centeredSlides: true,
+      slidesPerView: 3,
+      initialSlide: 1,
+      loop: false,
+      coverflowEffect: {
+        rotate: 35,
+        stretch: 0,
+        depth: 350,
+        modifier: 1,
+        scale: 0.85,
+        slideShadows: false,
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      keyboard: {
+        enabled: true,
+      },
+    });
+
+function updateDateTime() {
+      const now = new Date();
+
+const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const timeStr = `${hours}:${minutes}`;
+
+const dateStr = now.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric'
+      });
+
+const insightDateStr = now.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      }).toUpperCase();
+
+const gongTime = document.getElementById('gongTime');
+      const gongDate = document.getElementById('gongDate');
+      const insightDate = document.getElementById('insightDate');
+
+      if (gongTime) gongTime.textContent = timeStr;
+      if (gongDate) gongDate.textContent = dateStr;
+      if (insightDate) insightDate.textContent = insightDateStr;
+    }
+
+updateDateTime();
+    setInterval(updateDateTime, 60000);
+  </script>
+</body>
+
+</html>

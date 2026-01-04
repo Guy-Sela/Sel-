@@ -932,6 +932,10 @@
        Typography: fluid, magazine-like scale (Squarespace-style)
        Applied ONLY to main site sections (not the HUD).
        ========================================== */
+    html, body {
+      overflow-x: hidden;
+    }
+
     body {
       font-size: clamp(16px, 0.7vw + 14px, 19px);
       line-height: 1.65;
@@ -1537,11 +1541,19 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 2.5rem;
+      gap: 1.75rem;
     }
 
     .contact-newsletter {
       text-align: center;
+      width: 100%;
+      margin-bottom: 3vh;
+    }
+
+    @media (max-width: 480px) {
+      .contact-newsletter {
+        margin-bottom: 0;
+      }
     }
 
     .contact-heading {
@@ -1682,28 +1694,22 @@
 
     .contact-direct {
       display: flex;
-      justify-content: center;
-      gap: 2rem;
+      justify-content: space-between;
+      width: 100%;
     }
 
     .contact-link {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      gap: 0.6rem;
-      padding: 1.25rem 1.5rem;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
       text-decoration: none;
-      transition: all 0.25s ease;
-      min-width: 120px;
+      transition: opacity 0.2s ease;
     }
 
     .contact-link:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.2);
-      transform: translateY(-2px);
+      opacity: 0.8;
     }
 
     .contact-icon {
@@ -1731,14 +1737,8 @@
     @media (max-width: 480px) {
       .contact-direct {
         flex-direction: column;
+        align-items: center;
         gap: 1rem;
-      }
-
-      .contact-link {
-        flex-direction: row;
-        justify-content: center;
-        min-width: unset;
-        padding: 1rem 1.5rem;
       }
     }
 

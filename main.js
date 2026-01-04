@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', function() {
     // Year
     const yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());
@@ -106,6 +107,9 @@
 
       return false;
     }
+
+    // Expose to global scope for onsubmit handler
+    window.handleNewsletterSubmit = handleNewsletterSubmit;
 
     // ==========================================
     // Microdosing Swiper Carousel
@@ -982,6 +986,10 @@
         document.body.style.paddingRight = clockModalPrevBodyPaddingRight;
       }, 320);
     }
+
+    // Expose to global scope for onclick handlers
+    window.openClock = openClock;
+    window.closeClock = closeClock;
 
     (function initClockModal() {
       const modal = document.getElementById('clockModal');
@@ -2132,3 +2140,4 @@
       // Fallback: if IO isn't available, keep it simple.
       attachDissolveScroll();
     }
+});

@@ -1,0 +1,37 @@
+const slides = document.querySelectorAll('.slide');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const currentEl = document.getElementById('current');
+const total = slides.length;
+
+let current = 0;
+
+function showSlide(index) {
+  // Stop all videos
+  slides.forEach(slide => {
+    slide.classList.remove('active');
+    slide.querySelector('video').pause();
+  });
+
+  // Show new slide
+  current = (index + total) % total;
+  const activeSlide = slides[current];
+  activeSlide.classList.add('active');
+  activeSlide.querySelector('video').play();
+
+  // Update counter
+  currentEl.textContent = current + 1;
+}
+
+// Arrow clicks
+prevBtn.addEventListener('click', () => showSlide(current - 1));
+nextBtn.addEventListener('click', () => showSlide(current + 1));
+
+// Keyboard
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') showSlide(current - 1);
+  if (e.key === 'ArrowRight') showSlide(current + 1);
+});
+
+// Start first video
+slides[0].querySelector('video').play();

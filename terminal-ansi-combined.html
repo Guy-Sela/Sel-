@@ -161,20 +161,22 @@
       align-items: center;
       justify-content: center;
       padding: 0;
+      /* Isolate paint from parent (iOS stability, but NOT size containment) */
+      contain: layout paint;
     }
 
     .ansi-art {
       white-space: pre;
-      /* Keep ANSI portrait in the same mono family for continuity */
       font-family: 'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace;
-      /* Will be set dynamically: start at terminal font-size then shrink via transform */
       font-size: 10px;
       line-height: 10px;
-      /* Center origin for smooth scaling */
       transform-origin: center center;
       will-change: transform;
       color: #fff;
       overflow: visible;
+      /* Prevent iOS text size inflation */
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
 
     .ansi-cursor {
@@ -237,14 +239,16 @@
       function start() {
         if (started) return;
         started = true;
-        if (document.fonts && document.fonts.ready) {
-          document.fonts.ready.then(() => {
-            if (reduce) runReduce();
-            else run().catch(() => { });
-          });
-        } else {
+        
+        function doStart() {
           if (reduce) runReduce();
           else run().catch(() => { });
+        }
+        
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(doStart);
+        } else {
+          doStart();
         }
       }
 
@@ -416,7 +420,7 @@
       }
 
       // ------------------------------
-      // Fit ANSI art in its box (scale)
+      // Fit ANSI art in its box (font-size based, not transform)
       // ------------------------------
       function alignAnsiToTextColumn(centered) {
         // Always centered now for smooth zoom-to-fit
@@ -425,7 +429,7 @@
 
       function computeAnsiFitScale() {
         const stage = ansiStage || ansiEl.parentElement;
-        if (!stage) return;
+        if (!stage) return 0.2;
         const pad = 16;
         const availW = Math.max(120, stage.clientWidth - pad);
         const availH = Math.max(120, stage.clientHeight - pad);
@@ -470,14 +474,17 @@
         c.parentNode.replaceChild(newCursor, c);
       }
 
+      // Debounced resize: avoid iOS scroll-triggered jitter from URL bar changes.
+      // visualViewport resize is intentionally NOT listened to — it fires mid-scroll on iOS.
+      let resizeTimer = 0;
       window.addEventListener('resize', () => {
-        const s = computeAnsiFitScale();
-        if (typeof s === 'number') fitAnsiToScale(s);
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          resizeTimer = 0;
+          const s = computeAnsiFitScale();
+          if (typeof s === 'number') fitAnsiToScale(s);
+        }, 150);
       }, { passive: true });
-      if (window.visualViewport) window.visualViewport.addEventListener('resize', () => {
-        const s = computeAnsiFitScale();
-        if (typeof s === 'number') fitAnsiToScale(s);
-      });
 
       // ------------------------------
       // ANSI animation:
@@ -534,11 +541,10 @@
 
         // Compute scale to fit current content (only shrink when needed)
         function computeLiveScale() {
-          const contentW = (maxCols + 2) * cw; // +2 for cursor + margin
+          const contentW = (maxCols + 2) * cw;
           const contentH = rows * ch;
           const scaleW = availW / contentW;
           const scaleH = availH / contentH;
-          // Only scale down when content exceeds viewport, no preemptive shrink
           return Math.min(1, scaleW, scaleH);
         }
 
@@ -710,11 +716,6 @@
         }
 
         const html = ansiToHtml(ansiRaw);
-        // Start ANSI at the same font size as the terminal text, then shrink via transform as it draws.
-        const typedLineEl = document.querySelector('.typedline');
-        const typedFontPx = typedLineEl ? parseFloat(getComputedStyle(typedLineEl).fontSize || '16') : 16;
-        ansiEl.style.fontSize = `${typedFontPx}px`;
-        ansiEl.style.lineHeight = `${typedFontPx}px`;
 
         // Always centered from the start for smooth scaling
         alignAnsiToTextColumn(true);

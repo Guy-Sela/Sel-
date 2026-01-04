@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chevron Edge Glow (Outline Blur)</title>
+  <style>
+    body {
+      background: #111;
+      color: #ccc;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px;
+    }
+    canvas {
+      border: 1px solid #333;
+      background: #000;
+      margin-bottom: 16px;
+    }
+    .controls {
+      background: #222;
+      padding: 16px;
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 340px;
+    }
+    label { font-size: 12px; margin-bottom: 4px; display: block; }
+    input[type="range"] { width: 100%; }
+    input[type="color"] { width: 100%; height: 32px; border: none; }
+  </style>
+</head>
+<body>
+
+<canvas id="c" width="512" height="512"></canvas>
+
+<div class="controls">
+  <div>
+    <label>Stroke Width (outline %)</label>
+    <input type="range" id="stroke" min="2" max="50" value="18">
+  </div>
+  <div>
+    <label>Glow Blur</label>
+    <input type="range" id="blur" min="0" max="300" value="90">
+  </div>
+  <div>
+    <label>Glow Intensity (passes)</label>
+    <input type="range" id="passes" min="1" max="20" value="6">
+  </div>
+  <div>
+    <label>Glow Color</label>
+    <input type="color" id="color" value="#ffbe55">
+  </div>
+  <div>
+    <label>Glow Opacity</label>
+    <input type="range" id="opacity" min="0" max="1" step="0.05" value="0.75">
+  </div>
+</div>
+
+<script>
+  const c = document.getElementById('c');
+  const ctx = c.getContext('2d');
+  const pathString = "M985 711 440 0H57L602 711L57 1421H440Z";
+  const chevronPath = new Path2D(pathString);
+  const origH = 1421;
+
+  function hexToRgb(hex) {
+    const v = parseInt(hex.slice(1), 16);
+    return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+  }
+
+  function draw() {
+    const strokePct = parseFloat(document.getElementById('stroke').value); // percent of height
+    const blur = parseFloat(document.getElementById('blur').value);
+    const passes = parseInt(document.getElementById('passes').value, 10);
+    const color = document.getElementById('color').value;
+    const opacity = parseFloat(document.getElementById('opacity').value);
+    const [r, g, b] = hexToRgb(color);
+
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    const scale = 260 / origH;
+    const tx = c.width / 2;
+    const ty = c.height / 2;
+
+    // 1) Glow via blurred stroke of the chevron outline
+    ctx.save();
+    ctx.translate(tx, ty);
+    ctx.scale(scale, -scale);
+    ctx.translate(-521, -710.5);
+
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.shadowColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    ctx.shadowBlur = blur;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+
+    const strokeWidthPx = (strokePct / 100) * origH; // percent of glyph height
+    ctx.lineWidth = strokeWidthPx;
+    ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${opacity * 0.6})`;
+
+    for (let i = 0; i < passes; i++) {
+      ctx.stroke(chevronPath);
+    }
+    ctx.restore();
+
+    // 2) Crisp white chevron on top
+    ctx.save();
+    ctx.translate(tx, ty);
+    ctx.scale(scale, -scale);
+    ctx.translate(-521, -710.5);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = 'white';
+    ctx.fill(chevronPath);
+    ctx.restore();
+  }
+
+  document.querySelectorAll('input').forEach(el => el.addEventListener('input', draw));
+  draw();
+</script>
+
+</body>
+</html>
+

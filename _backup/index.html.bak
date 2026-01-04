@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Selà</title>
+
+  <meta name="description" content="code for consciousness">
+  <link rel="icon" type="image/x-icon" href="favicon-16x16.png">
+
+  <meta property="og:title" content="Selà">
+  <meta property="og:description" content="code for consciousness">
+  <meta property="og:image" content="https://guy-sela.github.io/Sel-/selà-1200x630.png">
+  <meta property="og:url" content="https://guy-sela.github.io/Sel-/">
+  <meta property="og:type" content="website">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body class="bg-neutral-950 text-neutral-300 overflow-hidden">
+
+  <!-- Nav -->
+  <nav id="nav" class="fixed top-0 left-0 right-0 z-50 px-4 py-4 md:px-8 md:py-6 flex justify-between items-center">
+    <a href="#" class="text-sm tracking-widest text-white">SELÀ</a>
+    <div class="flex gap-6 md:gap-10 text-xs tracking-wider">
+      <a href="#works" class="text-neutral-400 hover:text-white transition-colors">Works</a>
+      <a href="#about" class="text-neutral-400 hover:text-white transition-colors">About</a>
+      <a href="#contact" class="text-neutral-400 hover:text-white transition-colors">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Gallery -->
+  <section id="works" class="h-screen w-screen relative">
+    
+    <!-- Slides -->
+    <div id="gallery" class="h-full w-full">
+      <div class="slide active" data-index="0">
+        <video src="meditativeclocks/clocksInBackground/Ebb&FlowYoga.mp4" muted loop playsinline></video>
+        <div class="slide-title">Ebb & Flow</div>
+      </div>
+      <div class="slide" data-index="1">
+        <video src="meditativeclocks/clocksInBackground/Escalator - hourglass.mp4" muted loop playsinline></video>
+        <div class="slide-title">Hourglass</div>
+      </div>
+      <div class="slide" data-index="2">
+        <video src="meditativeclocks/clocksInBackground/PastPresentFutureAirport.mp4" muted loop playsinline></video>
+        <div class="slide-title">Past Present Future</div>
+      </div>
+      <div class="slide" data-index="3">
+        <video src="meditativeclocks/clocksInBackground/Serendipity BMW.mp4" muted loop playsinline></video>
+        <div class="slide-title">Serendipity</div>
+      </div>
+      <div class="slide" data-index="4">
+        <video src="meditativeclocks/clocksInBackground/street- univarse.mp4" muted loop playsinline></video>
+        <div class="slide-title">Universe</div>
+      </div>
+    </div>
+
+    <!-- Arrows -->
+    <button id="prevBtn" class="arrow arrow-left" aria-label="Previous">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+    <button id="nextBtn" class="arrow arrow-right" aria-label="Next">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+        <path d="M9 18l6-6-6-6"/>
+      </svg>
+    </button>
+
+    <!-- Counter -->
+    <div id="counter" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs tracking-widest text-neutral-500">
+      <span id="current">1</span> / <span id="total">5</span>
+  </div>
+
+  </section>
+
+  <script src="index.js"></script>
+</body>
+
+</html>

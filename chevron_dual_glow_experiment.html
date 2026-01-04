@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chevron Dual Glow (Inner + Outer)</title>
+  <style>
+    body {
+      background: #111;
+      color: #ccc;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px;
+    }
+    canvas {
+      border: 1px solid #333;
+      background: #000;
+      margin-bottom: 16px;
+    }
+    .controls {
+      background: #222;
+      padding: 16px;
+      border-radius: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 360px;
+    }
+    label { font-size: 12px; margin-bottom: 4px; display: block; }
+    input[type="range"] { width: 100%; }
+    input[type="color"] { width: 100%; height: 32px; border: none; }
+  </style>
+</head>
+<body>
+
+<canvas id="c" width="512" height="512"></canvas>
+
+<div class="controls">
+  <div>
+    <label>Inner Blur</label>
+    <input type="range" id="iblur" min="0" max="120" value="35">
+  </div>
+  <div>
+    <label>Outer Blur</label>
+    <input type="range" id="oblur" min="0" max="220" value="120">
+  </div>
+  <div>
+    <label>Inner Opacity</label>
+    <input type="range" id="iopa" min="0" max="1" step="0.05" value="0.7">
+  </div>
+  <div>
+    <label>Outer Opacity</label>
+    <input type="range" id="oopa" min="0" max="1" step="0.05" value="0.5">
+  </div>
+  <div>
+    <label>Inner Color</label>
+    <input type="color" id="icolor" value="#ffd9a6">
+  </div>
+  <div>
+    <label>Outer Color</label>
+    <input type="color" id="ocolor" value="#ffbe55">
+  </div>
+  <div>
+    <label>Passes (density)</label>
+    <input type="range" id="passes" min="1" max="15" value="5">
+  </div>
+  <div>
+    <label>Stroke Width (%)</label>
+    <input type="range" id="stroke" min="2" max="50" value="18">
+  </div>
+</div>
+
+<script>
+  const c = document.getElementById('c');
+  const ctx = c.getContext('2d');
+  const pathString = "M985 711 440 0H57L602 711L57 1421H440Z";
+  const chevronPath = new Path2D(pathString);
+  const origH = 1421;
+
+  function hexToRgb(hex) {
+    const v = parseInt(hex.slice(1), 16);
+    return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+  }
+
+  function draw() {
+    const iblur = parseFloat(document.getElementById('iblur').value);
+    const oblur = parseFloat(document.getElementById('oblur').value);
+    const iopa = parseFloat(document.getElementById('iopa').value);
+    const oopa = parseFloat(document.getElementById('oopa').value);
+    const [ir, ig, ib] = hexToRgb(document.getElementById('icolor').value);
+    const [or_, og, ob] = hexToRgb(document.getElementById('ocolor').value);
+    const passes = parseInt(document.getElementById('passes').value, 10);
+    const strokePct = parseFloat(document.getElementById('stroke').value);
+
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    const scale = 260 / origH;
+    const tx = c.width / 2;
+    const ty = c.height / 2;
+    const strokeWidthPx = (strokePct / 100) * origH;
+
+    // Outer halo
+    ctx.save();
+    ctx.translate(tx, ty);
+    ctx.scale(scale, -scale);
+    ctx.translate(-521, -710.5);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.shadowColor = `rgba(${or_}, ${og}, ${ob}, ${oopa})`;
+    ctx.shadowBlur = oblur;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.lineWidth = strokeWidthPx;
+    ctx.strokeStyle = `rgba(${or_}, ${og}, ${ob}, ${oopa * 0.6})`;
+    for (let i = 0; i < passes; i++) ctx.stroke(chevronPath);
+    ctx.restore();
+
+    // Inner bloom
+    ctx.save();
+    ctx.translate(tx, ty);
+    ctx.scale(scale, -scale);
+    ctx.translate(-521, -710.5);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.shadowColor = `rgba(${ir}, ${ig}, ${ib}, ${iopa})`;
+    ctx.shadowBlur = iblur;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.lineWidth = strokeWidthPx * 0.6; // inner stroke thinner
+    ctx.strokeStyle = `rgba(${ir}, ${ig}, ${ib}, ${iopa * 0.8})`;
+    for (let i = 0; i < passes; i++) ctx.stroke(chevronPath);
+    ctx.restore();
+
+    // Crisp white chevron
+    ctx.save();
+    ctx.translate(tx, ty);
+    ctx.scale(scale, -scale);
+    ctx.translate(-521, -710.5);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = 'white';
+    ctx.fill(chevronPath);
+    ctx.restore();
+  }
+
+  document.querySelectorAll('input').forEach(el => el.addEventListener('input', draw));
+  draw();
+</script>
+
+</body>
+</html>
+

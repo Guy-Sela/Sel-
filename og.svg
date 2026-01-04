@@ -1,0 +1,42 @@
+<svg id="ogSvg" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Radial gradient background -->
+                <radialGradient id="bgGrad" cx="30%" cy="40%" r="80%">
+                    <stop offset="0%" stop-color="#1a1a24"/>
+                    <stop offset="50%" stop-color="#0f0f16"/>
+                    <stop offset="100%" stop-color="#06060a"/>
+                </radialGradient>
+
+                <!-- Gold glow filter -->
+                <filter id="goldGlow" x="-100%" y="-100%" width="300%" height="300%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur1"/>
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="16" result="blur2"/>
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="32" result="blur3"/>
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="48" result="blur4"/>
+                    <feMerge>
+                        <feMergeNode in="blur4"/>
+                        <feMergeNode in="blur3"/>
+                        <feMergeNode in="blur2"/>
+                        <feMergeNode in="blur1"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="1200" height="630" fill="url(#bgGrad)"/>
+
+            <!-- Content block (JS will precisely vertical-center this group) -->
+            <g id="contentGroup" transform="translate(0 241.455)">
+                <!-- Brand -->
+                <text id="brandText" x="100" y="0" font-family="'Josefin Sans', sans-serif" font-size="110" font-weight="300" fill="#ffffff" letter-spacing="2" dominant-baseline="text-before-edge">SELÀ</text>
+
+                <!-- Tagline prefix -->
+                <text id="taglinePrefix" x="100" y="140" font-family="'JetBrains Mono', monospace" font-size="28" font-weight="400" fill="#ffffff" fill-opacity="0.75" letter-spacing="1" dominant-baseline="text-before-edge">❯ code for </text>
+
+                <!-- Glowing word: consciousness (fixed x like before) -->
+                <text id="glowGold" x="295" y="140" font-family="'JetBrains Mono', monospace" font-size="28" font-weight="400" fill="#d4b07a" letter-spacing="1" filter="url(#goldGlow)" dominant-baseline="text-before-edge">consciousness</text>
+
+                <text id="glowWhite" x="295" y="140" font-family="'JetBrains Mono', monospace" font-size="28" font-weight="400" fill="#ffffff" letter-spacing="1" dominant-baseline="text-before-edge">consciousness</text>
+            </g>
+        </svg>

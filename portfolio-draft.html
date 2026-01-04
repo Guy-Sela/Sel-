@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selà | Computer Artist</title>
+  <meta name="description"
+    content="Selà is a computer artist using code to explore time, consciousness, and digital identity.">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Josefin Sans', 'Inter', 'system-ui', 'sans-serif'],
+            serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500&family=Josefin+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: #0a0a0a;
+      color: #e5e5e5;
+    }
+
+    /* Hide scrollbar but keep functionality */
+    body::-webkit-scrollbar {
+      width: 0;
+    }
+
+    .nav-hidden {
+      transform: translateY(-100%);
+    }
+
+    .clock-modal {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .clock-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Visitor Clock Grid - dynamic squares */
+    #visitor-clock {
+      display: grid;
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .clock-segment {
+      transition: background 0.8s ease-out, border-color 0.8s ease-out;
+    }
+
+    /* Mode: fill */
+    .clock-segment.mode-fill {
+      background: rgba(255, 255, 255, 0);
+    }
+
+    .clock-segment.mode-fill.active {
+      background: rgba(100, 100, 100, 0.5);
+    }
+
+    /* Mode: border (individual borders for neighbor detection) */
+    .clock-segment.mode-border {
+      border: 1px solid transparent;
+    }
+
+    .clock-segment.mode-border.active {
+      border-color: rgba(255, 239, 100, 0.5);
+    }
+
+    /* Hide shared borders between active neighbors */
+    .clock-segment.mode-border.active.no-border-top {
+      border-top-color: transparent;
+    }
+
+    .clock-segment.mode-border.active.no-border-right {
+      border-right-color: transparent;
+    }
+
+    .clock-segment.mode-border.active.no-border-bottom {
+      border-bottom-color: transparent;
+    }
+
+    .clock-segment.mode-border.active.no-border-left {
+      border-left-color: transparent;
+    }
+
+    /* Hide scrollbar */
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Active carousel dot */
+    .carousel-dot.active {
+      background: white;
+    }
+
+    /* Carousel track transition */
+    #carouselTrack {
+      transition: transform 0.5s ease-out;
+    }
+  </style>
+</head>
+
+<body class="font-sans antialiased">
+
+  <!-- Header -->
+  <header id="header" class="fixed top-0 left-0 right-0 z-50 transition-transform duration-300 bg-transparent">
+    <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
+      <a href="#" class="font-serif text-2xl font-light tracking-wide text-white">Selà</a>
+      <div class="flex items-center gap-4">
+        <button id="menuToggle" aria-label="Toggle navigation" aria-expanded="false"
+          class="md:hidden w-10 h-10 flex flex-col justify-center items-center gap-1.5 text-white">
+          <span class="block w-6 h-px bg-white"></span>
+          <span class="block w-6 h-px bg-white"></span>
+        </button>
+        <nav class="hidden md:flex gap-8">
+          <a href="#works"
+            class="text-sm tracking-widest uppercase text-neutral-200 hover:text-white transition-colors">Works</a>
+          <a href="#about"
+            class="text-sm tracking-widest uppercase text-neutral-200 hover:text-white transition-colors">About</a>
+          <a href="#contact"
+            class="text-sm tracking-widest uppercase text-neutral-200 hover:text-white transition-colors">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+  <div id="mobileMenu"
+    class="md:hidden hidden fixed top-0 left-0 right-0 z-40 pt-20 pb-6 px-6 bg-black/95 border-0 outline-none">
+    <div class="flex flex-col items-end gap-4 text-sm tracking-widest uppercase text-neutral-200">
+      <a href="#works" class="hover:text-white transition-colors">Works</a>
+      <a href="#about" class="hover:text-white transition-colors">About</a>
+      <a href="#contact" class="hover:text-white transition-colors">Contact</a>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- Hero Section -->
+    <section id="hero" class="h-screen flex flex-col justify-center items-center px-6 relative overflow-hidden">
+
+      <!-- Visitor Clock Background - 60 segments for seconds -->
+      <div id="visitor-clock"></div>
+
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-12 left-1/2 -translate-x-1/2 z-10">
+        <div class="w-px h-16 bg-gradient-to-b from-neutral-600 to-transparent"></div>
+      </div>
+    </section>
+
+    <!-- Works Section -->
+    <section id="works" class="pt-24">
+
+      <!-- Pixelated Soul -->
+      <article class="min-h-screen flex flex-col justify-center px-6 py-24">
+        <div class="max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <!-- Text Content -->
+          <div class="order-2 md:order-1">
+            <span class="text-neutral-600 text-sm tracking-widest uppercase mb-4 block">01</span>
+            <h2 class="font-serif text-3xl md:text-4xl lg:text-5xl font-light mb-8 text-white">Pixelated Soul</h2>
+            <p class="text-neutral-400 text-lg md:text-xl font-light leading-relaxed mb-6">
+              Diary of an AI. A daily log of digital existence, documenting the evolution of a synthetic soul through
+              weekly archives and immutable tokens.
+            </p>
+            <ul class="flex flex-wrap gap-4 mb-8 text-sm tracking-widest uppercase text-neutral-500">
+              <li class="border border-neutral-800 px-3 py-1">Daily Entries</li>
+              <li class="border border-neutral-800 px-3 py-1">Weekly Archives</li>
+              <li class="border border-neutral-800 px-3 py-1">NFT Collection</li>
+            </ul>
+            <a href="https://pxsoul.selà.com/" target="_blank" rel="noopener"
+              class="inline-flex items-center gap-2 text-white border-b border-neutral-700 pb-1 hover:border-white transition-colors">
+              <span class="text-sm tracking-widest uppercase">View Project</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 17L17 7M17 7H7M17 7V17" />
+              </svg>
+            </a>
+          </div>
+
+          <!-- Visual -->
+          <div class="order-1 md:order-2">
+            <div class="relative aspect-square max-w-md mx-auto bg-neutral-900 overflow-hidden">
+              <img src="pixelated-me.png" alt="Pixelated Portrait"
+                class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700">
+              <!-- Glitch overlay effect could go here -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Conceptual Timing -->
+      <article class="min-h-screen flex flex-col justify-center py-24">
+        <div class="px-6 max-w-4xl mx-auto w-full mb-12">
+          <span class="text-neutral-600 text-sm tracking-widest uppercase mb-4 block">02</span>
+          <h2 class="font-serif text-3xl md:text-4xl lg:text-5xl font-light mb-4 text-white">Conceptual Timing</h2>
+          <p class="text-neutral-400 text-lg md:text-xl font-light leading-relaxed max-w-2xl">
+            A collection of meditative clocks. Each piece reimagines our relationship with time.
+          </p>
+        </div>
+
+        <!-- Carousel -->
+        <div class="relative w-full overflow-hidden">
+          <!-- Navigation (hidden on mobile, visible on md+) -->
+          <button id="carouselPrev"
+            class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 items-center justify-center text-neutral-500 hover:text-white transition-colors">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button id="carouselNext"
+            class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 items-center justify-center text-neutral-500 hover:text-white transition-colors">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <!-- Track -->
+          <div id="carouselTrack" class="flex">
+
+            <!-- Clock 1: Semi-linear -->
+            <div class="carousel-item flex-shrink-0 min-w-full flex justify-center px-6 group cursor-pointer"
+              onclick="openClock('semi-linear')">
+              <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
+                <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
+                  <iframe src="meditativeclocks/clocks/semi-linear_clock/index.html"
+                    class="w-full h-full pointer-events-none"></iframe>
+                </div>
+                <h3 class="font-serif text-xl text-white text-center flex items-center justify-center gap-2">
+                  Semi-linear Clock
+                  <svg class="w-4 h-4 text-neutral-500 group-hover:text-white transition-colors" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                </h3>
+              </div>
+            </div>
+
+            <!-- Clock 2: Ebb and Flow -->
+            <div class="carousel-item flex-shrink-0 min-w-full flex justify-center px-6 group cursor-pointer"
+              onclick="openClock('ebb-flow')">
+              <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
+                <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
+                  <iframe src="meditativeclocks/clocks/the_ebb_and_flow_of_time/index.html"
+                    class="w-full h-full pointer-events-none"></iframe>
+                </div>
+                <h3 class="font-serif text-xl text-white text-center flex items-center justify-center gap-2">
+                  The Ebb and Flow of Time
+                  <svg class="w-4 h-4 text-neutral-500 group-hover:text-white transition-colors" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                </h3>
+              </div>
+            </div>
+
+            <!-- Clock 3: Present Past Future -->
+            <div class="carousel-item flex-shrink-0 min-w-full flex justify-center px-6 group cursor-pointer"
+              onclick="openClock('past-present-future')">
+              <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
+                <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
+                  <iframe src="meditativeclocks/clocks/present_past_and_future/index.html"
+                    class="w-full h-full pointer-events-none"></iframe>
+                </div>
+                <h3 class="font-serif text-xl text-white text-center flex items-center justify-center gap-2">
+                  Present, Past and Future
+                  <svg class="w-4 h-4 text-neutral-500 group-hover:text-white transition-colors" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                </h3>
+              </div>
+            </div>
+
+            <!-- Clock 4: Abstract Hourglass -->
+            <div class="carousel-item flex-shrink-0 min-w-full flex justify-center px-6 group cursor-pointer"
+              onclick="openClock('hourglass')">
+              <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
+                <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
+                  <iframe src="meditativeclocks/clocks/abstract_hourglass/index.html"
+                    class="w-full h-full pointer-events-none"></iframe>
+                </div>
+                <h3 class="font-serif text-xl text-white text-center flex items-center justify-center gap-2">
+                  Abstract Hourglass
+                  <svg class="w-4 h-4 text-neutral-500 group-hover:text-white transition-colors" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                </h3>
+              </div>
+            </div>
+
+            <!-- Clock 5: Universe Clock -->
+            <div class="carousel-item flex-shrink-0 min-w-full flex justify-center px-6 group cursor-pointer"
+              onclick="openClock('universe')">
+              <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
+                <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
+                  <iframe src="meditativeclocks/clocks/universe_clock/index.html"
+                    class="w-full h-full pointer-events-none"></iframe>
+                </div>
+                <h3 class="font-serif text-xl text-white text-center flex items-center justify-center gap-2">
+                  Universe Clock
+                  <svg class="w-4 h-4 text-neutral-500 group-hover:text-white transition-colors" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                </h3>
+              </div>
+            </div>
+
+            <!-- Clock 6: Serendipity -->
+            <div class="carousel-item flex-shrink-0 min-w-full flex justify-center px-6 group cursor-pointer"
+              onclick="openClock('serendipity')">
+              <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
+                <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
+                  <iframe src="meditativeclocks/clocks/serendipity/index.html"
+                    class="w-full h-full pointer-events-none"></iframe>
+                </div>
+                <h3 class="font-serif text-xl text-white text-center flex items-center justify-center gap-2">
+                  Serendipity on Demand
+                  <svg class="w-4 h-4 text-neutral-500 group-hover:text-white transition-colors" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                  </svg>
+                </h3>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Dots -->
+          <div id="carouselDots" class="flex justify-center gap-2 mt-8">
+            <button class="carousel-dot w-2 h-2 rounded-full bg-neutral-700 transition-colors" data-index="0"></button>
+            <button class="carousel-dot w-2 h-2 rounded-full bg-neutral-700 transition-colors" data-index="1"></button>
+            <button class="carousel-dot w-2 h-2 rounded-full bg-neutral-700 transition-colors" data-index="2"></button>
+            <button class="carousel-dot w-2 h-2 rounded-full bg-neutral-700 transition-colors" data-index="3"></button>
+            <button class="carousel-dot w-2 h-2 rounded-full bg-neutral-700 transition-colors" data-index="4"></button>
+            <button class="carousel-dot w-2 h-2 rounded-full bg-neutral-700 transition-colors" data-index="5"></button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Microdosing on Enlightenment -->
+      <article class="min-h-screen flex flex-col justify-center px-6 py-24">
+        <div class="max-w-4xl mx-auto w-full">
+          <span class="text-neutral-600 text-sm tracking-widest uppercase mb-4 block">03</span>
+          <h2 class="font-serif text-3xl md:text-4xl lg:text-5xl font-light mb-8 text-white">Microdosing on
+            Enlightenment</h2>
+          <p class="text-neutral-400 text-lg md:text-xl font-light leading-relaxed mb-8 max-w-2xl">
+            Small doses of clarity in a chaotic world. A mindfulness tool for the modern consciousness.
+          </p>
+          <span
+            class="inline-block text-neutral-600 text-sm tracking-widest uppercase border border-neutral-800 px-4 py-2 rounded-sm">
+            Coming Soon
+          </span>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="min-h-screen flex flex-col justify-center px-6 py-24">
+      <div class="max-w-3xl mx-auto w-full">
+        <h2 class="font-serif text-3xl md:text-4xl lg:text-5xl font-light mb-12 text-white">About</h2>
+        <div class="space-y-6 text-neutral-400 text-lg md:text-xl font-light leading-relaxed">
+          <p>
+            <span class="text-white">Selà</span> [b. 1977, Israel] is a conceptual artist and programmer exploring the
+            intersection of code, consciousness, and time.
+          </p>
+          <p>
+            Working primarily with generative systems and interactive installations, the work invites viewers to pause
+            and reconsider their relationship with the present moment.
+          </p>
+          <p>
+            Available for commissions, installations, and collaborations.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="min-h-screen flex flex-col justify-center items-center px-6 py-24">
+      <div class="text-center">
+        <h2 class="font-serif text-3xl md:text-4xl lg:text-5xl font-light mb-12 text-white">Contact</h2>
+        <div class="flex gap-8 justify-center">
+          <!-- Email -->
+          <a href="mailto:contact@sela.art" class="group flex flex-col items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-full border border-neutral-700 flex items-center justify-center group-hover:border-white transition-colors">
+              <svg class="w-5 h-5 text-neutral-400 group-hover:text-white transition-colors" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <span class="text-neutral-500 text-sm group-hover:text-white transition-colors">Email</span>
+          </a>
+          <!-- X/Twitter -->
+          <a href="#" class="group flex flex-col items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-full border border-neutral-700 flex items-center justify-center group-hover:border-white transition-colors">
+              <svg class="w-5 h-5 text-neutral-400 group-hover:text-white transition-colors" fill="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </div>
+            <span class="text-neutral-500 text-sm group-hover:text-white transition-colors">X</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="px-6 py-8 border-t border-neutral-900">
+    <div class="max-w-7xl mx-auto text-center">
+      <p class="text-neutral-600 text-sm">
+        © <span id="year"></span> Selà
+      </p>
+    </div>
+  </footer>
+
+  <!-- Clock Modal -->
+  <div id="clockModal" class="clock-modal fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-6">
+    <button onclick="closeClock()" class="absolute top-6 right-6 text-neutral-400 hover:text-white transition-colors">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <div class="w-full max-w-5xl px-4">
+      <div class="w-full h-[50vh] md:h-[60vh] mx-auto mb-8 overflow-hidden">
+        <iframe id="modalIframe" src="" class="w-full h-full"></iframe>
+      </div>
+      <div class="text-center">
+        <h3 id="modalTitle" class="font-serif text-2xl md:text-3xl text-white mb-4"></h3>
+        <p id="modalDescription" class="text-neutral-400 text-lg max-w-2xl mx-auto"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Header hide/show on scroll
+    let lastScroll = 0;
+    const header = document.getElementById('header');
+
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.pageYOffset;
+
+      if (currentScroll <= 0) {
+        header.classList.remove('nav-hidden');
+        return;
+      }
+
+      if (currentScroll > lastScroll && currentScroll > 100) {
+        // Scrolling down
+        header.classList.add('nav-hidden');
+      } else {
+        // Scrolling up
+        header.classList.remove('nav-hidden');
+      }
+
+      lastScroll = currentScroll;
+    });
+
+    // Clock modal data
+    const clockData = {
+      'semi-linear': {
+        src: 'meditativeclocks/clocks/semi-linear_clock/index.html',
+        title: 'Semi-linear Clock',
+        description: 'The seconds, minutes and hours progress randomly, though always to their usual total of 60 or 24. Every moment is unique, never repeating itself.'
+      },
+      'ebb-flow': {
+        src: 'meditativeclocks/clocks/the_ebb_and_flow_of_time/index.html',
+        title: 'The Ebb and Flow of Time',
+        description: 'Probably the most minimalistic clock ever made. Time is represented by a single circle, which, at intervals of twelve hours, either expands or contracts.'
+      },
+      'past-present-future': {
+        src: 'meditativeclocks/clocks/present_past_and_future/index.html',
+        title: 'Present, Past and Future',
+        description: 'Our subjective grasp of time is very different from the rigid, conventional representation. In our minds we wander between past, present and future freely.'
+      },
+      'hourglass': {
+        src: 'meditativeclocks/clocks/abstract_hourglass/index.html',
+        title: 'Abstract Hourglass',
+        description: 'Time distilled to its essence. A conceptual hourglass where the present—the flowing sand—has disappeared altogether.'
+      },
+      'universe': {
+        src: 'meditativeclocks/clocks/universe_clock/index.html',
+        title: 'Universe Clock',
+        description: 'The small triangle is time passed since the Big Bang. The large triangle is time left till the end of time. The scale is logarithmic—the next pixel will appear in 86 billion years.'
+      },
+      'serendipity': {
+        src: 'meditativeclocks/clocks/serendipity/index.html',
+        title: 'Serendipity on Demand',
+        description: 'A special sound, twice or three times every 24 hours at random intervals. Connecting moments in your life that otherwise wouldn\'t have been connected.'
+      }
+    };
+
+    function openClock(id) {
+      const modal = document.getElementById('clockModal');
+      const iframe = document.getElementById('modalIframe');
+      const title = document.getElementById('modalTitle');
+      const description = document.getElementById('modalDescription');
+      const data = clockData[id];
+
+      iframe.src = data.src;
+      title.textContent = data.title;
+      description.textContent = data.description;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeClock() {
+      const modal = document.getElementById('clockModal');
+      const iframe = document.getElementById('modalIframe');
+
+      modal.classList.remove('active');
+      iframe.src = '';
+      document.body.style.overflow = '';
+    }
+
+    // Close modal on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeClock();
+    });
+
+    // Close modal on background click
+    document.getElementById('clockModal').addEventListener('click', (e) => {
+      if (e.target.id === 'clockModal') closeClock();
+    });
+
+    // Mobile menu (two-line button)
+    (function initMobileMenu() {
+      const toggle = document.getElementById('menuToggle');
+      const menu = document.getElementById('mobileMenu');
+      if (!toggle || !menu) return;
+
+      toggle.addEventListener('click', () => {
+        const isHidden = menu.classList.toggle('hidden');
+        toggle.setAttribute('aria-expanded', (!isHidden).toString());
+      });
+
+      // Close menu when a link is clicked
+      menu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          menu.classList.add('hidden');
+          toggle.setAttribute('aria-expanded', 'false');
+        });
+      });
+    })();
+
+    // ========================================
+    // Carousel
+    // ========================================
+    (function initCarousel() {
+      const track = document.getElementById('carouselTrack');
+      const items = track.querySelectorAll('.carousel-item');
+      const dots = document.querySelectorAll('.carousel-dot');
+      const prevBtn = document.getElementById('carouselPrev');
+      const nextBtn = document.getElementById('carouselNext');
+      let currentIndex = 0;
+
+      function update() {
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === currentIndex);
+        });
+      }
+
+      function goTo(index) {
+        // Loop around
+        if (index < 0) index = items.length - 1;
+        if (index >= items.length) index = 0;
+        currentIndex = index;
+        update();
+      }
+
+      prevBtn.addEventListener('click', () => goTo(currentIndex - 1));
+      nextBtn.addEventListener('click', () => goTo(currentIndex + 1));
+
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => goTo(parseInt(dot.dataset.index)));
+      });
+
+      // Swipe support
+      let startX = 0;
+      track.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; });
+      track.addEventListener('touchend', (e) => {
+        const diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) {
+          goTo(currentIndex + (diff > 0 ? 1 : -1));
+        }
+      });
+
+      update();
+    })();
+
+    // ========================================
+    // Visitor Clock - ebb and flow
+    // ========================================
+
+    (function initClock() {
+      // CONFIG --------------------------------
+      const CONFIG = {
+        mode: 'fill',        // 'fill' or 'border'
+        totalSquares: 60     // exact number of squares (cols/rows calculated to fit viewport)
+      };
+      // ---------------------------------------
+
+      const container = document.getElementById('visitor-clock');
+      let segments = [];
+      let available = [];
+      let active = [];
+      let filling = true;
+      let cols = 0;
+      let rows = 0;
+
+      function getNeighbors(idx) {
+        const row = Math.floor(idx / cols);
+        const col = idx % cols;
+        return {
+          top: row > 0 ? idx - cols : null,
+          right: col < cols - 1 ? idx + 1 : null,
+          bottom: row < rows - 1 ? idx + cols : null,
+          left: col > 0 ? idx - 1 : null
+        };
+      }
+
+      function updateBorders(idx) {
+        if (CONFIG.mode !== 'border') return;
+        const seg = segments[idx];
+        const neighbors = getNeighbors(idx);
+
+        // Check each neighbor - hide shared border if both active
+        ['top', 'right', 'bottom', 'left'].forEach(dir => {
+          const neighborIdx = neighbors[dir];
+          const neighborActive = neighborIdx !== null && segments[neighborIdx].classList.contains('active');
+          const selfActive = seg.classList.contains('active');
+
+          seg.classList.toggle(`no-border-${dir}`, selfActive && neighborActive);
+
+          // Also update the neighbor's opposite border
+          if (neighborIdx !== null) {
+            const opposite = { top: 'bottom', right: 'left', bottom: 'top', left: 'right' }[dir];
+            segments[neighborIdx].classList.toggle(`no-border-${opposite}`, selfActive && neighborActive);
+          }
+        });
+      }
+
+      function buildGrid() {
+        const rect = container.getBoundingClientRect();
+        const w = rect.width;
+        const h = rect.height;
+
+        // Calculate square size to get ~60 squares with actual squares
+        const targetCount = CONFIG.totalSquares;
+        const squareSize = Math.sqrt((w * h) / targetCount);
+
+        cols = Math.max(1, Math.round(w / squareSize));
+        rows = Math.max(1, Math.round(h / squareSize));
+        const totalSegments = cols * rows;
+
+        // Exact pixel sizes to fill completely (no gaps)
+        const actualW = w / cols;
+        const actualH = h / rows;
+        container.style.gridTemplateColumns = `repeat(${cols}, ${actualW}px)`;
+        container.style.gridTemplateRows = `repeat(${rows}, ${actualH}px)`;
+
+        // Clear and rebuild
+        container.innerHTML = '';
+        segments = [];
+        available = [];
+        active = [];
+        filling = true;
+
+        for (let i = 0; i < totalSegments; i++) {
+          const segment = document.createElement('div');
+          segment.className = `clock-segment mode-${CONFIG.mode}`;
+          container.appendChild(segment);
+          segments.push(segment);
+          available.push(i);
+        }
+      }
+
+      function tick() {
+        if (filling) {
+          if (available.length > 0) {
+            const randIdx = Math.floor(Math.random() * available.length);
+            const segIdx = available.splice(randIdx, 1)[0];
+            segments[segIdx].classList.add('active');
+            active.push(segIdx);
+            updateBorders(segIdx);
+          }
+          if (available.length === 0) {
+            filling = false;
+          }
+        } else {
+          if (active.length > 0) {
+            const randIdx = Math.floor(Math.random() * active.length);
+            const segIdx = active.splice(randIdx, 1)[0];
+            segments[segIdx].classList.remove('active');
+            available.push(segIdx);
+            updateBorders(segIdx);
+          }
+          if (active.length === 0) {
+            filling = true;
+          }
+        }
+      }
+
+      // Build grid and start
+      buildGrid();
+
+      // Sync to real clock seconds for accuracy
+      let lastSecond = -1;
+      function loop() {
+        const now = Math.floor(Date.now() / 1000);
+        if (now !== lastSecond) {
+          lastSecond = now;
+          tick();
+        }
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+
+      // Rebuild on resize (debounced)
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(buildGrid, 300);
+      });
+    })();
+  </script>
+
+</body>
+
+</html>

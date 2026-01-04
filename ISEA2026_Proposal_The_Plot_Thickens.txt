@@ -1,0 +1,58 @@
+ISEA2026 Artistic Proposal
+
+Basic Contact Details
+Name: Selà
+Year of Birth: 1977
+Country: Israel
+Email: contact@sela.art
+Website: https://pxsoul.selà.com/ (or main portfolio)
+
+Artist Biography (300 words max)
+Selà is a conceptual artist and programmer whose work uses code to examine consciousness and time. He works primarily with generative systems and interactive installations, creating environments that invite viewers to reconsider their relationship with the present moment. His practice combines technical precision with philosophical inquiry, often stripping away complex aesthetics to reveal the underlying structures of digital and human systems. Past projects include "Pixelated Soul," a diary of digital existence, and "Meditative Clocks," a series of time-keeping devices that challenge standard temporal perception.
+
+Thematic Statement (200–500 words)
+This proposal responds directly to the theme "ELYAH" and the sub-theme "Charting Constellations – Digital geographies."
+
+For millennia, humans looked to the stars for orientation. Today, we orient ourselves through data. We are constantly tracked, quantified, and guided by algorithms. This "algorithmic cosmos" is the new sky we navigate under. "The Plot Thickens" explores this shift by creating a live, digital geography of the ISEA symposium itself.
+
+The project constellates the physical movement of visitors into an abstract map. It connects to the idea of "starlinked worlds" by treating every individual as a trajectory in a shared system. In this map, traditional identity markers are removed; each person is depersonalized into a moving line. This mirrors the view of "Big Data," where we are reduced to patterns and vectors.
+
+However, unlike utilitarian surveillance, which mines data for profit or control, this project mines data for aesthetics. It turns the act of tracking into a poetic gesture. It creates a feedback loop: the data influences the people (who see the map), and the people influence the data. This "self-referential loop" highlights how our digital tools are not just passive observers but active participants in shaping our reality. The final result is a "digital fossil"—a residue of the event that serves as a portrait of the collective body, immortalizing the passing moment in a closed, circular system.
+
+Artwork Proposal (300–800 words)
+Title: The Plot Thickens
+
+Concept
+"The Plot Thickens" is a site-specific, generative data visualization that maps the movement of visitors during ISEA2026. It tracks the path of attendees within the venue and plots these paths in real-time onto a large circular canvas. The result is a dynamic, abstract map that evolves throughout the event, becoming a visual record of the symposium's social flow.
+
+The Experience
+Upon entering the venue, visitors become part of the artwork. A tracking system records their position. On a large projection or screen, these movements are visualized as lines. The map is not a floor plan; it is an abstract accumulation of trajectories constrained within a circle.
+As time passes, the "plot thickens." New paths layer over old ones. Solitary walks, group gatherings, and intersections are all captured. The map becomes a history of the event's activity—a "digital fossil" of the collective presence.
+
+Themes and Mechanics
+1.  **Surveillance as Aesthetics:** The project references the omnipresent experience of being tracked. However, here the tracking has no utilitarian cause. It is mining data solely for beauty. This contrast questions our relationship with the surveillance economy.
+2.  **Celestial vs. Digital Navigation:** The circular format invokes ancient celestial maps. But instead of looking up at the stars, we look at a data representation of ourselves. Aggregated data is the new object directing our lives.
+3.  **The Feedback Loop:** Visitors can see the map while they are generating it. This creates a self-referential loop. The observation of the data changes the behavior of the observed, which in turn changes the data.
+4.  **Tokenization and Rarity:** The resulting map is an emergent phenomenon. It cannot be predicted or controlled. It is a by-product of this specific group of people at this specific time. In an age of digital abundance, it creates a rare, site-specific artifact—a unique token of the event.
+5.  **Anonymization:** By reducing everyone to a line, the project explores depersonalization. In the eyes of the system, we are all identical. Yet, this anonymity also reveals our commonality—we are all distinct threads weaving the same fabric.
+
+Technical Description
+The installation consists of a local tracking system and a visualization server. The tracking data (X, Y coordinates of visitors) is fed into custom software. This software maps the physical coordinates to the circular display canvas. The visual style is minimal—monochrome or limited palette—emphasizing the structure of the data rather than decorative elements. The system runs continuously, accumulating data to create a dense, complex texture by the end of the exhibition.
+
+Technical and Logistical Requirements
+1.  **Space:** A wall or dedicated area for a large projection or LED screen (minimum 2m x 2m).
+2.  **Tracking Hardware:** Installation of sensors (e.g., UWB anchors or overhead cameras for computer vision) to cover the tracking area.
+    *   *Option A (Preferred):* UWB system. Requires anchors mounted on walls/ceiling and tags carried by visitors (e.g., on lanyards).
+    *   *Option B:* Computer Vision. Overhead cameras to track movement without tags. Requires high mounting points.
+3.  **Computing:** One high-performance PC (provided by artist) to run the tracking server and generative visuals.
+4.  **Power:** Standard 220V power for computer and display/projector.
+5.  **Lighting:** Controlled lighting in the projection area (if using projection).
+6.  **Internet:** Ethernet connection for remote monitoring and potential data streaming (optional).
+
+Images, Sketches, Drafts
+[Description for placeholder: A mockup showing a large white circle on a black background. Inside the circle, thousands of fine, intersecting lines form a dense, chaotic, yet organic mesh. The lines are denser in the center and sparse at the edges, resembling a star chart or a ball of yarn.]
+
+[Description for placeholder: A diagram showing the venue floor plan with "Visitor Paths" feeding into a "Server" which outputs to the "Circular Projection."]
+
+
+

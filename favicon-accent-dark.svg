@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none" aria-label="Selà grave accent mark (dark)">
+  <!-- Transparent background by default -->
+  <!-- Dark stroke variant for light UI surfaces -->
+  <path
+    d="M80 52 L52 24"
+    stroke="#0B0B0B"
+    stroke-width="14"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
+

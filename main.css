@@ -1,0 +1,1758 @@
+    :root {
+      --nav-h: 57px;
+      --footer-h: 73px;
+    }
+
+    .hud-font {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Scanlines - matching library's scanlineIntensity: 0.6 */
+    .scanline {
+      background: repeating-linear-gradient(0deg,
+          transparent,
+          transparent 1px,
+          rgba(0, 0, 0, 0.15) 1px,
+          rgba(0, 0, 0, 0.15) 2px);
+      pointer-events: none;
+    }
+
+    /* Retrace lines - animated scanlines moving upward (library: retraceLines) */
+    @keyframes retrace {
+      0% {
+        background-position: 0 0;
+      }
+
+      100% {
+        background-position: 0 -4px;
+      }
+    }
+
+    .crt-retrace {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(0deg,
+          transparent,
+          transparent 1px,
+          rgba(255, 255, 255, 0.02) 1px,
+          rgba(255, 255, 255, 0.02) 2px);
+      pointer-events: none;
+      z-index: 10;
+      animation: retrace 0.1s linear infinite;
+    }
+
+    /* Rolling refresh bar - sweeps bottom to top */
+    @keyframes crt-roll {
+      0% {
+        top: 100%;
+      }
+
+      100% {
+        top: -8%;
+      }
+    }
+
+    .crt-rollbar::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 8%;
+      background: linear-gradient(to bottom,
+          transparent 0%,
+          rgba(255, 255, 255, 0.015) 40%,
+          rgba(255, 255, 255, 0.03) 50%,
+          rgba(255, 255, 255, 0.015) 60%,
+          transparent 100%);
+      pointer-events: none;
+      z-index: 11;
+      animation: crt-roll 6s linear infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      50% {
+        opacity: 1;
+      }
+
+      51%,
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .blink {
+      animation: blink 1s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 0.8;
+      }
+    }
+
+    .pulse {
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+
+    /* Chromatic Aberration - library: chromaticAberration: 0.0005 (subtle RGB split) */
+    .crt-text {
+      text-shadow:
+        -0.3px 0 0 rgba(255, 0, 0, 0.25),
+        0.3px 0 0 rgba(0, 255, 255, 0.25),
+        0 0 1px rgba(255, 255, 255, 0.15);
+    }
+
+    /* Flicker - library: flicker: 0.01, brightness: 0.9 */
+    @keyframes crt-flicker {
+
+      0%,
+      100% {
+        opacity: 0.97;
+      }
+
+      5% {
+        opacity: 0.98;
+      }
+
+      10% {
+        opacity: 0.96;
+      }
+
+      15% {
+        opacity: 0.99;
+      }
+
+      20% {
+        opacity: 0.95;
+      }
+
+      50% {
+        opacity: 0.98;
+      }
+
+      80% {
+        opacity: 0.96;
+      }
+
+      95% {
+        opacity: 0.99;
+      }
+    }
+
+    .crt-flicker {
+      animation: crt-flicker 0.15s infinite;
+    }
+
+    /* Signal loss bands - library: signalLoss: 0.05 */
+    @keyframes signal-loss {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(-100%);
+      }
+    }
+
+    .crt-signal::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 200%;
+      background: repeating-linear-gradient(0deg,
+          transparent 0px,
+          transparent 40px,
+          rgba(0, 0, 0, 0.03) 40px,
+          rgba(0, 0, 0, 0.03) 42px,
+          transparent 42px,
+          transparent 80px);
+      pointer-events: none;
+      z-index: 9;
+      animation: signal-loss 4s linear infinite;
+    }
+
+    /* Static noise - library: staticNoise: 0.001 */
+    @keyframes noise {
+
+      0%,
+      100% {
+        background-position: 0 0;
+      }
+
+      10% {
+        background-position: -5% -10%;
+      }
+
+      20% {
+        background-position: -15% 5%;
+      }
+
+      30% {
+        background-position: 7% -25%;
+      }
+
+      40% {
+        background-position: -5% 25%;
+      }
+
+      50% {
+        background-position: -15% 10%;
+      }
+
+      60% {
+        background-position: 15% 0%;
+      }
+
+      70% {
+        background-position: 0% 15%;
+      }
+
+      80% {
+        background-position: 3% 35%;
+      }
+
+      90% {
+        background-position: -10% 10%;
+      }
+    }
+
+    .crt-noise::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      right: -50%;
+      bottom: -50%;
+      width: 200%;
+      height: 200%;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.015;
+      z-index: 8;
+      animation: noise 0.08s steps(8) infinite;
+    }
+
+    /* Desaturation + contrast - library: desaturation: 0.2, contrast: 1.0, brightness: 0.9 */
+    .crt-color {
+      filter: saturate(0.8) contrast(1.05) brightness(0.92);
+    }
+
+    /* Hero HUD - same layout for mobile and desktop */
+    #heroHud {
+      display: flex;
+      /* Fluid font: 11px → 14px (readable for dense data displays) */
+      font-size: clamp(0.6875rem, 0.6rem + 0.35vw, 0.875rem);
+      line-height: 1.6;
+      /* Always start from the top (override Tailwind's justify-center) */
+      justify-content: flex-start;
+      align-items: center;
+      /* Always fit fully in the viewport (mobile-safe height units) */
+      height: 100vh;
+      height: 100svh;
+      min-height: 100vh;
+      min-height: 100svh;
+      /* Nice, consistent padding across screens */
+      padding: clamp(1rem, 3vh, 2.5rem) clamp(1rem, 4vw, 2.5rem);
+    }
+
+    #heroHud .hud-container {
+      width: 100%;
+      /* Fluid max-width: scales with viewport */
+      max-width: clamp(20rem, 85vw, 60rem);
+      transform-origin: top center;
+      will-change: transform;
+    }
+
+    /* Responsive grid: 1 col mobile → 2 col tablet → 3 col desktop */
+    #heroHud .hud-grid {
+      display: grid;
+      /* Always at least 2 columns, even on narrow screens */
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem 1.5rem;
+    }
+
+    /* In 2-col mode, LIVE sits on its own row and should span both columns
+       so it can use the "empty" space to the right. */
+    #heroHud .hud-live {
+      grid-column: 1 / -1;
+    }
+
+    @media (min-width: 640px) {
+      #heroHud .hud-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 1024px) {
+      #heroHud .hud-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      /* On desktop 3-col layout, LIVE returns to being a normal column */
+      #heroHud .hud-live {
+        grid-column: auto;
+      }
+    }
+
+    /* LIVE: use space wisely by flowing into 2 sub-columns when there's room */
+    #heroHud .live-grid {
+      display: grid;
+      /* Default: exactly 2 columns on mobile/tablet (including <360px) */
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 1.25rem;
+      row-gap: 0;
+    }
+
+    /* Desktop: keep LIVE as a single column list */
+    @media (min-width: 1024px) {
+      #heroHud .live-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Section labels: ~85% of base, uppercase tracking */
+    .hud-label {
+      font-size: 0.85em;
+      letter-spacing: 0.05em;
+    }
+
+    /* Hide desktop HUD completely - using unified hero */
+    #desktopHud {
+      display: none !important;
+    }
+
+    /* Sticky nav behavior */
+    #stickyNav {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-100%);
+      will-change: transform, opacity;
+      /* Like your snippet: slide+fade, with visibility delayed until the fade/slide completes */
+      transition: transform 0.5s ease, opacity 0.5s ease, visibility 0s linear 0.5s;
+
+      /* Base background (always present) */
+      background: rgba(0, 0, 0, 0.35);
+      border-bottom: 1px solid var(--border);
+      pointer-events: none;
+    }
+
+    /* Blur: Only on non-touch devices or when performance permits.
+       On iOS/Touch, we skip backdrop-filter entirely to prevent scroll stutter. */
+    @media (hover: hover) and (pointer: fine) {
+      #stickyNav {
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        background: rgba(0, 0, 0, 0.35);
+        /* Lighter bg when blur is active */
+      }
+    }
+
+    #stickyNav.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+      transition: transform 0.5s ease, opacity 0.5s ease, visibility 0s linear 0s;
+    }
+
+    /* Works should not appear before the header "menu" appears */
+    #works {
+      opacity: 0;
+      will-change: opacity;
+      transition: opacity 0.7s ease;
+      scroll-margin-top: 96px;
+      /* keeps anchor jumps clear of the fixed sticky nav */
+    }
+
+    #works.works-visible {
+      opacity: 1;
+    }
+
+    /* Prevent white flash while iframes load */
+    #works iframe {
+      background: #171717;
+    }
+
+    /* Clock preview iframes */
+    .clock-preview-iframe {
+      background: #000;
+      /* Let the whole Works section fade in as one unit (no per-iframe pop-in). */
+      opacity: 1;
+    }
+
+    /* ==========================================
+       Section layout: full viewport, centered content
+       Each section fills at least viewport minus nav, content centered
+       ========================================== */
+
+    /* Works section: contains multiple articles, each should fill viewport */
+    #works {
+      padding-top: 0;
+    }
+
+    #works>article {
+      /* Fill the viewport, but *reserve* space for the fixed sticky nav via padding.
+         This prevents content being hidden "under" the menu on anchor jumps and on tall sections. */
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: calc(var(--nav-h) + clamp(1.75rem, 4vh, 3rem));
+      padding-bottom: clamp(1.75rem, 4vh, 3rem);
+      box-sizing: border-box;
+    }
+
+    /* Shorten 01 and 03: remove min-height so they fit content naturally */
+    #works>article:first-of-type,
+    #works>article:nth-of-type(3) {
+      min-height: auto;
+      padding-top: calc(var(--nav-h) + clamp(1rem, 2vh, 1.5rem));
+      padding-bottom: clamp(1rem, 2vh, 1.5rem);
+      justify-content: flex-start;
+    }
+
+    /* First article (Conceptual Timing) has carousel - needs full width */
+    #works>article:first-of-type {
+      width: 100%;
+    }
+
+    /* Microdosing (03) is intrinsically tall; don't vertically center it.
+       Let it start below the nav and flow naturally to avoid "cut off" under the menu. */
+    #works>article:nth-of-type(3) {
+      justify-content: flex-start;
+    }
+
+    /* Slightly tighten the mockup on shorter viewports (laptops, landscape phones). */
+    @media (max-height: 820px) {
+      .microdosing-carousel {
+        padding: 28px 0 44px;
+      }
+
+      .microdosing-carousel .swiper-wrapper {
+        padding-bottom: 64px;
+      }
+
+      .microdosing-carousel .phone-frame {
+        width: 210px;
+        height: 454px;
+      }
+    }
+
+    /* About section */
+    #about {
+      /* Same rule as Works: full viewport, but keep content safely below fixed nav */
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Nudge About content down a bit more vs other sections */
+      padding-top: calc(var(--nav-h) + (clamp(1.75rem, 4vh, 3rem) * 5));
+      padding-bottom: clamp(1.75rem, 4vh, 3rem);
+      box-sizing: border-box;
+    }
+
+    /* Sticky header nav styling */
+
+    #stickyNav .nav-link {
+      color: rgba(255, 255, 255, 0.78);
+      border-bottom: 1px solid transparent;
+      padding-bottom: 0.15rem;
+      transition: color 160ms ease, border-color 160ms ease;
+    }
+
+    #stickyNav .nav-link:hover {
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    #stickyNav .nav-link.active {
+      color: rgba(255, 255, 255, 1);
+      border-color: rgba(255, 255, 255, 0.55);
+    }
+
+    /* Reveal text - fades on scroll */
+    #revealText.hidden {
+      opacity: 0;
+    }
+
+    /* Reveal text typography (use ID so it always applies, even if Tailwind JIT misses arbitrary values) */
+    #revealText {
+      line-height: 2.2;
+    }
+
+    @media (min-width: 768px) {
+      #revealText {
+        line-height: 2.3;
+      }
+    }
+
+    /* Cross-dissolve container (tall) + stage (sticky) */
+    #dissolve-container {
+      position: relative;
+      /* Keep this STABLE (no JS resizing) to avoid tiny scroll "jumps" on iOS.
+         `svh` is stable when the URL bar collapses/expands. */
+      /* Needs enough runway for the sticky stage:
+         available scroll inside this container is (containerHeight - stageHeight). */
+      height: 200vh;
+      height: 200svh;
+      /* ~100svh fade + ~100svh hold/buffer */
+    }
+
+    #dissolve-stage {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      height: 100svh;
+    }
+
+    /* Hero and Reveal are stacked inside the sticky stage.
+       IMPORTANT: We fade wrapper layers (not #heroHud directly) because #heroHud
+       has a CRT flicker animation that also animates `opacity` and would override JS. */
+    #dissolve-stage #heroLayer,
+    #dissolve-stage #revealLayer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100vh;
+      height: 100svh;
+    }
+
+    #dissolve-stage #heroLayer {
+      z-index: 20;
+      pointer-events: none;
+      /* Allow scroll through */
+      /* PERF: will-change is applied only while the hero is in/near view (via JS) */
+    }
+
+    #dissolve-stage #heroLayer * {
+      pointer-events: auto;
+      /* But allow interaction with HUD contents */
+    }
+
+    #dissolve-stage #revealLayer {
+      z-index: 19;
+      opacity: 0;
+      pointer-events: none;
+      /* PERF: will-change is applied only while the hero is in/near view (via JS) */
+    }
+
+    #dissolve-stage #revealLayer.active {
+      pointer-events: auto;
+    }
+
+    /* Smooth scroll */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    ::selection {
+      background: rgba(100, 100, 100, 0.3);
+      color: inherit;
+    }
+
+    /* ==========================================
+       Works Gallery (ported from portfolio-draft)
+       ========================================== */
+    .clock-modal {
+      opacity: 0;
+      pointer-events: none;
+      will-change: opacity;
+      transition: opacity 0.3s ease;
+    }
+
+    .clock-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Prevent white flash when modal iframe loads */
+    #modalIframe {
+      display: block;
+      background: #0a0a0a;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      will-change: opacity;
+    }
+
+    #modalIframe.loaded {
+      opacity: 1;
+    }
+
+    .carousel-dot.active {
+      background: white;
+    }
+
+    #carouselTrack {
+      transition: transform 0.5s ease-out;
+    }
+
+    /* ==========================================
+       TEMP: Disable CRT/HUD animations (starlight)
+       Remove `disable-crt` from <body> to re-enable.
+       ========================================== */
+    body.disable-crt .crt-flicker,
+    body.disable-crt .crt-retrace,
+    body.disable-crt .scanline,
+    body.disable-crt .pulse,
+    body.disable-crt .crt-rollbar::before,
+    body.disable-crt .crt-signal::after,
+    body.disable-crt .crt-noise::before {
+      animation: none !important;
+    }
+
+    /* ==========================================
+       Pixelated Soul: First + Latest entry cards
+       ========================================== */
+    .pxsoul-card {
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, transparent 50%, rgba(255, 255, 255, 0.01) 100%),
+        rgba(10, 10, 14, 0.7);
+      backdrop-filter: blur(12px);
+      border-radius: 2px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .pxsoul-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .pxsoul-card::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 20%;
+      right: 20%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      pointer-events: none;
+    }
+
+    .pxsoul-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .pxsoul-card>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    .pxsoul-entry-body {
+      font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 9;
+      line-clamp: 9;
+      overflow: hidden;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      letter-spacing: 0.01em;
+    }
+
+    .pxsoul-entry-label {
+      font-family: 'Josefin Sans', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 1rem;
+      margin-top: auto;
+    }
+
+    /* ==========================================
+       About: world population module
+       ========================================== */
+    .about-grid {
+      width: 100%;
+      max-width: 56rem;
+      /* match Tailwind max-w-4xl used in Works sections for left-edge alignment */
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(1.75rem, 3vw, 3rem);
+      align-items: center;
+    }
+
+    @media (min-width: 1024px) {
+      .about-grid {
+        grid-template-columns: 1fr;
+        align-items: center;
+      }
+    }
+
+    /* About layout variant when we remove the photo (no empty column on desktop) */
+    @media (min-width: 1024px) {
+      .about-grid.about-grid--no-pic {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .about-textcol {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .about-born {
+      letter-spacing: 0.02em;
+    }
+
+    .about-pop {
+      letter-spacing: 0.01em;
+    }
+
+    .about-terminal .worldPopCounter {
+      font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+      color: rgba(255, 255, 255, 0.95);
+      padding: 0 0.15rem;
+    }
+
+    .about-profile-pic {
+      width: clamp(260px, 34vw, 560px);
+      max-width: 100%;
+      height: auto;
+      object-fit: cover;
+      image-rendering: pixelated;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 1024px) {
+      .about-profile-pic {
+        width: clamp(360px, 32vw, 640px);
+      }
+    }
+
+    /* ==========================================
+       About: terminal window concept
+       ========================================== */
+    .about-terminal {
+      width: 100%;
+      border: 0;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+      position: relative;
+      /* Context for absolute controls */
+    }
+
+    /* About: embed the standalone terminal page without CSS/JS collisions */
+    .about-terminal-embed {
+      width: 100%;
+      /* Match About's "centered area" (viewport minus sticky nav minus section padding). */
+      height: min(720px, calc(100svh - var(--nav-h) - (clamp(1.75rem, 4vh, 3rem) * 2)));
+      border: 0;
+      display: block;
+      /* Dark bg prevents white flash from about:blank before real content loads */
+      background: #0a0a0a;
+      /* Hide until loaded to prevent partial render flash */
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .about-terminal-embed.loaded {
+      opacity: 1;
+    }
+
+    .about-terminal-controls {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      gap: 6px;
+      z-index: 20;
+    }
+
+    .ascii-btn {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .ascii-btn:hover,
+    .ascii-btn.active {
+      background: rgba(255, 255, 255, 0.8);
+      border-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+
+    .about-terminal-body {
+      padding: clamp(0.9rem, 1.2vw + 0.6rem, 1.35rem);
+      font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-variant-numeric: tabular-nums;
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 0.98em;
+      line-height: 1.7;
+      text-align: left;
+    }
+
+    /* Single-line "terminal output" typing */
+    .about-terminal .term-typedline {
+      white-space: pre-wrap;
+      letter-spacing: 0.01em;
+      max-width: 100%;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      /* Hanging indent so wrapped lines align after the prompt */
+      padding-left: 2ch;
+      text-indent: -2ch;
+    }
+
+    /* Hide cursor gap when not visible (cursor only shows during initial blink) */
+    .about-terminal .term-cursor:not(.is-visible) {
+      display: none;
+    }
+
+    .about-terminal .term-cursor {
+      display: none;
+      /* Hidden by default */
+    }
+
+    .about-terminal .term-cursor.is-visible {
+      display: inline-block;
+      width: 0.7ch;
+      opacity: 0.95;
+    }
+
+    .about-terminal .fake-tm {
+      font-size: 0.72em;
+      vertical-align: super;
+      letter-spacing: 0.02em;
+      opacity: 0.9;
+      margin-left: 0.15ch;
+    }
+
+    .about-terminal .worldPopCounter {
+      white-space: normal;
+      display: inline;
+      word-break: keep-all;
+      /* try to keep number together but allow breaking at commas if needed */
+    }
+
+    @media (prefers-reduced-motion: reduce) {}
+
+    /* Faux editor pane for ASCII portrait (preserve whitespace exactly) */
+    .about-terminal .term-editor {
+      margin-top: clamp(0.65rem, 0.9vw + 0.4rem, 1.05rem);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: rgba(0, 0, 0, 0.28);
+      border-radius: 10px;
+      overflow: hidden;
+      /* no scrolling; we fit to viewport */
+      text-align: center;
+      /* center the <pre> block */
+    }
+
+    .about-terminal .term-editor-pre {
+      margin: 0;
+      padding: clamp(0.55rem, 0.9vw + 0.3rem, 0.95rem);
+      white-space: pre;
+      /* preserve spaces */
+      font-family: inherit;
+      /* font-size is set by JS to ensure no-scroll fit */
+      font-size: 12px;
+      line-height: 1.08;
+      /* slightly looser so the ASCII feels less “thick” */
+      letter-spacing: 0;
+      color: rgba(255, 255, 255, 0.74);
+      /* lighter ink */
+      font-weight: 300;
+      /* thinner glyph weight */
+      display: inline-block;
+      /* allow centering via parent text-align */
+      text-align: left;
+      /* keep ASCII art alignment intact */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .about-terminal .term-cursor {
+        display: none !important;
+      }
+    }
+
+    /* ==========================================
+       Contrast bump: Tailwind neutral text on near-black
+       (keeps the "gray" intent, but improves legibility)
+       ========================================== */
+    .text-neutral-400 {
+      color: rgb(229 229 229 / 0.95) !important;
+      /* strong, still not pure white */
+    }
+
+    .text-neutral-500 {
+      color: rgb(229 229 229 / 0.86) !important;
+      /* clearly legible secondary */
+    }
+
+    .text-neutral-600 {
+      color: rgb(229 229 229 / 0.76) !important;
+      /* tertiary, but readable */
+    }
+
+    /* ==========================================
+       Typography: fluid, magazine-like scale (Squarespace-style)
+       Applied ONLY to main site sections (not the HUD).
+       ========================================== */
+    body {
+      font-size: clamp(16px, 0.7vw + 14px, 19px);
+      line-height: 1.65;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Small labels and utility text were too small; bump responsively */
+    #works .text-xs,
+    #about .text-xs,
+    #contact .text-xs,
+    footer .text-xs {
+      font-size: clamp(0.85rem, 0.78rem + 0.25vw, 0.98rem) !important;
+      line-height: 1.35;
+    }
+
+    #works .text-sm,
+    #about .text-sm,
+    #contact .text-sm,
+    footer .text-sm {
+      font-size: clamp(0.98rem, 0.9rem + 0.3vw, 1.12rem) !important;
+      line-height: 1.45;
+    }
+
+    #works .text-lg,
+    #about .text-lg,
+    #contact .text-lg,
+    footer .text-lg {
+      font-size: clamp(1.18rem, 1.05rem + 0.55vw, 1.45rem) !important;
+      line-height: 1.6;
+    }
+
+    #works .text-xl,
+    #about .text-xl,
+    #contact .text-xl,
+    footer .text-xl {
+      font-size: clamp(1.32rem, 1.12rem + 0.7vw, 1.65rem) !important;
+      line-height: 1.55;
+    }
+
+    /* ==========================================
+       Microdosing Mockup: responsive phone cascade
+       Row on desktop/iPad, stack on mobile
+       ========================================== */
+    .mockup-microdosing {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(0.5rem, 2vw, 1.5rem);
+      padding: clamp(1rem, 3vw, 2rem);
+    }
+
+    .mockup-phone-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .mockup-phone {
+      /* Scale to fit viewport with nice padding */
+      width: clamp(100px, 22vw, 180px);
+      height: auto;
+      filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
+    }
+
+    .mockup-label {
+      color: #555555;
+      font-family: system-ui, sans-serif;
+      font-size: clamp(0.5rem, 1vw, 0.7rem);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .mockup-arrow {
+      width: clamp(20px, 4vw, 40px);
+      height: auto;
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+
+    /* Mobile: stack vertically, rotate arrows */
+    @media (max-width: 767px) {
+      .mockup-microdosing {
+        flex-direction: column;
+        gap: clamp(0.75rem, 3vw, 1.5rem);
+      }
+
+      .mockup-phone {
+        width: clamp(140px, 50vw, 200px);
+      }
+
+      .mockup-arrow {
+        transform: rotate(90deg);
+        width: clamp(24px, 6vw, 36px);
+      }
+    }
+
+    /* ==========================================
+     Microdosing Swiper Carousel (from mockup-microdosing.html)
+     ========================================== */
+    .microdosing-carousel {
+      width: 100%;
+      max-width: 1200px;
+      padding: 40px 0 60px;
+      overflow: visible;
+      position: relative;
+      scale: 0.75;
+    }
+
+    .microdosing-carousel .swiper-wrapper {
+      padding-bottom: 80px;
+    }
+
+    .microdosing-carousel .swiper-slide {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+
+    .microdosing-carousel .phone-frame::before {
+      content: '';
+      position: absolute;
+      top: calc(100% + 10px);
+      left: -20%;
+      width: 140%;
+      height: 60px;
+      background: radial-gradient(ellipse at center,
+          rgba(200, 170, 120, 0.6) 0%,
+          rgba(160, 130, 90, 0.35) 30%,
+          transparent 70%);
+      border-radius: 50%;
+      filter: blur(12px);
+      pointer-events: none;
+    }
+
+    .microdosing-carousel .phone-frame {
+      width: 220px;
+      height: 476px;
+      background: linear-gradient(160deg, #b09870 0%, #8a7050 100%);
+      border-radius: 32px;
+      padding: 4px;
+      box-shadow: 8px 12px 24px rgba(0, 0, 0, 0.5);
+      position: relative;
+      border: 1px solid #a89060;
+    }
+
+    .microdosing-carousel .phone-bezel {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      border-radius: 28px;
+      padding: 2px;
+    }
+
+    .microdosing-carousel .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #1a1a22 0%, #0f0f14 100%);
+      border-radius: 26px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .microdosing-carousel .dynamic-island {
+      width: 70px;
+      height: 22px;
+      background: #000;
+      border-radius: 11px;
+      margin: 12px auto 0;
+      flex-shrink: 0;
+    }
+
+    .microdosing-carousel .home-indicator {
+      width: 75px;
+      height: 3px;
+      background: #888;
+      border-radius: 2px;
+      margin: auto auto 10px;
+      flex-shrink: 0;
+    }
+
+    .microdosing-carousel .screen-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .microdosing-carousel .entry-screen .screen-content {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .microdosing-carousel .entry-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .microdosing-carousel .entry-logo svg {
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+    }
+
+    .microdosing-carousel .entry-title {
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      margin-bottom: 40px;
+      line-height: 1.4;
+    }
+
+    .microdosing-carousel .entry-glow {
+      color: #ffffff;
+      text-shadow:
+        0 0 8px rgba(212, 176, 122, 0.8),
+        0 0 20px rgba(212, 176, 122, 0.7),
+        0 0 40px rgba(212, 176, 122, 0.6),
+        0 0 70px rgba(212, 176, 122, 0.5),
+        0 0 100px rgba(212, 176, 122, 0.4),
+        0 0 140px rgba(212, 176, 122, 0.3);
+    }
+
+    .microdosing-carousel .entry-btn {
+      width: 80px;
+      height: 80px;
+      border: 2px solid #5a5a70;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .microdosing-carousel .entry-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #8a8aa0;
+    }
+
+    .microdosing-carousel .gong-screen .screen-content {
+      padding-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .microdosing-carousel .gong-time {
+      color: #fff;
+      font-size: 40px;
+      font-weight: 200;
+      text-align: center;
+      margin-bottom: 2px;
+    }
+
+    .microdosing-carousel .gong-date {
+      color: #a0a0a0;
+      font-size: 10px;
+      text-align: center;
+      margin-bottom: 0;
+    }
+
+    .microdosing-carousel .gong-main-block {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+
+    .microdosing-carousel .gong-notification {
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      padding: 8px 0 20px;
+      margin-bottom: 0;
+      text-align: center;
+    }
+
+    .microdosing-carousel .gong-icon-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+
+    .microdosing-carousel .gong-icon-main {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .microdosing-carousel .gong-body {
+      color: #c0c0c0;
+      font-size: 10px;
+      margin-bottom: 4px;
+    }
+
+    .microdosing-carousel .gong-input-label {
+      color: #d0d0d0;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      margin-bottom: 14px;
+      margin-top: 8px;
+      margin-left: 12px;
+    }
+
+    .microdosing-carousel .gong-input-wrap {
+      position: relative;
+      margin-bottom: 0;
+    }
+
+    .microdosing-carousel .gong-input-icon {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      opacity: 0.7;
+    }
+
+    .microdosing-carousel .gong-input {
+      width: 100%;
+      background: rgba(35, 35, 42, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      padding: 12px;
+      color: #a0a0a0;
+      font-size: 9px;
+      font-family: inherit;
+      resize: none;
+      height: 72px;
+    }
+
+    .microdosing-carousel .gong-submit {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 10px;
+      padding: 12px;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .microdosing-carousel .moments-screen .screen-content {
+      /* Vertically center the whole "Today's Insights" composition */
+      justify-content: center;
+      padding-top: 16px;
+      padding-bottom: 16px;
+    }
+
+    .microdosing-carousel .moments-title {
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .microdosing-carousel .moments-timer {
+      width: 36px;
+      height: 36px;
+      border: 2.5px solid #3a3a45;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .microdosing-carousel .moments-timer::before {
+      content: '';
+      position: absolute;
+      inset: -2.5px;
+      border: 2.5px solid transparent;
+      border-top-color: #7a7a90;
+      border-radius: 50%;
+      transform: rotate(-30deg);
+    }
+
+    .microdosing-carousel .moments-timer-text {
+      color: #a0a0a0;
+      font-size: 8px;
+      font-weight: 500;
+    }
+
+    .microdosing-carousel .moment-card {
+      background: rgba(35, 35, 42, 0.95);
+      border: 0.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .microdosing-carousel .moment-card.active {
+      background: rgba(45, 45, 55, 0.98);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .microdosing-carousel .moment-card.pending {
+      opacity: 0.7;
+      border-style: dashed;
+    }
+
+    .microdosing-carousel .moment-dot {
+      width: 10px;
+      height: 10px;
+      background: #4a4a60;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .microdosing-carousel .moment-card.active .moment-dot {
+      background: #7a7aa0;
+    }
+
+    .microdosing-carousel .moment-card.pending .moment-dot {
+      background: transparent;
+      border: 1px dashed #4a4a60;
+    }
+
+    .microdosing-carousel .moment-info {
+      flex: 1;
+    }
+
+    .microdosing-carousel .moment-time {
+      color: #909090;
+      font-size: 7px;
+      margin-bottom: 4px;
+    }
+
+    .microdosing-carousel .moment-text {
+      color: #e8e8e8;
+      font-size: 9px;
+    }
+
+    .microdosing-carousel .moment-card.active .moment-text {
+      color: #fff;
+    }
+
+    .microdosing-carousel .moment-card.pending .moment-text {
+      color: #909090;
+      font-style: italic;
+    }
+
+    .microdosing-carousel .moments-progress {
+      margin-top: auto;
+      padding-top: 16px;
+    }
+
+    .microdosing-carousel .progress-bar {
+      height: 4px;
+      background: #2a2a35;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .microdosing-carousel .progress-fill {
+      height: 100%;
+      background: #7a7a90;
+      border-radius: 2px;
+      width: 66%;
+    }
+
+    .microdosing-carousel .progress-text {
+      color: #808080;
+      font-size: 7px;
+      text-align: center;
+    }
+
+    .microdosing-carousel .insight-screen .screen-content {
+      /* Vertically center the insight screen composition */
+      justify-content: center;
+      padding-top: 16px;
+      padding-bottom: 16px;
+    }
+
+    .microdosing-carousel .insight-title {
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .microdosing-carousel .insight-diagram {
+      position: relative;
+      height: 90px;
+      margin-bottom: 16px;
+    }
+
+    .microdosing-carousel .insight-card {
+      background: rgba(30, 30, 38, 0.98);
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .microdosing-carousel .insight-quote {
+      color: #f0f0f0;
+      font-family: Georgia, 'New York', serif;
+      font-size: 10px;
+      font-style: italic;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .microdosing-carousel .insight-date {
+      color: #808080;
+      font-size: 7px;
+      letter-spacing: 0.1em;
+    }
+
+    .microdosing-carousel .insight-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .microdosing-carousel .insight-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 10px;
+      padding: 12px;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .microdosing-carousel .completion-screen .screen-content {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 32px;
+    }
+
+    .microdosing-carousel .completion-message {
+      color: #c0c0c8;
+      font-family: Georgia, 'New York', serif;
+      font-size: 16px;
+      font-style: italic;
+      line-height: 1.7;
+      letter-spacing: 0.02em;
+    }
+
+    .microdosing-carousel .swiper-pagination-bullet {
+      background: #4a4a60;
+      opacity: 1;
+    }
+
+    .microdosing-carousel .swiper-pagination-bullet-active {
+      background: #a08968;
+    }
+
+    .microdosing-carousel .screen-label {
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #d0d0d0;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      white-space: nowrap;
+    }
+
+    /* ==========================================
+       Contact Section
+       ========================================== */
+    .contact-section {
+      /* Footer is real layout (takes space), sticky nav is an overlay (doesn't).
+         So: subtract footer from section height, and reserve nav via padding for safe centering. */
+      min-height: calc(100vh - var(--footer-h));
+      min-height: calc(100svh - var(--footer-h));
+      padding-top: var(--nav-h);
+      box-sizing: border-box;
+    }
+
+    .contact-container {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .contact-newsletter {
+      text-align: center;
+    }
+
+    .contact-heading {
+      font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+      font-weight: 300;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    .contact-subtext {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-form {
+      width: 100%;
+    }
+
+    .contact-input-wrap {
+      display: flex;
+      align-items: stretch;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .contact-input-wrap:focus-within {
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+    }
+
+    .contact-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 1rem 1.25rem;
+      color: #fff;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      /* Prevent browser-native focus artifacts; keep only our wrapper focus ring */
+      appearance: none;
+      -webkit-appearance: none;
+      box-shadow: none;
+      /* Avoid the "blue vertical line" (default caret color) */
+      caret-color: rgba(255, 255, 255, 0.85);
+    }
+
+    .contact-input:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    /* Keep browser-native invalid styling from going "off brand" (red glow/outlines) */
+    .contact-input:invalid {
+      box-shadow: none;
+      outline: none;
+    }
+
+    /* Firefox-specific invalid styling */
+    .contact-input:-moz-ui-invalid {
+      box-shadow: none;
+    }
+
+    .contact-input::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .contact-submit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 1.25rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .contact-submit:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    .contact-form-status {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      min-height: 1.25rem;
+      color: rgba(255, 255, 255, 0.6);
+      font-family: inherit;
+      letter-spacing: 0.01em;
+    }
+
+    .contact-form-status.success {
+      /* Keep success feedback subtle + consistent with the site's neutral palette */
+      color: rgba(255, 255, 255, 0.86);
+    }
+
+    .contact-form-status.error {
+      /* Keep error feedback consistent; message text communicates the issue */
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 1.25rem;
+    }
+
+    /* iOS/Safari: avoid blue tap highlight + autofill styling artifacts */
+    .contact-input,
+    .contact-submit {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .contact-input:-webkit-autofill,
+    .contact-input:-webkit-autofill:hover,
+    .contact-input:-webkit-autofill:focus,
+    .contact-input:-webkit-autofill:active {
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 0px 1000px rgba(0, 0, 0, 0) inset;
+      transition: background-color 9999s ease-out 0s;
+    }
+
+    .contact-divider {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .contact-divider-line {
+      width: 120px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .contact-direct {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .contact-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1.25rem 1.5rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      min-width: 120px;
+    }
+
+    .contact-link:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .contact-icon {
+      width: 24px;
+      height: 24px;
+      color: rgba(255, 255, 255, 0.7);
+      transition: color 0.2s ease;
+    }
+
+    .contact-link:hover .contact-icon {
+      color: #fff;
+    }
+
+    .contact-link-text {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.85rem;
+      letter-spacing: 0.02em;
+      transition: color 0.2s ease;
+    }
+
+    .contact-link:hover .contact-link-text {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    @media (max-width: 480px) {
+      .contact-direct {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .contact-link {
+        flex-direction: row;
+        justify-content: center;
+        min-width: unset;
+        padding: 1rem 1.5rem;
+      }
+    }
+
+    .contact-footer {
+      position: relative;
+    }
+
+    .contact-footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.25);
+    }

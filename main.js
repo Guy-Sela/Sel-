@@ -1005,12 +1005,47 @@ document.addEventListener('DOMContentLoaded', function () {
       dot.addEventListener('click', () => goTo(parseInt(dot.dataset.index)));
     });
 
+    // Touch swipe
     let startX = 0;
     track.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
     track.addEventListener('touchend', (e) => {
       const diff = startX - e.changedTouches[0].clientX;
       if (Math.abs(diff) > 50) goTo(currentIndex + (diff > 0 ? 1 : -1));
     }, { passive: true });
+
+    // Mouse drag (for desktop when arrows hidden)
+    let isDragging = false;
+    let dragStartX = 0;
+    let didDrag = false;
+
+    track.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      didDrag = false;
+      dragStartX = e.clientX;
+      track.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging && Math.abs(dragStartX - e.clientX) > 10) {
+        didDrag = true;
+      }
+    });
+
+    document.addEventListener('mouseup', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      track.style.cursor = '';
+      const diff = dragStartX - e.clientX;
+      if (Math.abs(diff) > 50) goTo(currentIndex + (diff > 0 ? 1 : -1));
+    });
+
+    // Prevent click from opening clock after drag
+    track.addEventListener('click', (e) => {
+      if (didDrag) {
+        e.stopPropagation();
+        didDrag = false;
+      }
+    }, true);
 
     update();
   })();

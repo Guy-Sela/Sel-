@@ -1555,14 +1555,23 @@
     }
 
     .contact-newsletter {
-      text-align: left;
+      text-align: center;
       flex: 1;
       min-width: 0;
+    }
+
+    .contact-form {
+      width: 75%;
+      margin: 0 auto;
     }
 
     @media (max-width: 640px) {
       .contact-newsletter {
         text-align: center;
+        width: 100%;
+      }
+
+      .contact-form {
         width: 100%;
       }
     }

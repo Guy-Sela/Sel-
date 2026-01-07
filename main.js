@@ -641,7 +641,7 @@ document.addEventListener('DOMContentLoaded', function () {
           break;
         }
       }
-    }, { threshold: 0.22 });
+    }, { rootMargin: '100px 0px 0px 0px', threshold: 0.08 });
 
     io.observe(about);
   })();
@@ -1644,7 +1644,7 @@ document.addEventListener('DOMContentLoaded', function () {
         ensureAboutEmbedLoaded();
         preloadObserver.disconnect();
       }
-    }, { rootMargin: '600px 0px 600px 0px', threshold: 0 });
+    }, { rootMargin: '1200px 0px 1200px 0px', threshold: 0 });
 
     preloadObserver.observe(aboutSection);
   })();
@@ -1775,11 +1775,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const activeObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting && entry.intersectionRatio > 0.15) {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.05) {
           setActiveNav(entry.target.id);
         }
       });
-    }, { rootMargin: '0px 0px -20% 0px', threshold: [0.15, 0.3] });
+    }, { rootMargin: '0px 0px -40% 0px', threshold: [0.05, 0.15] });
     ['works', 'about', 'contact'].forEach(id => {
       const el = document.getElementById(id);
       if (el) activeObserver.observe(el);

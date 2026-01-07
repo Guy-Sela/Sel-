@@ -7,7 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DOMAIN = 'https://selà.com';
+const DOMAIN = 'https://xn--sel-cla.com';
 const ROOT = path.resolve(__dirname, '..');
 
 // Pages with their priorities and change frequencies

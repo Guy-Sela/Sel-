@@ -841,6 +841,8 @@ document.addEventListener('DOMContentLoaded', function () {
   let clockModalPrevBodyPaddingRight = '';
   let clockModalPrevHtmlOverflow = '';
 
+  let clockModalOpenTimer = null;
+
   function openClock(id) {
     const data = clockData[id];
     if (!data) return;
@@ -857,8 +859,16 @@ document.addEventListener('DOMContentLoaded', function () {
       clockModalCloseTimer = null;
     }
 
+    // If we were mid-open (switching clocks), cancel that too
+    if (clockModalOpenTimer) {
+      clearTimeout(clockModalOpenTimer);
+      clockModalOpenTimer = null;
+    }
+
+    const isAlreadyOpen = modal.classList.contains('active');
+
     // Make modal visible (dark) and lock scroll without layout jump
-    if (!modal.classList.contains('active')) {
+    if (!isAlreadyOpen) {
       clockModalPrevBodyOverflow = document.body.style.overflow;
       clockModalPrevBodyPaddingRight = document.body.style.paddingRight;
       clockModalPrevHtmlOverflow = document.documentElement.style.overflow;
@@ -871,22 +881,30 @@ document.addEventListener('DOMContentLoaded', function () {
       modal.classList.add('active');
     }
 
-    // Reset and fade in iframe only after content loads
+    // Fade out current iframe first
     iframe.classList.remove('loaded');
     iframe.onload = null;
-    iframe.onload = () => {
-      // Ignore late loads after close
-      if (!modal.classList.contains('active')) return;
-      iframe.classList.add('loaded');
-    };
 
-    // Assign src on next frame so the opacity reset is applied before navigation paints
-    const nextSrc = data.src;
-    requestAnimationFrame(() => {
-      iframe.src = nextSrc;
-    });
-    title.textContent = data.title;
-    description.textContent = data.description;
+    function loadNewClock() {
+      iframe.onload = () => {
+        if (!modal.classList.contains('active')) return;
+        iframe.classList.add('loaded');
+      };
+      iframe.src = data.src;
+      title.textContent = data.title;
+      description.textContent = data.description;
+    }
+
+    // If switching clocks, wait for fade out before loading new one
+    if (isAlreadyOpen) {
+      clockModalOpenTimer = setTimeout(() => {
+        clockModalOpenTimer = null;
+        loadNewClock();
+      }, 320);
+    } else {
+      // Fresh open - load immediately
+      requestAnimationFrame(loadNewClock);
+    }
   }
 
   function closeClock() {

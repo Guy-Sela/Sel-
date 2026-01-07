@@ -31,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: Generate Tailwind CSS
-        run: ./node_modules/.bin/tailwindcss -i src/tailwind-input.css -o src/vendor/tailwind.min.css --minify
+        run: npx tailwindcss -i tailwind-input.css -o vendor/tailwind.min.css --minify
 
       - name: Generate sitemap
         run: node scripts/sitemap.js

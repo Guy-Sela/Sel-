@@ -115,74 +115,91 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ==========================================
-  // Microdosing Swiper Carousel
+  // Microdosing Swiper Carousel (lazy-loaded)
   // ==========================================
   (function initMicrodosingSwiper() {
     if (typeof Swiper === 'undefined') return;
 
-    new Swiper('.microdosing-carousel', {
-      effect: 'coverflow',
-      grabCursor: true,
-      centeredSlides: true,
-      // Desktop/default: multi-phone coverflow.
-      slidesPerView: 3,
-      initialSlide: 0,
-      loop: false,
-      coverflowEffect: {
-        rotate: 35,
-        stretch: 0,
-        depth: 350,
-        modifier: 1,
-        scale: 0.85,
-        slideShadows: false,
-      },
-      // Narrow screens: show only the "front" phone (no squeezing/distortion).
-      breakpoints: {
-        0: {
-          // Slightly >1 so adjacent slides can "exist" for coverflow, but still reads as one main phone.
-          slidesPerView: 1.15,
-          spaceBetween: 12,
-          coverflowEffect: {
-            rotate: 18,
-            stretch: 0,
-            depth: 220,
-            modifier: 1,
-            scale: 0.92,
-            slideShadows: false,
+    const carousel = document.querySelector('.microdosing-carousel');
+    if (!carousel) return;
+
+    let swiperInitialized = false;
+
+    function initSwiper() {
+      if (swiperInitialized) return;
+      swiperInitialized = true;
+
+      new Swiper('.microdosing-carousel', {
+        effect: 'coverflow',
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: 3,
+        initialSlide: 0,
+        loop: false,
+        coverflowEffect: {
+          rotate: 35,
+          stretch: 0,
+          depth: 350,
+          modifier: 1,
+          scale: 0.85,
+          slideShadows: false,
+        },
+        breakpoints: {
+          0: {
+            slidesPerView: 1.15,
+            spaceBetween: 12,
+            coverflowEffect: {
+              rotate: 18,
+              stretch: 0,
+              depth: 220,
+              modifier: 1,
+              scale: 0.92,
+              slideShadows: false,
+            },
+          },
+          640: {
+            slidesPerView: 2,
+            spaceBetween: 18,
+            coverflowEffect: {
+              rotate: 25,
+              stretch: 0,
+              depth: 260,
+              modifier: 1,
+              scale: 0.9,
+              slideShadows: false,
+            },
+          },
+          1024: {
+            slidesPerView: 3,
+            coverflowEffect: {
+              rotate: 35,
+              stretch: 0,
+              depth: 350,
+              modifier: 1,
+              scale: 0.85,
+              slideShadows: false,
+            },
           },
         },
-        640: {
-          slidesPerView: 2,
-          spaceBetween: 18,
-          coverflowEffect: {
-            rotate: 25,
-            stretch: 0,
-            depth: 260,
-            modifier: 1,
-            scale: 0.9,
-            slideShadows: false,
-          },
+        pagination: {
+          el: '.microdosing-carousel .swiper-pagination',
+          clickable: true,
         },
-        1024: {
-          slidesPerView: 3,
-          coverflowEffect: {
-            rotate: 35,
-            stretch: 0,
-            depth: 350,
-            modifier: 1,
-            scale: 0.85,
-            slideShadows: false,
-          },
+        keyboard: {
+          enabled: true,
         },
-      },
-      pagination: {
-        el: '.microdosing-carousel .swiper-pagination',
-        clickable: true,
-      },
-      keyboard: {
-        enabled: true,
-      },
-    });
+      });
+    }
+
+    // Lazy init: start when carousel is 300px from viewport
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        initSwiper();
+        observer.disconnect();
+      }
+    }, { rootMargin: '300px' });
+
+    observer.observe(carousel);
 
     function updateMdDateTime() {
       const now = new Date();

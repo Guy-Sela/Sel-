@@ -839,6 +839,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let clockModalCloseTimer = null;
   let clockModalPrevBodyOverflow = '';
   let clockModalPrevBodyPaddingRight = '';
+  let clockModalPrevHtmlOverflow = '';
 
   function openClock(id) {
     const data = clockData[id];
@@ -860,9 +861,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!modal.classList.contains('active')) {
       clockModalPrevBodyOverflow = document.body.style.overflow;
       clockModalPrevBodyPaddingRight = document.body.style.paddingRight;
+      clockModalPrevHtmlOverflow = document.documentElement.style.overflow;
 
       const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
       if (scrollbarW > 0) document.body.style.paddingRight = `${scrollbarW}px`;
 
       modal.classList.add('active');
@@ -905,6 +908,7 @@ document.addEventListener('DOMContentLoaded', function () {
       clockModalCloseTimer = null;
       document.body.style.overflow = clockModalPrevBodyOverflow;
       document.body.style.paddingRight = clockModalPrevBodyPaddingRight;
+      document.documentElement.style.overflow = clockModalPrevHtmlOverflow;
     }, 320);
   }
 

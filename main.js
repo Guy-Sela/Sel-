@@ -1847,12 +1847,28 @@ document.addEventListener('DOMContentLoaded', function () {
       worksRevealObserver.observe(worksTriggerEl);
     }
 
-    const activeObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && entry.intersectionRatio > 0.05) {
-          setActiveNav(entry.target.id);
+    const activeObserver = new IntersectionObserver((entries, observer) => {
+      // Find section closest to viewport center among all observed elements
+      const viewportCenter = window.innerHeight / 2;
+      let closest = null;
+      let closestDist = Infinity;
+
+      observer.takeRecords(); // flush pending
+      ['works', 'about', 'contact'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        // Section must be at least partially visible
+        if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+        const sectionCenter = rect.top + rect.height / 2;
+        const dist = Math.abs(sectionCenter - viewportCenter);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = id;
         }
       });
+
+      if (closest) setActiveNav(closest);
     }, { rootMargin: '0px 0px -40% 0px', threshold: [0.05, 0.15] });
     ['works', 'about', 'contact'].forEach(id => {
       const el = document.getElementById(id);

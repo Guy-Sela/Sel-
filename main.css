@@ -503,21 +503,21 @@
 
     /* Cross-dissolve container (tall) + stage (sticky) */
     #dissolve-container {
-      position: relative;
+      position: relative !important;
       /* Keep this STABLE (no JS resizing) to avoid tiny scroll "jumps" on iOS.
          `svh` is stable when the URL bar collapses/expands. */
       /* Needs enough runway for the sticky stage:
          available scroll inside this container is (containerHeight - stageHeight). */
-      height: 200vh;
-      height: 200svh;
+      height: 200vh !important;
+      height: 200svh !important;
       /* ~100svh fade + ~100svh hold/buffer */
     }
 
     #dissolve-stage {
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      height: 100svh;
+      position: sticky !important;
+      top: 0 !important;
+      height: 100vh !important;
+      height: 100svh !important;
     }
 
     /* Hero and Reveal are stacked inside the sticky stage.
@@ -932,8 +932,9 @@
        Typography: fluid, magazine-like scale (Squarespace-style)
        Applied ONLY to main site sections (not the HUD).
        ========================================== */
-    html, body {
-      overflow-x: hidden;
+    html,
+    body {
+      overflow-x: clip;
     }
 
     body {
@@ -1536,28 +1537,38 @@
 
     .contact-container {
       width: 100%;
-      max-width: 420px;
+      max-width: 680px;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 1.75rem;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 3rem;
+    }
+
+    @media (max-width: 640px) {
+      .contact-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        max-width: 420px;
+      }
     }
 
     .contact-newsletter {
-      text-align: center;
-      width: 100%;
-      margin-bottom: 3vh;
+      text-align: left;
+      flex: 1;
+      min-width: 0;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 640px) {
       .contact-newsletter {
-        margin-bottom: 0;
+        text-align: center;
+        width: 100%;
       }
     }
 
     .contact-heading {
-      font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+      font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem);
       font-weight: 300;
       color: #fff;
       margin-bottom: 0.5rem;
@@ -1565,8 +1576,8 @@
     }
 
     .contact-subtext {
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 1.05rem;
       margin-bottom: 1.5rem;
     }
 
@@ -1578,7 +1589,7 @@
       display: flex;
       align-items: stretch;
       background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 12px;
       overflow: hidden;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -1679,23 +1690,18 @@
       transition: background-color 9999s ease-out 0s;
     }
 
-    .contact-divider {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .contact-divider-line {
-      width: 120px;
-      height: 1px;
-      background: rgba(255, 255, 255, 0.25);
-    }
-
     .contact-direct {
       display: flex;
-      justify-content: space-between;
-      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding-top: 0.25rem;
+    }
+
+    @media (max-width: 640px) {
+      .contact-direct {
+        align-items: center;
+      }
     }
 
     .contact-link {
@@ -1713,8 +1719,8 @@
     }
 
     .contact-icon {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       color: rgba(255, 255, 255, 0.7);
       transition: color 0.2s ease;
     }
@@ -1725,21 +1731,13 @@
 
     .contact-link-text {
       color: rgba(255, 255, 255, 0.6);
-      font-size: 0.85rem;
+      font-size: 0.95rem;
       letter-spacing: 0.02em;
       transition: color 0.2s ease;
     }
 
     .contact-link:hover .contact-link-text {
       color: rgba(255, 255, 255, 0.9);
-    }
-
-    @media (max-width: 480px) {
-      .contact-direct {
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-      }
     }
 
     .contact-footer {

@@ -1,0 +1,79 @@
+html, body {
+    background: black;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.hourglass {
+    display: flex;
+    flex-direction: row;
+    width: 96vw;
+    height: 63vw;
+    max-width: 141vh;
+    max-height: 94vh;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: 0.1vmin white solid;
+}
+
+
+.hourglass > div {
+    width: 33.33%;
+    height: 100%;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+
+.top {
+    width: 30%;
+    height: 45%;
+    border: 0.1vmin white solid;
+    margin: 1.66%;
+    position: absolute;
+}
+
+.bottom {
+    width: 30%;
+    height: 45%;
+    border: 0.1vmin white solid;
+    margin: 1.66%;
+    position: absolute;
+    bottom: 0;
+}
+
+#rectangle1_seconds,
+#rectangle2_seconds,
+#rectangle1_minutes,
+#rectangle2_minutes,
+#rectangle1_hours,
+#rectangle2_hours {
+    max-width: 50%;
+    max-height: 45%;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+#rectangle1_seconds,
+#rectangle1_minutes,
+#rectangle1_hours {
+    background: red;
+}
+
+#rectangle2_seconds,
+#rectangle2_minutes,
+#rectangle2_hours {
+    background: blue;
+}

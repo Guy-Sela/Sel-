@@ -62,6 +62,7 @@
       font-display: swap;
       src: url('fonts/jetbrains-mono.woff2') format('woff2');
     }
+
     @font-face {
       font-family: 'Josefin Sans';
       font-style: normal;
@@ -69,6 +70,7 @@
       font-display: swap;
       src: url('fonts/josefin-sans.woff2') format('woff2');
     }
+
     @font-face {
       font-family: 'Roboto Mono';
       font-style: normal;
@@ -322,7 +324,7 @@
 
   <section id="works" class="pt-0 bg-neutral-950">
     <!-- 01: Conceptual Timing (carousel + modal) -->
-    <article>
+    <article id="conceptual-timing">
       <div class="px-6 max-w-4xl mx-auto w-full mb-12">
         <span class="text-neutral-600 text-sm tracking-widest uppercase mb-4 block">01</span>
         <h2 class="text-3xl md:text-4xl lg:text-5xl font-light mb-4 text-white">Conceptual Timing</h2>
@@ -354,7 +356,8 @@
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
                 <iframe loading="eager" src="about:blank"
                   data-src="meditativeclocks/clocks/semi-linear_clock_svg/index.html"
-                  class="clock-preview-iframe w-full h-full pointer-events-none" title="Semi-linear Clock preview"></iframe>
+                  class="clock-preview-iframe w-full h-full pointer-events-none"
+                  title="Semi-linear Clock preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
                 Semi-linear Clock
@@ -431,9 +434,9 @@
             data-clock="universe">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe loading="eager" src="about:blank"
-                  data-src="meditativeclocks/clocks/universe_clock/index.html"
-                  class="clock-preview-iframe w-full h-full pointer-events-none" title="Universe Clock preview"></iframe>
+                <iframe loading="eager" src="about:blank" data-src="meditativeclocks/clocks/universe_clock/index.html"
+                  class="clock-preview-iframe w-full h-full pointer-events-none"
+                  title="Universe Clock preview"></iframe>
               </div>
               <h3 class="text-xl text-white text-center flex items-center justify-center gap-2">
                 Universe Clock
@@ -450,8 +453,7 @@
             data-clock="serendipity">
             <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl">
               <div class="h-64 md:h-96 lg:h-[28rem] w-full bg-neutral-900 overflow-hidden mb-4 relative">
-                <iframe loading="eager" src="about:blank"
-                  data-src="meditativeclocks/clocks/serendipity/index.html"
+                <iframe loading="eager" src="about:blank" data-src="meditativeclocks/clocks/serendipity/index.html"
                   class="clock-preview-iframe w-full h-full pointer-events-none"
                   title="Serendipity on Demand preview"></iframe>
               </div>
@@ -485,7 +487,7 @@
     </article>
 
     <!-- 02: Pixelated Soul (text-only) -->
-    <article class="px-6">
+    <article id="pixelated-soul" class="px-6">
       <div class="max-w-4xl mx-auto w-full">
         <span class="text-neutral-600 text-sm tracking-widest uppercase mb-4 block">02</span>
         <h2 class="text-3xl md:text-4xl lg:text-5xl font-light mb-8 text-white">Pixelated Soul</h2>
@@ -525,7 +527,7 @@
     </article>
 
     <!-- 03: Microdosing on Enlightenment -->
-    <article class="px-6">
+    <article id="microdosing-on-enlightenment" class="px-6">
       <div class="max-w-4xl mx-auto w-full">
         <span class="text-neutral-600 text-sm tracking-widest uppercase mb-4 block">03</span>
         <h2 class="text-3xl md:text-4xl lg:text-5xl font-light mb-6 text-white">Microdosing on
@@ -849,12 +851,35 @@
   <!-- Noscript fallback -->
   <noscript>
     <style>
-      #heroHud, #desktopHud, #dissolve-container { display: none !important; }
-      #works, #about, #contact { opacity: 1 !important; }
-      #stickyNav { opacity: 1 !important; visibility: visible !important; transform: none !important; }
-      .clock-preview-iframe { display: none; }
-      .carousel-item { display: none; }
-      .carousel-item:first-child { display: flex; }
+      #heroHud,
+      #desktopHud,
+      #dissolve-container {
+        display: none !important;
+      }
+
+      #works,
+      #about,
+      #contact {
+        opacity: 1 !important;
+      }
+
+      #stickyNav {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+      }
+
+      .clock-preview-iframe {
+        display: none;
+      }
+
+      .carousel-item {
+        display: none;
+      }
+
+      .carousel-item:first-child {
+        display: flex;
+      }
     </style>
     <div style="background:#0a0a0a;color:#a3a3a3;text-align:center;padding:2rem 1rem;font-family:system-ui;">
       <p>This site works best with JavaScript enabled for the full interactive experience.</p>

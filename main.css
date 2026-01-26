@@ -1527,99 +1527,117 @@
        Contact Section
        ========================================== */
     .contact-section {
-      /* Footer is real layout (takes space), sticky nav is an overlay (doesn't).
-         So: subtract footer from section height, and reserve nav via padding for safe centering. */
       min-height: calc(100vh - var(--footer-h));
       min-height: calc(100svh - var(--footer-h));
       padding-top: var(--nav-h);
       box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .contact-container {
       width: 100%;
-      max-width: 680px;
+      max-width: 720px;
+      padding: 0 2rem;
+      margin: 0 auto;
+      /* Simplified single-column, centered layout */
       display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 3rem;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+      min-height: 125px;
     }
 
-    @media (max-width: 640px) {
-      .contact-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 2rem;
-        max-width: 420px;
-      }
+    /* Squarespace-style split: newsletter left, direct contact right */
+    .contact-container.contact-card {
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
     }
 
     .contact-newsletter {
       text-align: center;
-      flex: 1;
-      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      align-items: center;
+      width: 100%;
+      max-width: 640px;
     }
 
-    .contact-form {
-      width: 70%;
-      margin: 0 auto;
-    }
 
-    @media (max-width: 640px) {
-      .contact-newsletter {
-        text-align: center;
-        width: 100%;
+    @media (max-width: 768px) {
+      .contact-container {
+        gap: 2rem;
+        max-width: 100%;
+        padding: 0 1.25rem;
       }
 
       .contact-form {
         width: 100%;
+        max-width: 100%;
+      }
+
+      .contact-direct {
+        align-items: center;
       }
     }
 
-    .contact-heading {
-      font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem);
-      font-weight: 300;
-      color: #fff;
-      margin-bottom: 0.5rem;
-      letter-spacing: 0.02em;
+    .contact-subtext {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.875rem;
+      /* text-sm */
+      letter-spacing: 0.1em;
+      /* tracking-widest */
+      text-transform: uppercase;
+      font-weight: 400;
+      margin: 0;
     }
 
-    .contact-subtext {
-      color: rgba(255, 255, 255, 0.65);
-      font-size: 1.05rem;
-      margin-bottom: 1.5rem;
+    .contact-form {
+      width: 70%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 0 auto;
     }
 
     .contact-input-wrap {
       display: flex;
-      align-items: stretch;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 12px;
-      overflow: hidden;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      align-items: center;
+      background: transparent;
+      border: none;
+      /* Slightly higher contrast for the input border */
+      border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 0;
+      overflow: visible;
+      padding: 0.5rem 0;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease;
     }
 
     .contact-input-wrap:focus-within {
-      border-color: rgba(255, 255, 255, 0.3);
-      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+      /* Stronger visible focus state for accessibility */
+      border-bottom-color: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 0 4px rgba(160, 140, 80, 0.06);
     }
 
     .contact-input {
       flex: 1;
       background: transparent;
       border: none;
-      padding: 1rem 1.25rem;
-      color: #fff;
+      padding-top: 0.75rem;
+      /* Slightly darker than pure white to avoid glare, but high contrast */
+      color: rgba(255, 255, 255, 0.95);
       font-size: 1rem;
       font-family: inherit;
       outline: none;
-      /* Prevent browser-native focus artifacts; keep only our wrapper focus ring */
       appearance: none;
       -webkit-appearance: none;
       box-shadow: none;
-      /* Avoid the "blue vertical line" (default caret color) */
-      caret-color: rgba(255, 255, 255, 0.85);
+      caret-color: rgba(255, 255, 255, 0.95);
     }
 
     .contact-input:focus {
@@ -1627,44 +1645,40 @@
       box-shadow: none;
     }
 
-    /* Keep browser-native invalid styling from going "off brand" (red glow/outlines) */
-    .contact-input:invalid {
+    .contact-input:invalid,
+    .contact-input:-moz-ui-invalid {
       box-shadow: none;
       outline: none;
     }
 
-    /* Firefox-specific invalid styling */
-    .contact-input:-moz-ui-invalid {
-      box-shadow: none;
-    }
-
     .contact-input::placeholder {
-      color: rgba(255, 255, 255, 0.35);
+      /* Increased placeholder contrast for readability */
+      color: rgba(255, 255, 255, 0.6);
     }
 
     .contact-submit {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 1.25rem;
-      background: rgba(255, 255, 255, 0.08);
+      padding: 0.5rem 0;
+      background: transparent;
       border: none;
-      border-left: 1px solid rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.7);
+      /* Slightly higher contrast on the button/icon */
+      color: rgba(255, 255, 255, 0.75);
       cursor: pointer;
-      transition: background 0.2s ease, color 0.2s ease;
+      transition: color 0.16s ease, transform 0.12s ease;
     }
 
     .contact-submit:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
+      color: rgba(255, 255, 255, 0.95);
+      transform: translateX(2px);
     }
 
     .contact-form-status {
-      margin-top: 0.75rem;
-      font-size: 0.85rem;
-      min-height: 1.25rem;
-      color: rgba(255, 255, 255, 0.6);
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      min-height: 1rem;
+      color: rgba(255, 255, 255, 0.55);
       font-family: inherit;
       letter-spacing: 0.01em;
     }
@@ -1698,14 +1712,20 @@
     .contact-direct {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      gap: 0.75rem;
+      align-items: center;
+      gap: 1rem;
       padding-top: 0.25rem;
     }
 
-    @media (max-width: 640px) {
+    /* Make contact links stack and breathe */
+    .contact-direct .contact-link {
+      padding: 0.5rem 0;
+      justify-content: center;
+    }
+
+    @media (max-width: 768px) {
       .contact-direct {
-        align-items: center;
+        align-items: flex-start;
       }
     }
 
@@ -1713,8 +1733,8 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 0.75rem;
+      gap: 0.75rem;
+      padding: 0;
       text-decoration: none;
       transition: opacity 0.2s ease;
     }
@@ -1724,38 +1744,80 @@
     }
 
     .contact-icon {
-      width: 28px;
-      height: 28px;
-      color: rgba(255, 255, 255, 0.7);
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      color: rgba(255, 255, 255, 0.6);
       transition: color 0.2s ease;
+      flex-shrink: 0;
     }
 
     .contact-link:hover .contact-icon {
-      color: #fff;
+      color: rgba(255, 255, 255, 0.9);
     }
 
     .contact-link-text {
       color: rgba(255, 255, 255, 0.6);
       font-size: 0.95rem;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.01em;
       transition: color 0.2s ease;
+    }
+
+    /* Prevent flex children collapsing to zero width in constrained layouts
+       and ensure links behave like text+icon inline controls. */
+    .contact-container,
+    .contact-newsletter,
+    .contact-direct,
+    .contact-link,
+    .contact-link-text {
+      min-width: 0;
+    }
+
+    /* Prefer inline-flex for link content so it sizes to its text instead
+       of taking the full flex-row width (keeps layout tight and predictable). */
+    .contact-link {
+      display: inline-block;
+      align-items: center;
+      gap: 0.5rem;
+      /* Ensure the anchor doesn't shrink to 0 inside flex containers */
+      flex: 0 0 auto;
+    }
+
+    .contact-link-text {
+      display: inline-block;
+    }
+
+    /* Ensure icon and label align exactly and don't collapse or wrap.
+       This fixes SVG baseline shifts and keeps the mailto text visible. */
+    .contact-icon {
+      display: inline-block;
+      flex: 0 0 24px;
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
+    }
+
+    .contact-link-text {
+      line-height: 1;
+      white-space: nowrap;
+      overflow: visible;
     }
 
     .contact-link:hover .contact-link-text {
       color: rgba(255, 255, 255, 0.9);
     }
 
-    .contact-footer {
-      position: relative;
+    .contact-direct .contact-link:first-child::before {
+      content: '';
+      display: block;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin-bottom: 1.75rem;
+      margin-left: -100vw;
+      margin-right: -100vw;
+      margin-top: -1.75rem;
     }
 
-    .contact-footer::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120px;
-      height: 1px;
-      background: rgba(255, 255, 255, 0.25);
+    .contact-footer {
+      position: relative;
     }

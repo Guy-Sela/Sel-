@@ -87,14 +87,14 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
           >
             {/* Main iframe - Takes 2/3 on desktop */}
             <div className="lg:col-span-2 lg:row-span-2">
-              <div className="aspect-[4/3] lg:aspect-auto lg:h-full min-h-[400px] lg:min-h-[600px] bg-card border border-border overflow-hidden relative">
+              <div className="aspect-[4/3] lg:aspect-auto lg:h-full lg:min-h-[600px] bg-card border border-border overflow-hidden relative">
                 <iframe
                   src={clock.iframeUrl}
                   className="w-full h-full"
                   title={clock.title}
                   loading="lazy"
                 />
-                <div className="absolute bottom-4 left-4 bg-background/80 backdrop-blur-sm px-3 py-1.5 text-xs">
+                <div className="hidden lg:block absolute bottom-4 left-4 bg-background/80 backdrop-blur-sm px-3 py-1.5 text-xs">
                   Live Preview
                 </div>
               </div>

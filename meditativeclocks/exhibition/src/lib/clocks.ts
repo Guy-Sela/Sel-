@@ -27,7 +27,6 @@ Ideal for corporate lobbies and meditation spaces where viewers benefit from a s
       "/mockups/slc/airport_installation.jpg",
       "/mockups/slc/train_station.jpg",
       "/mockups/slc/romantic_lounge_v3.jpg",
-      "/mockups/slc/romantic_lounge_futuristic.jpg",
     ],
   },
   {
@@ -43,11 +42,11 @@ Particularly suited for wellness centers and spa environments where the rhythm o
     iframeUrl:
       "https://xn--sel-cla.com/meditativeclocks/clocks/the_ebb_and_flow_of_time/index.html",
     mockups: [
-      "/mockups/ebb-and-flow/hotel-lobby.jpg",
-      "/mockups/ebb-and-flow/wellness-spa.jpg",
-      "/mockups/ebb-and-flow/corporate.jpg",
-      "/mockups/ebb-and-flow/restaurant.jpg",
-      "/mockups/ebb-and-flow/gallery.jpg",
+      "/mockups/ebb&flow/mockup_boutique.jpg",
+      "/mockups/ebb&flow/mockup_burningman_night.jpg",
+      "/mockups/ebb&flow/mockup_train.jpg",
+      "/mockups/ebb&flow/mockup_villa.jpg",
+      "/mockups/ebb&flow/mockup_watchstore.jpg",
     ],
   },
   {
@@ -63,11 +62,11 @@ A contemplative work suited for spaces that invite reflection: hotel lobbies, wa
     iframeUrl:
       "https://xn--sel-cla.com/meditativeclocks/clocks/present_past_and_future/index.html",
     mockups: [
-      "/mockups/present-past-future/hotel-lobby.jpg",
-      "/mockups/present-past-future/wellness-spa.jpg",
-      "/mockups/present-past-future/corporate.jpg",
-      "/mockups/present-past-future/restaurant.jpg",
-      "/mockups/present-past-future/gallery.jpg",
+      "/mockups/present-past and future/mockup_boutique.jpg",
+      "/mockups/present-past and future/mockup_jet.jpg",
+      "/mockups/present-past and future/mockup_observatory.jpg",
+      "/mockups/present-past and future/mockup_spa.jpg",
+      "/mockups/present-past and future/mockup_winery.jpg",
     ],
   },
   {
@@ -83,11 +82,11 @@ A powerful piece for fine dining environments and high-end hospitality where the
     iframeUrl:
       "https://xn--sel-cla.com/meditativeclocks/clocks/abstract_hourglass/index.html",
     mockups: [
-      "/mockups/abstract-hourglass/hotel-lobby.jpg",
-      "/mockups/abstract-hourglass/wellness-spa.jpg",
-      "/mockups/abstract-hourglass/corporate.jpg",
-      "/mockups/abstract-hourglass/restaurant.jpg",
-      "/mockups/abstract-hourglass/gallery.jpg",
+      "/mockups/abstract-hourglass/mockup_chessclub.jpg",
+      "/mockups/abstract-hourglass/mockup_concerthall.jpg",
+      "/mockups/abstract-hourglass/mockup_contemporaryclassical.jpg",
+      "/mockups/abstract-hourglass/mockup_gentlemansclub.jpg",
+      "/mockups/abstract-hourglass/mockup_templeretreat.jpg",
     ],
   },
   {
@@ -103,11 +102,11 @@ This piece works powerfully in corporate headquarters and luxury retail environm
     iframeUrl:
       "https://xn--sel-cla.com/meditativeclocks/clocks/universe_clock/index.html",
     mockups: [
-      "/mockups/universe-clock/hotel-lobby.jpg",
-      "/mockups/universe-clock/wellness-spa.jpg",
-      "/mockups/universe-clock/corporate.jpg",
-      "/mockups/universe-clock/restaurant.jpg",
-      "/mockups/universe-clock/gallery.jpg",
+      "/mockups/universe-clock/city-view.jpg",
+      "/mockups/universe-clock/mockup_bedroom(1).jpg",
+      "/mockups/universe-clock/mockup_gallery.jpg",
+      "/mockups/universe-clock/mockup_gallery_v2.jpg",
+      "/mockups/universe-clock/mockup_yacht.jpg",
     ],
   },
   {
@@ -123,11 +122,11 @@ Ideal for creative spaces and boutique hotels where the unexpected is welcomed a
     iframeUrl:
       "https://xn--sel-cla.com/meditativeclocks/clocks/serendipity/index.html",
     mockups: [
-      "/mockups/serendipity-on-demand/hotel-lobby.jpg",
-      "/mockups/serendipity-on-demand/wellness-spa.jpg",
-      "/mockups/serendipity-on-demand/corporate.jpg",
-      "/mockups/serendipity-on-demand/restaurant.jpg",
-      "/mockups/serendipity-on-demand/gallery.jpg",
+      "/mockups/serendipity-on-demand/mockup_airport.jpg",
+      "/mockups/serendipity-on-demand/mockup_mallfloor_v2.jpg",
+      "/mockups/serendipity-on-demand/mockup_restaurant.jpg",
+      "/mockups/serendipity-on-demand/mockup_spa_v2.jpg",
+      "/mockups/serendipity-on-demand/mockup_tesla_v2.jpg",
     ],
   },
 ];

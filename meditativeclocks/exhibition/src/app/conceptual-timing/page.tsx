@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { clocks } from "@/lib/clocks";
 import { motion } from "framer-motion";
+import { ExternalLink } from "lucide-react";
 
 export default function ConceptualTimingPage() {
   return (
@@ -32,7 +33,8 @@ export default function ConceptualTimingPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
           >
-            A collection of meditative clocks. Each piece deconstructs the concept of time differently.
+            A collection of meditative clocks. Each piece deconstructs the
+            concept of time differently.
           </motion.p>
         </div>
       </section>
@@ -48,45 +50,55 @@ export default function ConceptualTimingPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 * index }}
               >
-                <Link href={`/conceptual-timing/${clock.slug}`} className="group block">
-                  <article className="space-y-6">
+                <Link
+                  href={`/conceptual-timing/${clock.slug}`}
+                  className="group block"
+                >
+                  <article className="space-y-4">
                     {/* Clock Preview */}
                     <div className="aspect-[4/3] bg-card border border-border overflow-hidden relative">
-                      <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-transparent" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center space-y-2">
-                          <div className="w-16 h-16 mx-auto border border-border/50 rounded-full flex items-center justify-center group-hover:border-foreground/50 transition-colors">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1}
-                              stroke="currentColor"
-                              className="w-6 h-6 text-muted-foreground group-hover:text-foreground transition-colors"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
-                          </div>
-                          <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                            View Piece
-                          </p>
-                        </div>
+                      <iframe
+                        src={clock.iframeUrl}
+                        title={`${clock.title} preview`}
+                        loading="lazy"
+                        tabIndex={-1}
+                        aria-hidden="true"
+                        scrolling="no"
+                        className="absolute inset-0 w-full h-full pointer-events-none select-none border-0 block max-w-full"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-br from-muted/30 to-transparent pointer-events-none" />
+                      <div className="hidden lg:block absolute bottom-2 left-2 bg-background/70 backdrop-blur-sm px-2 py-1 text-[9px] uppercase tracking-wider pointer-events-none">
+                        Live Preview
                       </div>
                     </div>
 
+                    {/* Mockup Thumbnails (signals expanded view) */}
+                    <div className="grid grid-cols-3 gap-2">
+                      {clock.mockups.slice(0, 3).map((mockup, i) => (
+                        <div
+                          key={mockup}
+                          className="aspect-[4/3] bg-card border border-border overflow-hidden relative"
+                        >
+                          <img
+                            src={mockup}
+                            alt={`${clock.title} mockup ${i + 1}`}
+                            className="absolute inset-0 w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      ))}
+                    </div>
+
                     {/* Clock Info */}
-                    <div className="space-y-2">
+                    <div className="space-y-2 pt-2">
                       <div className="flex items-baseline justify-between gap-4">
                         <h2 className="text-xl sm:text-2xl font-light group-hover:opacity-70 transition-opacity">
                           {clock.title}
                         </h2>
-                        <span className="text-sm text-muted-foreground tabular-nums">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
+                        <ExternalLink
+                          aria-hidden="true"
+                          className="w-4 h-4 text-muted-foreground group-hover:opacity-70 transition-opacity flex-shrink-0"
+                        />
                       </div>
                       <p className="text-sm text-muted-foreground italic">
                         {clock.subtitle}
@@ -106,13 +118,21 @@ export default function ConceptualTimingPage() {
       {/* About Section */}
       <section className="border-t border-border py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center space-y-8">
-          <h2 className="text-2xl sm:text-3xl font-light">About the Collection</h2>
+          <h2 className="text-2xl sm:text-3xl font-light">
+            About the Collection
+          </h2>
           <div className="space-y-6 text-muted-foreground leading-relaxed">
             <p>
-              These are not clocks in the functional sense. They are contemplations on temporality—visual meditations that use the language of timekeeping to explore deeper questions about presence, impermanence, and perception.
+              These are not clocks in the functional sense. They are
+              contemplations on temporality—visual meditations that use the
+              language of timekeeping to explore deeper questions about
+              presence, impermanence, and perception.
             </p>
             <p>
-              Each piece is designed to reward prolonged attention. Rather than demanding focus, these works create ambient presence—transforming spaces into environments that invite pause, reflection, and presence.
+              Each piece is designed to reward prolonged attention. Rather than
+              demanding focus, these works create ambient presence—transforming
+              spaces into environments that invite pause, reflection, and
+              presence.
             </p>
           </div>
           <div className="pt-8">

@@ -1,14 +1,12 @@
+html,
 body {
-
     margin: 0;
     padding: 0;
     overflow: hidden;
-    
+    cursor: none;
 }
 
 canvas {
-
     background: black;
-/*    background: grey;*/
-    
+    /*    background: grey;*/
 }

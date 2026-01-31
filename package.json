@@ -13,5 +13,8 @@
     "esbuild": "^0.24.0",
     "lightningcss": "^1.28.0",
     "tailwindcss": "^3.4.17"
+  },
+  "dependencies": {
+    "motion": "^12.29.2"
   }
 }

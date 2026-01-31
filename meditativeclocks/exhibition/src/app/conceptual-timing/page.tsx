@@ -2,35 +2,42 @@
 
 import Link from "next/link";
 import { clocks } from "@/lib/clocks";
-import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
+import { Expand } from "lucide-react";
+import { motion } from "motion/react";
+import { useMemo, useState } from "react";
+import { TransitionPanel } from "../../../components/motion-primitives/transition-panel";
 
 export default function ConceptualTimingPage() {
-  return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
+  const [loadedPreviews, setLoadedPreviews] = useState<Record<string, boolean>>(
+    {},
+  );
+
+  const hero = useMemo(
+    () => (
       <section className="py-24 sm:py-32 lg:py-40 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0 }}
             className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-6"
           >
             Collection
           </motion.p>
+
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.08 }}
             className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight mb-8"
           >
             Conceptual Timing
           </motion.h1>
+
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.16 }}
             className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
           >
             A collection of meditative clocks. Each piece deconstructs the
@@ -38,17 +45,29 @@ export default function ConceptualTimingPage() {
           </motion.p>
         </div>
       </section>
+    ),
+    [],
+  );
 
-      {/* Gallery Grid */}
+  return (
+    <div className="min-h-screen">
+      {/* Hero stagger (line-by-line) */}
+      <TransitionPanel activeIndex={0}>{[hero]}</TransitionPanel>
+
+      {/* Gallery Grid (all pieces on the page) */}
       <section className="px-4 sm:px-6 lg:px-8 pb-24">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
             {clocks.map((clock, index) => (
               <motion.div
                 key={clock.slug}
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 * index }}
+                initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{
+                  duration: 0.6,
+                  ease: [0.16, 1, 0.3, 1],
+                  delay: 0.18 + index * 0.08,
+                }}
               >
                 <Link
                   href={`/conceptual-timing/${clock.slug}`}
@@ -56,7 +75,7 @@ export default function ConceptualTimingPage() {
                 >
                   <article className="space-y-4">
                     {/* Clock Preview */}
-                    <div className="aspect-[4/3] bg-card border border-border overflow-hidden relative">
+                    <div className="aspect-[4/3] bg-black border border-border overflow-hidden relative">
                       <iframe
                         src={clock.iframeUrl}
                         title={`${clock.title} preview`}
@@ -64,7 +83,20 @@ export default function ConceptualTimingPage() {
                         tabIndex={-1}
                         aria-hidden="true"
                         scrolling="no"
-                        className="absolute inset-0 w-full h-full pointer-events-none select-none border-0 block max-w-full"
+                        onLoad={() => {
+                          setLoadedPreviews((prev) => ({
+                            ...prev,
+                            [clock.slug]: true,
+                          }));
+                        }}
+                        className={[
+                          "absolute inset-0 w-full h-full pointer-events-none select-none border-0 block max-w-full",
+                          "bg-black",
+                          "transition-opacity duration-300",
+                          loadedPreviews[clock.slug]
+                            ? "opacity-100"
+                            : "opacity-0",
+                        ].join(" ")}
                       />
                       <div className="absolute inset-0 bg-gradient-to-br from-muted/30 to-transparent pointer-events-none" />
                       <div className="hidden lg:block absolute bottom-2 left-2 bg-background/70 backdrop-blur-sm px-2 py-1 text-[9px] uppercase tracking-wider pointer-events-none">
@@ -95,7 +127,7 @@ export default function ConceptualTimingPage() {
                         <h2 className="text-xl sm:text-2xl font-light group-hover:opacity-70 transition-opacity">
                           {clock.title}
                         </h2>
-                        <ExternalLink
+                        <Expand
                           aria-hidden="true"
                           className="w-4 h-4 text-muted-foreground group-hover:opacity-70 transition-opacity flex-shrink-0"
                         />

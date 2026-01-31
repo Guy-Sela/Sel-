@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { clocks, getClockBySlug } from "@/lib/clocks";
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { X } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { TransitionPanel } from "../../../../components/motion-primitives/transition-panel";
 
 interface ClockPageClientProps {
   slug: string;
@@ -14,6 +15,110 @@ interface ClockPageClientProps {
 export default function ClockPageClient({ slug }: ClockPageClientProps) {
   const clock = getClockBySlug(slug);
   const [selectedMockup, setSelectedMockup] = useState<string | null>(null);
+
+  // Match main-site modal behavior:
+  // - lock scroll while open
+  // - restore scroll + padding after close (after transition)
+  // - clear selected image after close delay (avoids flicker during close anim)
+  const scrollLockRef = useRef<{
+    bodyOverflow: string;
+    bodyPaddingRight: string;
+    htmlOverflow: string;
+    locked: boolean;
+    clearTimer: number | null;
+  }>({
+    bodyOverflow: "",
+    bodyPaddingRight: "",
+    htmlOverflow: "",
+    locked: false,
+    clearTimer: null,
+  });
+
+  const LOCK_DELAY_MS = 0;
+  const UNLOCK_DELAY_MS = 320;
+
+  function lockScroll() {
+    const s = scrollLockRef.current;
+    if (s.locked) return;
+
+    s.bodyOverflow = document.body.style.overflow;
+    s.bodyPaddingRight = document.body.style.paddingRight;
+    s.htmlOverflow = document.documentElement.style.overflow;
+
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    s.locked = true;
+  }
+
+  function unlockScroll() {
+    const s = scrollLockRef.current;
+    if (!s.locked) return;
+
+    document.body.style.overflow = s.bodyOverflow;
+    document.body.style.paddingRight = s.bodyPaddingRight;
+    document.documentElement.style.overflow = s.htmlOverflow;
+
+    s.locked = false;
+  }
+
+  // Iframe flash prevention (match main site behavior):
+  // - start as about:blank
+  // - swap to real src on next frame
+  // - fade in once loaded
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [iframeSrc, setIframeSrc] = useState<string>("about:blank");
+
+  useEffect(() => {
+    setIframeLoaded(false);
+    setIframeSrc("about:blank");
+
+    const next = clock?.iframeUrl;
+    if (!next) return;
+
+    const raf = requestAnimationFrame(() => setIframeSrc(next));
+    return () => cancelAnimationFrame(raf);
+  }, [clock?.iframeUrl]);
+
+  const activeMockupIndex = useMemo(() => {
+    if (!clock?.mockups?.length) return 0;
+    return Math.min(0, clock.mockups.length - 1);
+  }, [clock?.mockups?.length]);
+
+  useEffect(() => {
+    const s = scrollLockRef.current;
+
+    if (selectedMockup) {
+      if (s.clearTimer) {
+        window.clearTimeout(s.clearTimer);
+        s.clearTimer = null;
+      }
+      // ensure lock happens after React commits open state
+      window.setTimeout(() => lockScroll(), LOCK_DELAY_MS);
+      return;
+    }
+
+    // closing: restore scroll + clear image after close transition
+    window.setTimeout(() => unlockScroll(), UNLOCK_DELAY_MS);
+
+    s.clearTimer = window.setTimeout(() => {
+      s.clearTimer = null;
+      // already null, but keep symmetry if future changes set a "closing" sentinel
+    }, UNLOCK_DELAY_MS);
+
+    return () => {
+      if (s.clearTimer) {
+        window.clearTimeout(s.clearTimer);
+        s.clearTimer = null;
+      }
+    };
+  }, [selectedMockup]);
 
   if (!clock) {
     return (
@@ -41,12 +146,7 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
       {/* Header */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex items-center gap-4 mb-8"
-          >
+          <div className="flex items-center gap-4 mb-8">
             <Link
               href="/conceptual-timing"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -58,56 +158,49 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
               {String(currentIndex + 1).padStart(2, "0")} /{" "}
               {String(clocks.length).padStart(2, "0")}
             </span>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="space-y-4 max-w-3xl"
-          >
+          <div className="space-y-4 max-w-3xl">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight">
               {clock.title}
             </h1>
             <p className="text-lg text-muted-foreground italic">
               {clock.subtitle}
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Mosaic Section */}
       <section className="px-4 sm:px-6 lg:px-8 pb-16">
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid grid-cols-1 lg:grid-cols-3 gap-4"
-          >
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Main iframe - Takes 2/3 on desktop */}
             <div className="lg:col-span-2 lg:row-span-2">
-              <div className="aspect-[4/3] lg:aspect-auto lg:h-full lg:min-h-[600px] bg-card border border-border overflow-hidden relative">
+              <div className="aspect-[4/3] lg:aspect-auto lg:h-full lg:min-h-[600px] bg-black border border-border overflow-hidden relative">
                 <iframe
-                  src={clock.iframeUrl}
-                  className="w-full h-full"
+                  src={iframeSrc}
+                  onLoad={() => setIframeLoaded(true)}
+                  className={[
+                    "w-full h-full block",
+                    "bg-black",
+                    "transition-opacity duration-300",
+                    iframeLoaded ? "opacity-100" : "opacity-0",
+                  ].join(" ")}
                   title={clock.title}
-                  loading="lazy"
+                  loading="eager"
                 />
-                <div className="hidden lg:block absolute bottom-4 left-4 bg-background/80 backdrop-blur-sm px-3 py-1.5 text-xs">
+                <div className="hidden lg:block absolute bottom-4 left-4 bg-background/80 backdrop-blur-sm px-3 py-1.5 text-xs pointer-events-none">
                   Live Preview
                 </div>
               </div>
             </div>
 
-            {/* Mockups Grid - 5 smaller images */}
+            {/* Mockups Grid */}
             <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
               {clock.mockups.slice(0, 2).map((mockup, index) => (
-                <motion.button
+                <button
                   key={mockup}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
                   onClick={() => setSelectedMockup(mockup)}
                   className="aspect-[4/3] bg-card border border-border overflow-hidden relative group cursor-pointer"
                 >
@@ -117,18 +210,15 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors" />
-                </motion.button>
+                </button>
               ))}
             </div>
 
             {/* Second row of mockups */}
             <div className="lg:col-span-3 grid grid-cols-3 gap-4">
               {clock.mockups.slice(2, 5).map((mockup, index) => (
-                <motion.button
+                <button
                   key={mockup}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
                   onClick={() => setSelectedMockup(mockup)}
                   className="aspect-[4/3] bg-card border border-border overflow-hidden relative group cursor-pointer"
                 >
@@ -138,22 +228,17 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors" />
-                </motion.button>
+                </button>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Description Section */}
       <section className="px-4 sm:px-6 lg:px-8 pb-16">
         <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="grid grid-cols-1 lg:grid-cols-3 gap-12"
-          >
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-6">
               <h2 className="text-xl font-light">About This Piece</h2>
               <div className="prose prose-neutral dark:prose-invert max-w-none">
@@ -215,7 +300,7 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
                 </a>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -257,18 +342,32 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
       {/* Lightbox Dialog */}
       <Dialog
         open={!!selectedMockup}
-        onOpenChange={() => setSelectedMockup(null)}
+        onOpenChange={(open) => {
+          // keep "selectedMockup" until close animation finishes (like main site)
+          if (open) return;
+          window.setTimeout(() => setSelectedMockup(null), UNLOCK_DELAY_MS);
+        }}
       >
         <DialogContent className="max-w-5xl p-0 bg-background border-border">
           <VisuallyHidden>
             <DialogTitle>Mockup Preview</DialogTitle>
           </VisuallyHidden>
+
+          <button
+            type="button"
+            onClick={() => setSelectedMockup(null)}
+            className="absolute right-4 top-4 rounded-full bg-black/70 p-2 text-white hover:bg-black/70 focus:outline-none disabled:pointer-events-none"
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </button>
+
           {selectedMockup && (
             <div className="aspect-video bg-muted relative">
               <img
                 src={selectedMockup}
                 alt="Mockup Preview"
-                className="absolute inset-0 w-full h-full object-contain"
+                className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
           )}

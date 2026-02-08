@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { clocks } from "@/lib/clocks";
 import { Expand } from "lucide-react";
@@ -15,12 +16,12 @@ export default function ConceptualTimingPage() {
   const hero = useMemo(
     () => (
       <section className="py-24 sm:py-32 lg:py-40 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-7xl mx-auto text-center">
           <motion.p
             initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0 }}
-            className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-6"
+            className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-6 text-center"
           >
             Collection
           </motion.p>
@@ -38,10 +39,12 @@ export default function ConceptualTimingPage() {
             initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.16 }}
-            className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+            className="text-lg sm:text-xl text-muted-foreground max-w-2xl leading-relaxed text-center mx-auto"
           >
-            A collection of meditative clocks. Each piece deconstructs the
-            concept of time differently.
+            A collection of meditative clocks.
+            <span className="block">
+              Each piece deconstructs the concept of time differently.
+            </span>
           </motion.p>
         </div>
       </section>
@@ -111,10 +114,12 @@ export default function ConceptualTimingPage() {
                           key={mockup}
                           className="aspect-[4/3] bg-card border border-border overflow-hidden relative"
                         >
-                          <img
+                          <Image
                             src={mockup}
                             alt={`${clock.title} mockup ${i + 1}`}
-                            className="absolute inset-0 w-full h-full object-cover"
+                            fill
+                            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                            className="object-cover"
                             loading="lazy"
                           />
                         </div>
@@ -132,9 +137,7 @@ export default function ConceptualTimingPage() {
                           className="w-4 h-4 text-muted-foreground group-hover:opacity-70 transition-opacity flex-shrink-0"
                         />
                       </div>
-                      <p className="text-sm text-muted-foreground italic">
-                        {clock.subtitle}
-                      </p>
+
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         {clock.description}
                       </p>
@@ -149,28 +152,29 @@ export default function ConceptualTimingPage() {
 
       {/* About Section */}
       <section className="border-t border-border py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto text-center space-y-8">
+        <div className="max-w-7xl mx-auto flex flex-col items-start text-left space-y-8">
           <h2 className="text-2xl sm:text-3xl font-light">
             About the Collection
           </h2>
           <div className="space-y-6 text-muted-foreground leading-relaxed">
             <p>
-              These are not clocks in the functional sense. They are
-              contemplations on temporality—visual meditations that use the
-              language of timekeeping to explore deeper questions about
-              presence, impermanence, and perception.
+              Conceptual Timing is an evolving collection of clocks whose
+              subject matter is the essence of time itself. The pieces are code
+              based, and even the most technically far fetched clock in the
+              collection — Universe Clock — is a real clock nonetheless. It{" "}
+              <i>will</i> run the next moment, as long as it&apos;s still in
+              tact when the next moment comes (86 billion years from now).
             </p>
             <p>
-              Each piece is designed to reward prolonged attention. Rather than
-              demanding focus, these works create ambient presence—transforming
-              spaces into environments that invite pause, reflection, and
-              presence.
+              The conceptual clocks can appear anywhere there&apos;s a screen.
+              They are set to be hypnotic, friendly to the contemplative mind
+              and to the sublime ambiance seeking soul.
             </p>
           </div>
-          <div className="pt-8">
+          <div className="pt-0">
             <a
               href="mailto:ops@selahq.com"
-              className="inline-flex items-center gap-2 text-sm border border-border px-6 py-3 hover:bg-accent transition-colors"
+              className="inline-flex items-center gap-2 text-sm pl-0 pr-6 py-3 hover:bg-accent transition-colors"
             >
               Inquire About Licensing
               <svg

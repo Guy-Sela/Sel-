@@ -19,11 +19,24 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Conceptual Timing | Selà",
-  description: "A collection of meditative clocks. Each piece deconstructs the concept of time differently.",
+  description:
+    "A collection of meditative clocks. Each piece deconstructs the concept of time differently.",
   openGraph: {
     title: "Conceptual Timing | Selà",
     description: "A collection of meditative clocks by Selà",
     type: "website",
+    images: ["https://selà.com/og-1200x630.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Conceptual Timing | Selà",
+    description: "A collection of meditative clocks by Selà",
+    images: ["https://selà.com/og-1200x630.png"],
+  },
+  icons: {
+    icon: "https://selà.com/favicons/experiments/favicon_gold.ico",
+    shortcut: "https://selà.com/favicons/experiments/favicon_gold.ico",
+    apple: "https://selà.com/favicons/experiments/chevron_gold_180.png",
   },
 };
 
@@ -34,7 +47,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${josefin.variable} ${inter.variable} font-sans antialiased`}>
+      <body
+        className={`${josefin.variable} ${inter.variable} font-sans antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -61,9 +76,7 @@ export default function RootLayout({
                 </nav>
               </div>
             </header>
-            <main className="pt-16">
-              {children}
-            </main>
+            <main className="pt-16">{children}</main>
             <footer className="border-t border-border/50 py-12 mt-24">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4">

@@ -16,8 +16,7 @@ export const clocks: Clock[] = [
     description:
       'Always the right time, never in the same way. The next "moment" is selected randomly.',
     longDescription: `Always the right time, never in the same way. The next "moment" is selected randomly.`,
-    iframeUrl:
-      "https://xn--sel-cla.com/meditativeclocks/clocks/semi-linear_clock_svg/index.html",
+    iframeUrl: "/meditativeclocks/clocks/semi-linear_clock_svg/",
     mockups: [
       "/mockups/slc/hotel_lobby.jpg",
       "/mockups/slc/business_lobby.jpg",
@@ -33,8 +32,7 @@ export const clocks: Clock[] = [
     description:
       "Possibly the most minimalistic clock ever made. Time is represented by a single circle, which, at intervals of twelve hours, either expands or contracts. At both extremes (12am, 12pm) it disappears altogether.",
     longDescription: `Possibly the most minimalistic clock ever made. Time is represented by a single circle, which, at intervals of twelve hours, either expands or contracts. At both extremes (12am, 12pm) it disappears altogether.`,
-    iframeUrl:
-      "https://xn--sel-cla.com/meditativeclocks/clocks/the_ebb_and_flow_of_time/index.html",
+    iframeUrl: "/meditativeclocks/clocks/the_ebb_and_flow_of_time/",
     mockups: [
       "/mockups/ebb&flow/mockup_boutique.jpg",
       "/mockups/ebb&flow/mockup_burningman_night.jpg",
@@ -50,8 +48,7 @@ export const clocks: Clock[] = [
     description:
       "Our subjective grasp of time is very different from the rigid, conventional representation. In our minds we often wander between past, present and future, and so does this clock (it takes some time and close attention to see it).",
     longDescription: `Our subjective grasp of time is very different from the rigid, conventional representation. In our minds we often wander between past, present and future, and so does this clock (it takes some time and close attention to see it).`,
-    iframeUrl:
-      "https://xn--sel-cla.com/meditativeclocks/clocks/present_past_and_future/index.html",
+    iframeUrl: "/meditativeclocks/clocks/present_past_and_future/",
     mockups: [
       "/mockups/present-past and future/mockup_boutique.jpg",
       "/mockups/present-past and future/mockup_jet.jpg",
@@ -66,8 +63,7 @@ export const clocks: Clock[] = [
     subtitle: "Mortality abstracted",
     description: "This one is self-explanatory.",
     longDescription: `This one is self-explanatory.`,
-    iframeUrl:
-      "https://xn--sel-cla.com/meditativeclocks/clocks/abstract_hourglass/index.html",
+    iframeUrl: "/meditativeclocks/clocks/abstract_hourglass/",
     mockups: [
       "/mockups/abstract-hourglass/mockup_contemporaryclassical_v2.jpg",
       "/mockups/abstract-hourglass/mockup_concerthall.jpg",
@@ -83,8 +79,7 @@ export const clocks: Clock[] = [
     description:
       "The small triangle is time passed since the Big Bang. The large, open triangle is time left till the end of time. The scale is logarithmic—the next pixel will appear in 86 billion years.",
     longDescription: `The small triangle is time passed since the Big Bang. The large, open triangle is time left till the end of time. The scale is logarithmic—the next pixel will appear in 86 billion years.`,
-    iframeUrl:
-      "https://xn--sel-cla.com/meditativeclocks/clocks/universe_clock/index.html",
+    iframeUrl: "/meditativeclocks/clocks/universe_clock/",
     mockups: [
       "/mockups/universe-clock/city-view.jpg",
       "/mockups/universe-clock/mockup_bedroom(1).jpg",
@@ -100,13 +95,12 @@ export const clocks: Clock[] = [
     description:
       "This clock utters a special sound, up to three times every 24 hours, at random intervals, thus connecting moments in life that otherwise wouldn't have been connected.",
     longDescription: `This clock utters a special sound, up to three times every 24 hours, at random intervals, thus connecting moments in life that otherwise wouldn't have been connected.`,
-    iframeUrl:
-      "https://xn--sel-cla.com/meditativeclocks/clocks/serendipity/index.html",
+    iframeUrl: "/meditativeclocks/clocks/serendipity/",
     mockups: [
       "/mockups/serendipity-on-demand/train-station.png",
       "/mockups/serendipity-on-demand/mockup_mallfloor_v2.jpg",
       "/mockups/serendipity-on-demand/necklace_on_model_v21.jpg",
-      "/mockups/serendipity-on-demand/necklace_variant2.jpg",
+      "/mockups/serendipity-on-demand/necklace_variant2.png",
       "/mockups/serendipity-on-demand/mockup_tesla_v2.jpg",
     ],
   },

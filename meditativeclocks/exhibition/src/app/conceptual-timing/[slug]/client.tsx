@@ -1,12 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { clocks, getClockBySlug } from "@/lib/clocks";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { TransitionPanel } from "../../../../components/motion-primitives/transition-panel";
 
 interface ClockPageClientProps {
   slug: string;
@@ -86,11 +86,6 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
     return () => cancelAnimationFrame(raf);
   }, [clock?.iframeUrl]);
 
-  const activeMockupIndex = useMemo(() => {
-    if (!clock?.mockups?.length) return 0;
-    return Math.min(0, clock.mockups.length - 1);
-  }, [clock?.mockups?.length]);
-
   useEffect(() => {
     const s = scrollLockRef.current;
 
@@ -164,9 +159,6 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight">
               {clock.title}
             </h1>
-            <p className="text-lg text-muted-foreground italic">
-              {clock.subtitle}
-            </p>
           </div>
         </div>
       </section>
@@ -204,10 +196,12 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
                   onClick={() => setSelectedMockup(mockup)}
                   className="aspect-[4/3] bg-card border border-border overflow-hidden relative group cursor-pointer"
                 >
-                  <img
+                  <Image
                     src={mockup}
                     alt={`${clock.title} mockup ${index + 1}`}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors" />
                 </button>
@@ -222,10 +216,12 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
                   onClick={() => setSelectedMockup(mockup)}
                   className="aspect-[4/3] bg-card border border-border overflow-hidden relative group cursor-pointer"
                 >
-                  <img
+                  <Image
                     src={mockup}
                     alt={`${clock.title} mockup ${index + 3}`}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors" />
                 </button>
@@ -261,7 +257,12 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
                 <dl className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground">Format</dt>
-                    <dd>Web-based (HTML5/JS)</dd>
+                    <dd>
+                      Web-based (HTML5/JS)
+                      {clock.slug === "universe-clock"
+                        ? " | E-paper–compatible"
+                        : ""}
+                    </dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground">Aspect Ratio</dt>
@@ -280,7 +281,7 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
                 </h3>
                 <a
                   href="mailto:ops@selahq.com"
-                  className="inline-flex items-center gap-2 text-sm border border-border px-4 py-2 hover:bg-accent transition-colors w-full justify-center"
+                  className="inline-flex items-center gap-2 text-sm px-4 py-2 hover:bg-accent transition-colors w-full justify-center"
                 >
                   Inquire
                   <svg
@@ -305,7 +306,7 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
       </section>
 
       {/* Navigation */}
-      <section className="border-t border-border px-4 sm:px-6 lg:px-8 py-12">
+      <section className="px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 gap-8">
             {prevClock ? (
@@ -353,21 +354,14 @@ export default function ClockPageClient({ slug }: ClockPageClientProps) {
             <DialogTitle>Mockup Preview</DialogTitle>
           </VisuallyHidden>
 
-          <button
-            type="button"
-            onClick={() => setSelectedMockup(null)}
-            className="absolute right-4 top-4 rounded-full bg-black/70 p-2 text-white hover:bg-black/70 focus:outline-none disabled:pointer-events-none"
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </button>
-
           {selectedMockup && (
             <div className="aspect-video bg-muted relative">
-              <img
+              <Image
                 src={selectedMockup}
                 alt="Mockup Preview"
-                className="absolute inset-0 w-full h-full object-cover"
+                fill
+                sizes="100vw"
+                className="object-cover"
               />
             </div>
           )}

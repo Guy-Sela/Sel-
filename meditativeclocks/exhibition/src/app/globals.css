@@ -137,3 +137,87 @@ html {
 ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.5);
 }
+
+/*
+ * Hardware-accelerated reveal animations to help with LCP.
+ * These can be used to show content before Framer Motion hydrates.
+ */
+@keyframes reveal {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+        filter: blur(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0px);
+    }
+}
+
+.reveal {
+    animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    will-change: transform, opacity, filter;
+}
+
+.reveal-delayed {
+    animation-delay: 0.1s;
+}
+
+.reveal-slow {
+    animation-duration: 1.2s;
+}
+
+/* Page loading and transition states */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: hsl(var(--background));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0.6s;
+}
+
+.loading-overlay.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.page-content {
+    opacity: 0;
+    transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity;
+}
+
+.page-content.is-visible {
+    opacity: 1;
+}
+
+/* Minimalist pulse loader */
+.loader-pulse {
+    width: 24px;
+    height: 24px;
+    background: hsl(var(--foreground));
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.2;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.2;
+    }
+}

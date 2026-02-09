@@ -1,20 +1,21 @@
 import type { Metadata } from "next";
-import { Josefin_Sans, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 import Link from "next/link";
 
-const josefin = Josefin_Sans({
-  subsets: ["latin"],
+const josefin = localFont({
+  src: "./fonts/josefin-sans.woff2",
   variable: "--font-josefin",
-  display: "swap",
+  display: "block",
 });
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
-  display: "swap",
+  display: "block",
 });
 
 export const metadata: Metadata = {
@@ -77,7 +78,7 @@ export default function RootLayout({
               </div>
             </header>
             <main className="pt-16">{children}</main>
-            <footer className="border-t border-border/50 py-12 mt-24">
+            <footer className="py-12 mt-24">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                   <p className="text-sm text-muted-foreground">

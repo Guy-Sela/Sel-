@@ -32,7 +32,7 @@ export const clocks: Clock[] = [
     description:
       "Possibly the most minimalistic clock ever made. Time is represented by a single circle, which, at intervals of twelve hours, either expands or contracts. At both extremes (12am, 12pm) it disappears altogether.",
     longDescription: `Possibly the most minimalistic clock ever made. Time is represented by a single circle, which, at intervals of twelve hours, either expands or contracts. At both extremes (12am, 12pm) it disappears altogether.`,
-    iframeUrl: "/meditativeclocks/clocks/the_ebb_and_flow_of_time/",
+    iframeUrl: "/meditativeclocks/clocks/the_ebb_and_flow_of_time_svg/",
     mockups: [
       "/mockups-compressed/ebb&flow/mockup_boutique.webp",
       "/mockups-compressed/ebb&flow/mockup_burningman_night.webp",

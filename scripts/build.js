@@ -4,7 +4,7 @@
  * - Minifies CSS and JS
  * - Adds content hashes to filenames
  * - Updates HTML references
- * - Copies all files to dist/
+ * - Copies assets to docs/ for GitHub Pages
  */
 
 const fs = require("fs");
@@ -16,17 +16,21 @@ const { transform } = require("lightningcss");
 
 const ROOT = path.resolve(__dirname, "..");
 const DIST = path.join(ROOT, "docs");
-const SRC = ROOT; // Source files are in root for now
+const SRC = ROOT;
 
-// Files to process
+// Files to process and hash
 const CSS_FILES = ["main.css"];
 const JS_FILES = ["main.js"];
 const HTML_FILES = ["index.html", "terminal-ansi-combined.html", "404.html"];
 
-// Files/dirs to copy as-is
+// Static items to copy to docs/ root
+// These are items from the project root that should be in the final site
 const COPY_ITEMS = [
-  "meditativeclocks",
   "favicons",
+  "fonts",
+  "vendor",
+  "meditativeclocks/clock-pics",
+  "meditativeclocks/clocks",
   "favicon-chevron-gold.svg",
   "og-1200x630.png",
   "ascii-profile.txt",
@@ -34,19 +38,35 @@ const COPY_ITEMS = [
   "manifest.json",
   "sitemap.xml",
   "robots.txt",
-  "fonts",
-  "vendor",
 ];
 
-// Clean docs
+// Folders/Files to skip during any recursive copies to avoid bloating the build
+// This prevents source code, node_modules, and cache files from leaking into docs/
+const GLOBAL_IGNORE = [
+  "node_modules",
+  ".git",
+  ".next",
+  "src",
+  "components",
+  "out",
+  ".DS_Store",
+  "package.json",
+  "package-lock.json",
+  "tsconfig.json",
+  "next.config.mjs",
+  "postcss.config.mjs",
+  "tailwind.config.js",
+  "tailwind.config.ts",
+];
+
 function cleanDocs() {
+  console.log("1. Cleaning docs/");
   if (fs.existsSync(DIST)) {
     fs.rmSync(DIST, { recursive: true });
   }
   fs.mkdirSync(DIST, { recursive: true });
 }
 
-// Generate content hash
 function contentHash(content, length = 8) {
   return crypto
     .createHash("md5")
@@ -55,7 +75,6 @@ function contentHash(content, length = 8) {
     .slice(0, length);
 }
 
-// Minify CSS with lightningcss
 function minifyCSS(inputPath) {
   const code = fs.readFileSync(inputPath);
   const { code: minified } = transform({
@@ -67,7 +86,6 @@ function minifyCSS(inputPath) {
   return minified;
 }
 
-// Minify JS with esbuild
 async function minifyJS(inputPath) {
   const result = await esbuild.build({
     entryPoints: [inputPath],
@@ -80,14 +98,28 @@ async function minifyJS(inputPath) {
   return result.outputFiles[0].text;
 }
 
-// Copy directory recursively
+/**
+ * Recursively copies a directory with filtering to prevent source leakage
+ */
 function copyDir(src, dest) {
   if (!fs.existsSync(src)) return;
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
 
-  fs.mkdirSync(dest, { recursive: true });
   const entries = fs.readdirSync(src, { withFileTypes: true });
 
   for (const entry of entries) {
+    // Skip ignored names (node_modules, src, etc)
+    if (GLOBAL_IGNORE.includes(entry.name)) continue;
+
+    // Skip source/config files (ts, tsx, jsx, mjs, config.js)
+    if (
+      entry.isFile() &&
+      entry.name.match(/\.(ts|tsx|jsx|mjs|config\.(js|mjs|ts))$/)
+    )
+      continue;
+
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
 
@@ -99,36 +131,41 @@ function copyDir(src, dest) {
   }
 }
 
-// Copy file or directory
-function copyItem(item) {
-  const srcPath = path.join(SRC, item);
-
-  if (!fs.existsSync(srcPath)) {
-    console.log(`  ⚠ Skipping ${item} (not found)`);
+/**
+ * Copies a file or directory item to its corresponding path in DIST
+ */
+function copyItem(itemPath) {
+  const fullSrcPath = path.join(SRC, itemPath);
+  if (!fs.existsSync(fullSrcPath)) {
+    console.log(`  ⚠ Skipping ${itemPath} (not found)`);
     return;
   }
 
-  const stat = fs.statSync(srcPath);
+  const stat = fs.statSync(fullSrcPath);
+  const destPath = path.join(DIST, itemPath);
 
   if (stat.isDirectory()) {
-    const destPath = path.join(DIST, item);
-    copyDir(srcPath, destPath);
-    console.log(`  ✓ Copied ${item}/`);
+    copyDir(fullSrcPath, destPath);
+    console.log(`  ✓ Copied ${itemPath}/`);
   } else {
-    const destPath = path.join(DIST, path.basename(item));
-    fs.copyFileSync(srcPath, destPath);
-    console.log(`  ✓ Copied ${item}`);
+    fs.mkdirSync(path.dirname(destPath), { recursive: true });
+    fs.copyFileSync(fullSrcPath, destPath);
+    console.log(`  ✓ Copied ${itemPath}`);
   }
 }
 
-function runConceptualTimingExport() {
+/**
+ * Builds the Next.js exhibition project and deploys it to docs/
+ */
+function buildExhibition() {
   const projectDir = path.join(ROOT, "meditativeclocks", "exhibition");
   if (!fs.existsSync(projectDir)) {
-    console.log("  ⚠ Skipping Conceptual Timing export (project not found)");
+    console.log("  ⚠ Skipping exhibition build (folder not found)");
     return;
   }
 
-  console.log("  ↳ Running Next export in meditativeclocks/exhibition");
+  console.log("  ↳ Running Next.js build & export...");
+  // Use npm run build which triggers next build (configured for static export in next.config.mjs)
   execSync("npm run build", {
     cwd: projectDir,
     stdio: "inherit",
@@ -136,134 +173,81 @@ function runConceptualTimingExport() {
   });
 
   const outDir = path.join(projectDir, "out");
-  if (!fs.existsSync(outDir)) {
-    throw new Error(
-      "Conceptual Timing export missing out/ directory. Run the export before building.",
-    );
-  } else {
-    console.log("  ✓ Conceptual Timing export ready");
-  }
-}
-
-function copyConceptualTimingExportToDocs() {
-  const outDir = path.join(ROOT, "meditativeclocks", "exhibition", "out");
   const destDir = path.join(DIST, "meditativeclocks", "exhibition");
 
   if (!fs.existsSync(outDir)) {
-    throw new Error(
-      "Conceptual Timing export missing out/ directory. Run the export before building.",
-    );
+    throw new Error("Exhibition build failed: 'out' directory not found.");
   }
 
+  // Copy built site to its subfolder in docs
   copyDir(outDir, destDir);
   console.log(
-    "  ✓ Copied Conceptual Timing export to docs/meditativeclocks/exhibition/",
+    "  ✓ Copied exhibition build to docs/meditativeclocks/exhibition/",
   );
+
+  // Support root-level access for mockups to avoid broken links in main site
+  // We take them from the build output (which already includes public assets)
+  // this avoids copying the large source 'public' folder redundantly.
+  const assetsToSync = ["mockups", "mockups-compressed"];
+  assetsToSync.forEach((asset) => {
+    const src = path.join(outDir, asset);
+    const dest = path.join(DIST, asset);
+    if (fs.existsSync(src)) {
+      copyDir(src, dest);
+      console.log(`  ✓ Synced ${asset} to docs root`);
+    }
+  });
 }
 
-// Main build
-async function build() {
+async function main() {
   console.log("🔨 Building Selà website...\n");
 
-  // Clean
-  console.log("1. Cleaning docs/");
   cleanDocs();
 
-  // Track hash mappings for HTML replacement
   const hashMap = {};
 
-  // Process CSS
-  console.log("\n2. Minifying CSS");
+  console.log("\n2. Processing CSS");
   for (const file of CSS_FILES) {
     const inputPath = path.join(SRC, file);
-    if (!fs.existsSync(inputPath)) {
-      console.log(`  ⚠ Skipping ${file} (not found)`);
-      continue;
-    }
-
+    if (!fs.existsSync(inputPath)) continue;
     const minified = minifyCSS(inputPath);
     const hash = contentHash(minified);
-    const baseName = path.basename(file, ".css");
-    const hashedName = `${baseName}.${hash}.min.css`;
-
+    const hashedName = `${path.basename(file, ".css")}.${hash}.min.css`;
     fs.writeFileSync(path.join(DIST, hashedName), minified);
     hashMap[file] = hashedName;
-
-    const originalSize = fs.statSync(inputPath).size;
-    const minifiedSize = minified.length;
-    const savings = ((1 - minifiedSize / originalSize) * 100).toFixed(1);
-    console.log(`  ✓ ${file} → ${hashedName} (${savings}% smaller)`);
+    console.log(`  ✓ ${file} → ${hashedName}`);
   }
 
-  // Process JS
-  console.log("\n3. Minifying JS");
+  console.log("\n3. Processing JS");
   for (const file of JS_FILES) {
     const inputPath = path.join(SRC, file);
-    if (!fs.existsSync(inputPath)) {
-      console.log(`  ⚠ Skipping ${file} (not found)`);
-      continue;
-    }
-
+    if (!fs.existsSync(inputPath)) continue;
     const minified = await minifyJS(inputPath);
     const hash = contentHash(minified);
-    const baseName = path.basename(file, ".js");
-    const hashedName = `${baseName}.${hash}.min.js`;
-
+    const hashedName = `${path.basename(file, ".js")}.${hash}.min.js`;
     fs.writeFileSync(path.join(DIST, hashedName), minified);
     hashMap[file] = hashedName;
-
-    const originalSize = fs.statSync(inputPath).size;
-    const minifiedSize = minified.length;
-    const savings = ((1 - minifiedSize / originalSize) * 100).toFixed(1);
-    console.log(`  ✓ ${file} → ${hashedName} (${savings}% smaller)`);
+    console.log(`  ✓ ${file} → ${hashedName}`);
   }
 
-  // Build Conceptual Timing export
-  console.log("\n4. Building Conceptual Timing export");
-  runConceptualTimingExport();
+  console.log("\n4. Building Exhibition (Conceptual Timing)");
+  buildExhibition();
 
-  // Copy static assets
-  console.log("\n5. Copying static assets");
+  console.log("\n5. Copying Static Assets");
   for (const item of COPY_ITEMS) {
     copyItem(item);
   }
 
-  // Copy Conceptual Timing export into docs/meditativeclocks/exhibition
-  console.log("\n5.1 Copying Conceptual Timing export");
-  copyConceptualTimingExportToDocs();
-
-  // Copy exhibition public assets to docs root (for /mockups paths)
-  console.log("\n5.2 Copying exhibition public assets");
-  const exhibitionPublicDir = path.join(
-    ROOT,
-    "meditativeclocks",
-    "exhibition",
-    "public",
-  );
-  if (fs.existsSync(exhibitionPublicDir)) {
-    copyDir(exhibitionPublicDir, DIST);
-    console.log("  ✓ Copied exhibition public assets to docs/");
-  } else {
-    console.log("  ⚠ Skipping exhibition public assets (not found)");
-  }
-
-  // Process HTML files
-  console.log("\n6. Processing HTML");
+  console.log("\n6. Finalizing HTML");
   for (const file of HTML_FILES) {
     const inputPath = path.join(SRC, file);
-    if (!fs.existsSync(inputPath)) {
-      console.log(`  ⚠ Skipping ${file} (not found)`);
-      continue;
-    }
-
+    if (!fs.existsSync(inputPath)) continue;
     let html = fs.readFileSync(inputPath, "utf8");
-
-    // Replace asset references with hashed versions
     for (const [original, hashed] of Object.entries(hashMap)) {
-      // Handle both quoted and unquoted references
+      // Replace references to unminified assets with hashed versions
       html = html.replace(
-        new RegExp(`["']${original}["']`, "g"),
-        `"${hashed}"`,
+        new RegExp(`(["'])${original}(["'])`, "g"),
+        `$1${hashed}$2`,
       );
       html = html.replace(
         new RegExp(`href="${original}"`, "g"),
@@ -274,37 +258,34 @@ async function build() {
         `src="${hashed}"`,
       );
     }
-
     fs.writeFileSync(path.join(DIST, file), html);
     console.log(`  ✓ Processed ${file}`);
   }
 
-  // Create .nojekyll to prevent GitHub Pages Jekyll processing
+  // GitHub Pages requirements
   fs.writeFileSync(path.join(DIST, ".nojekyll"), "");
   console.log("\n7. Created .nojekyll");
 
-  // Summary
   console.log("\n✅ Build complete!");
   console.log(`   Output: ${DIST}`);
 
-  // Calculate total size
+  // Calculate final build size
   let totalSize = 0;
   function calcSize(dir) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const entry of entries) {
       const p = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        calcSize(p);
-      } else {
-        totalSize += fs.statSync(p).size;
-      }
+      if (entry.isDirectory()) calcSize(p);
+      else totalSize += fs.statSync(p).size;
     }
   }
-  calcSize(DIST);
-  console.log(`   Total size: ${(totalSize / 1024).toFixed(1)} KB`);
+  if (fs.existsSync(DIST)) {
+    calcSize(DIST);
+    console.log(`   Total size: ${(totalSize / (1024 * 1024)).toFixed(2)} MB`);
+  }
 }
 
-build().catch((err) => {
-  console.error("Build failed:", err);
+main().catch((err) => {
+  console.error("\n❌ Build failed:", err);
   process.exit(1);
 });

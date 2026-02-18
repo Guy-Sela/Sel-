@@ -889,7 +889,7 @@ document.addEventListener("DOMContentLoaded", function () {
         'Always the right time, never in the same way. The next "moment" is selected randomly.',
     },
     "ebb-flow": {
-      src: "meditativeclocks/clocks/the_ebb_and_flow_of_time/",
+      src: "meditativeclocks/clocks/the_ebb_and_flow_of_time_svg/",
       title: "The Ebb and Flow of Time",
       description:
         "Possibly the most minimalistic clock ever made. Time is represented by a single circle, which, at intervals of twelve hours, either expands or contracts. At both extremes (12am, 12pm) it disappears altogether.",

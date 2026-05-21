@@ -1,0 +1,27 @@
+{
+  "name": "Selà",
+  "short_name": "Selà",
+  "description": "Code for consciousness",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/favicons/experiments/chevron_gold_180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicons/experiments/chevron_gold_32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicons/experiments/chevron_gold_16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    }
+  ]
+}
+

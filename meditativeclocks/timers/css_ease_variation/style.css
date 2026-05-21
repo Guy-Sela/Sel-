@@ -1,0 +1,47 @@
+/*
+ * ONE MINUTE OF YOUR LIFE - CSS Ease Variation
+ *
+ * CONFIGURATION
+ */
+:root {
+    --duration: 60s;          /* Total loop duration */
+    --color-in: #000000;      /* Starting/Ending color (Black) */
+    --color-out: #ffffff;     /* Midpoint color (White) */
+    --easing: ease-in-out;    /* The timing function that makes it feel natural */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--color-in);
+    cursor: none; /* Hide cursor for immersion */
+}
+
+#timer-background {
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-in);
+    animation: meditative-fade var(--duration) var(--easing) infinite;
+}
+
+/**
+ * The animation cycle:
+ * 0%: Start at Black
+ * 50%: Fade to White
+ * 100%: Fade back to Black
+ */
+@keyframes meditative-fade {
+    0%, 100% {
+        background-color: var(--color-in);
+    }
+    50% {
+        background-color: var(--color-out);
+    }
+}

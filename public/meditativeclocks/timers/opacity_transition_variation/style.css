@@ -1,0 +1,52 @@
+/*
+ * ONE MINUTE OF YOUR LIFE - Opacity Transition Variation
+ *
+ * CONFIGURATION
+ */
+:root {
+    --duration: 60s; /* Total loop duration */
+    --base-color: #191970; /* The "In" color (Black) */
+    --fade-color: #ff8c00; /* The "Out" color (White) */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--base-color);
+}
+
+/* The Foreground Layer that fades in and out */
+#fade-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--fade-color);
+    opacity: 0;
+    animation: opacity-fade var(--duration) ease-in-out infinite;
+}
+
+/**
+ * OPACITY CYCLE:
+ * 0%: Completely Transparent (Black background shows)
+ * 50%: Completely Opaque (White foreground shows)
+ * 100%: Completely Transparent (Back to Black)
+ */
+@keyframes opacity-fade {
+    0%,
+    100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+}

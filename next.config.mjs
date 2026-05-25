@@ -1,11 +1,16 @@
 /** @type {import('next').NextConfig} */
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const nextConfig = {
-  output: 'export',
+  output: "export",
   images: {
     unoptimized: true,
   },
-  // If you are deploying to a sub-path (like github pages),
-  // you might need basePath. But for now we assume root.
+  outputFileTracingRoot: __dirname,
 };
 
 export default nextConfig;

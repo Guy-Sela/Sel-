@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>One Minute Of Your Life - CSS Ease Variation</title>
+        <link rel="stylesheet" href="style.css" />
+        <style>
+            /* Ensure no scrollbars or margins interfere with the immersive view */
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                background-color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="timer-background"></div>
+
+        <script>
+            /**
+             * FULLSCREEN ENFORCEMENT
+             * To comply with browser security, a user interaction is usually required.
+             * Clicking anywhere on the screen will toggle Fullscreen mode.
+             */
+            document.addEventListener("click", () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement
+                        .requestFullscreen()
+                        .catch((err) => {
+                            console.error(
+                                `Error attempting to enable full-screen mode: ${err.message}`,
+                            );
+                        });
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            });
+
+            // Hide cursor after 2 seconds of inactivity
+            let timeout;
+            document.addEventListener("mousemove", () => {
+                document.body.style.cursor = "default";
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    document.body.style.cursor = "none";
+                }, 2000);
+            });
+        </script>
+    </body>
+</html>

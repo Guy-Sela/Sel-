@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Navbar } from '@/components/navbar';
-import { TransitionPanel } from '@/components/motion-primitives/transition-panel';
-import { cn } from '@/lib/utils';
+import { useState } from "react";
+import { Navbar } from "@/components/navbar";
+import { TransitionPanel } from "@/components/motion-primitives/transition-panel";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
-  const [activeView, setActiveView] = useState('hero');
+  const [activeView, setActiveView] = useState("hero");
   const [workIndex, setWorkIndex] = useState(0);
 
   // For the prototype, we only have one work: Conceptual Timing
   const works = [
     {
-      id: 'conceptual-timing',
-      url: '/meditativeclocks/exhibition/',
+      id: "conceptual-timing",
+      url: "/meditativeclocks/exhibition/conceptual-timing/index.html",
     },
   ];
 
   const handleViewChange = (view: string) => {
     setActiveView(view);
-    if (view === 'works') {
+    if (view === "works") {
       setWorkIndex(0);
     }
   };
@@ -38,7 +38,7 @@ export default function Home() {
 
   const variants = {
     enter: (direction: number) => ({
-      x: direction > 0 ? '100%' : '-100%',
+      x: direction > 0 ? "100%" : "-100%",
       opacity: 0,
     }),
     center: {
@@ -46,7 +46,7 @@ export default function Home() {
       opacity: 1,
     },
     exit: (direction: number) => ({
-      x: direction < 0 ? '100%' : '-100%',
+      x: direction < 0 ? "100%" : "-100%",
       opacity: 0,
     }),
   };
@@ -57,9 +57,8 @@ export default function Home() {
 
       {/* The Stage */}
       <div className="flex-1 relative mt-16 overflow-hidden">
-
         {/* Top Indicators & Controls */}
-        {activeView === 'works' && (
+        {activeView === "works" && (
           <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-center py-6 px-10">
             <div className="flex items-center gap-8">
               {/* Left Arrow */}
@@ -67,7 +66,9 @@ export default function Home() {
                 onClick={prevWork}
                 className={cn(
                   "transition-all duration-300 hover:scale-110 active:scale-95",
-                  workIndex === 0 ? "opacity-0 pointer-events-none" : "opacity-40 hover:opacity-100"
+                  workIndex === 0
+                    ? "opacity-0 pointer-events-none"
+                    : "opacity-40 hover:opacity-100",
                 )}
               >
                 <svg
@@ -78,7 +79,11 @@ export default function Home() {
                   stroke="currentColor"
                   className="w-5 h-5 rotate-180"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+                  />
                 </svg>
               </button>
 
@@ -89,7 +94,7 @@ export default function Home() {
                     key={idx}
                     className={cn(
                       "h-[2px] w-12 transition-all duration-500",
-                      idx === workIndex ? "bg-white" : "bg-white/10"
+                      idx === workIndex ? "bg-white" : "bg-white/10",
                     )}
                   />
                 ))}
@@ -100,7 +105,9 @@ export default function Home() {
                 onClick={nextWork}
                 className={cn(
                   "transition-all duration-300 hover:scale-110 active:scale-95",
-                  workIndex === works.length - 1 ? "opacity-0 pointer-events-none" : "opacity-40 hover:opacity-100"
+                  workIndex === works.length - 1
+                    ? "opacity-0 pointer-events-none"
+                    : "opacity-40 hover:opacity-100",
                 )}
               >
                 <svg
@@ -111,7 +118,11 @@ export default function Home() {
                   stroke="currentColor"
                   className="w-5 h-5"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+                  />
                 </svg>
               </button>
             </div>
@@ -120,15 +131,15 @@ export default function Home() {
 
         {/* Content Slideshow */}
         <TransitionPanel
-          activeIndex={activeView === 'hero' ? 0 : 1}
+          activeIndex={activeView === "hero" ? 0 : 1}
           variants={{
-            enter: { x: '100%', opacity: 0 },
+            enter: { x: "100%", opacity: 0 },
             center: { x: 0, opacity: 1 },
-            exit: { x: '-100%', opacity: 0 },
+            exit: { x: "-100%", opacity: 0 },
           }}
           transition={{
             x: { type: "spring", stiffness: 300, damping: 30 },
-            opacity: { duration: 0.2 }
+            opacity: { duration: 0.2 },
           }}
           className="w-full h-full"
         >
@@ -140,14 +151,17 @@ export default function Home() {
             <TransitionPanel
               activeIndex={workIndex}
               variants={{
-                enter: { x: '100%', opacity: 0 },
+                enter: { x: "100%", opacity: 0 },
                 center: { x: 0, opacity: 1 },
-                exit: { x: '-100%', opacity: 0 },
+                exit: { x: "-100%", opacity: 0 },
               }}
               className="w-full h-full"
             >
               {works.map((work) => (
-                <div key={work.id} className="w-full h-full p-4 sm:p-8 md:p-12 lg:p-16">
+                <div
+                  key={work.id}
+                  className="w-full h-full p-4 sm:p-8 md:p-12 lg:p-16"
+                >
                   <div className="w-full h-full rounded-sm overflow-hidden bg-neutral-900 shadow-2xl">
                     <iframe
                       src={work.url}

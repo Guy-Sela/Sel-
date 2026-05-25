@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>One Minute Of Your Life - Meditative Timer</title>
+        <link rel="stylesheet" href="style.css" />
+        <style>
+            /* Ensure no scrollbars or margins interfere with the immersive view */
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                background-color: black;
+            }
+            #timerCanvas {
+                display: block;
+                width: 100vw;
+                height: 100vh;
+            }
+        </style>
+    </head>
+    <body>
+        <!--
+        Using a Canvas for the animation.
+        Click anywhere to toggle Fullscreen mode.
+        Press 'R' to record the canvas.
+    -->
+        <canvas id="timerCanvas"></canvas>
+
+        <script src="script.js"></script>
+        <script>
+            /**
+             * FULLSCREEN ENFORCEMENT
+             * To comply with browser security, a user interaction is required.
+             * Clicking anywhere on the screen will toggle Fullscreen mode.
+             */
+            document.addEventListener("click", () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement
+                        .requestFullscreen()
+                        .catch((err) => {
+                            console.error(
+                                `Error attempting to enable full-screen mode: ${err.message}`,
+                            );
+                        });
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            });
+
+            // Hide cursor after 2 seconds of inactivity for deep focus
+            let cursorTimeout;
+            document.addEventListener("mousemove", () => {
+                document.body.style.cursor = "default";
+                clearTimeout(cursorTimeout);
+                cursorTimeout = setTimeout(() => {
+                    document.body.style.cursor = "none";
+                }, 2000);
+            });
+        </script>
+    </body>
+</html>

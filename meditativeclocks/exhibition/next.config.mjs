@@ -7,7 +7,7 @@ const turbopackRoot = new URL(".", import.meta.url).pathname.replace(/\/$/, "");
 
 const nextConfig = {
   output: "export",
-  basePath: isProd ? "/meditativeclocks/exhibition" : "",
+  basePath: "/meditativeclocks/exhibition",
   trailingSlash: true,
   images: {
     unoptimized: true,

@@ -13,7 +13,7 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
       <div className="w-full h-16 flex items-center justify-between px-10">
         <button
           onClick={() => onViewChange("hero")}
-          className="text-base sm:text-lg uppercase tracking-wide transition-opacity hover:opacity-70 font-josefin"
+          className="text-base sm:text-xs md:text-sm uppercase tracking-wide transition-opacity hover:opacity-70 font-josefin"
         >
           SELÀ
         </button>
@@ -24,7 +24,7 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
               "text-[10px] sm:text-xs md:text-sm uppercase tracking-wide transition-colors font-josefin",
               activeView === "works"
                 ? "text-white"
-                : "text-white/60 hover:text-white",
+                : "text-white/70 hover:text-white",
             )}
           >
             Works
@@ -35,7 +35,7 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
               "text-[10px] sm:text-xs md:text-sm uppercase tracking-wide transition-colors font-josefin",
               activeView === "about"
                 ? "text-white"
-                : "text-white/60 hover:text-white",
+                : "text-white/70 hover:text-white",
             )}
           >
             About
@@ -46,7 +46,7 @@ export function Navbar({ activeView, onViewChange }: NavbarProps) {
               "text-[10px] sm:text-xs md:text-sm uppercase tracking-wide transition-colors font-josefin",
               activeView === "contact"
                 ? "text-white"
-                : "text-white/60 hover:text-white",
+                : "text-white/70 hover:text-white",
             )}
           >
             Contact

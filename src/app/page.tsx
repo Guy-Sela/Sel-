@@ -59,6 +59,13 @@ export default function Home() {
     <main className="flex flex-col h-[100dvh] bg-black text-white selection:bg-white selection:text-black">
       <Navbar activeView={activeView} onViewChange={handleViewChange} />
 
+      {/* Preload each work's iframe in the background */}
+      <div className="hidden pointer-events-none" aria-hidden="true">
+        {works.map((work) => (
+          <iframe key={`preload-${work.id}`} src={work.url} />
+        ))}
+      </div>
+
       {/* Dedicated Control Strip */}
       {activeView === "works" && (
         <div className="mt-16 w-full flex items-center justify-center py-6 bg-black border-b border-white/5">
@@ -67,26 +74,26 @@ export default function Home() {
             <button
               onClick={prevWork}
               className={cn(
-                "h-full flex items-center text-3xl transition-all duration-300 hover:scale-110 active:scale-90 font-light font-inter",
+                "h-full flex items-center text-3xl transition-all duration-300 hover:scale-110 active:scale-90 font-medium font-inter",
                 workIndex === 0
                   ? "opacity-0 pointer-events-none"
-                  : "opacity-40 hover:opacity-100",
+                  : "opacity-70 hover:opacity-100",
               )}
             >
               ←
             </button>
 
             {/* Typographic Line Indicators using Em-Dashes */}
-            <div className="flex items-center gap-1 h-full font-inter font-light text-3xl tracking-[-0.1em]">
+            <div className="flex items-center h-full font-inter font-medium text-3xl">
               {works.map((_, idx) => (
                 <span
                   key={idx}
                   className={cn(
-                    "transition-all duration-500",
-                    idx === workIndex ? "text-white" : "text-white/20",
+                    "transition-all duration-500 mx-2",
+                    idx === workIndex ? "text-white" : "text-white/70",
                   )}
                 >
-                  —
+                  ←—⟵
                 </span>
               ))}
             </div>
@@ -95,10 +102,10 @@ export default function Home() {
             <button
               onClick={nextWork}
               className={cn(
-                "h-full flex items-center text-3xl transition-all duration-300 hover:scale-110 active:scale-90 font-light font-inter",
+                "h-full flex items-center text-3xl transition-all duration-300 hover:scale-110 active:scale-90 font-medium font-inter",
                 workIndex === works.length - 1
                   ? "opacity-0 pointer-events-none"
-                  : "opacity-40 hover:opacity-100",
+                  : "opacity-70 hover:opacity-100",
               )}
             >
               →
@@ -133,7 +140,7 @@ export default function Home() {
 
           {/* Works View */}
           <div className="w-full h-full relative flex items-center justify-center">
-            <div className="w-full h-full scale-[0.75] origin-center">
+            <div className="w-full h-full scale-[0.8] origin-center">
               <TransitionPanel
                 activeIndex={workIndex}
                 variants={{

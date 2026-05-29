@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { TransitionPanel } from "@/components/motion-primitives/transition-panel";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
@@ -66,54 +67,6 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Dedicated Control Strip */}
-      {activeView === "works" && (
-        <div className="mt-16 w-full flex items-center justify-center py-6 bg-black border-b border-white/5">
-          <div className="flex items-center gap-12 h-10">
-            {/* Left Arrow */}
-            <button
-              onClick={prevWork}
-              className={cn(
-                "h-full flex items-center text-3xl transition-all duration-300 hover:scale-110 active:scale-90 font-medium font-inter",
-                workIndex === 0
-                  ? "opacity-0 pointer-events-none"
-                  : "opacity-70 hover:opacity-100",
-              )}
-            >
-              ←
-            </button>
-
-            {/* Typographic Line Indicators using Em-Dashes */}
-            <div className="flex items-center h-full font-inter font-medium text-3xl">
-              {works.map((_, idx) => (
-                <span
-                  key={idx}
-                  className={cn(
-                    "transition-all duration-500 mx-2",
-                    idx === workIndex ? "text-white" : "text-white/70",
-                  )}
-                >
-                  ←—⟵
-                </span>
-              ))}
-            </div>
-
-            {/* Right Arrow */}
-            <button
-              onClick={nextWork}
-              className={cn(
-                "h-full flex items-center text-3xl transition-all duration-300 hover:scale-110 active:scale-90 font-medium font-inter",
-                workIndex === works.length - 1
-                  ? "opacity-0 pointer-events-none"
-                  : "opacity-70 hover:opacity-100",
-              )}
-            >
-              →
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* The Stage */}
       <div
         className={cn(
@@ -140,7 +93,74 @@ export default function Home() {
 
           {/* Works View */}
           <div className="w-full h-full relative flex items-center justify-center">
-            <div className="w-full h-full scale-[0.8] origin-center">
+            {/* Left Arrow — elegant chevron */}
+            <motion.button
+              onClick={prevWork}
+              whileTap={{ scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className={cn(
+                "absolute left-10 top-1/2 -translate-y-1/2 z-10 flex items-center opacity-85 hover:opacity-100",
+                workIndex === 0 && "opacity-0 pointer-events-none",
+              )}
+            >
+              <svg
+                className="h-7 w-7 block"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </motion.button>
+
+            {/* Progress Indicators — horizontal elegant lines */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-4">
+              {works.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setWorkIndex(idx)}
+                  className="group"
+                  disabled={idx === workIndex}
+                >
+                  <motion.div
+                    className={cn(
+                      "h-px rounded-full bg-current",
+                      idx === workIndex ? "w-8 text-white" : "w-5 text-white/55",
+                    )}
+                    animate={{ scaleX: idx === workIndex ? 1.2 : 1 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  />
+                </button>
+              ))}
+            </div>
+
+            {/* Right Arrow — elegant chevron */}
+            <motion.button
+              onClick={nextWork}
+              whileTap={{ scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className={cn(
+                "absolute right-10 top-1/2 -translate-y-1/2 z-10 flex items-center opacity-85 hover:opacity-100",
+                workIndex === works.length - 1 && "opacity-0 pointer-events-none",
+              )}
+            >
+              <svg
+                className="h-7 w-7 block"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </motion.button>
+
+            <div className="scale-[0.75] origin-center">
               <TransitionPanel
                 activeIndex={workIndex}
                 variants={{
@@ -153,7 +173,11 @@ export default function Home() {
                 {works.map((work) => (
                   <div
                     key={work.id}
-                    className="w-full h-full overflow-hidden bg-black ring-1 ring-white/10 shadow-2xl"
+                    className="overflow-hidden bg-black"
+                    style={{
+                      width: "min(1360px, 92vw)",
+                      height: "min(82dvh, 92vh)",
+                    }}
                   >
                     <iframe
                       src={work.url}

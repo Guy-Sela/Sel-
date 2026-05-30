@@ -13,16 +13,6 @@ export default function Home() {
   >("hero");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [workIndex, setWorkIndex] = useState(0);
-  const [trailVisible, setTrailVisible] = useState(false);
-  const [trailFading, setTrailFading] = useState(false);
-  const [trailPath, setTrailPath] = useState("");
-
-  useEffect(() => {
-    if (activeView === "works" && workIndex === 0) {
-      const t = setTimeout(() => setTrailVisible(true), 1000);
-      return () => clearTimeout(t);
-    }
-  }, [activeView, workIndex]);
 
   // For the prototype, we only have one work: Conceptual Timing
   const works = [
@@ -186,13 +176,6 @@ export default function Home() {
 
                 {/* Exhibition Content — always dead center, properly constrained */}
                 <div
-                  ref={(node) => {
-                    if (node) {
-                      const { width, height } = node.getBoundingClientRect();
-                      const path = `M 0,0 H ${width} V ${height} H 0 Z`;
-                      if (trailPath !== path) setTrailPath(path);
-                    }
-                  }}
                   className="relative"
                   style={{
                     transform: "scale(0.75)",
@@ -201,29 +184,6 @@ export default function Home() {
                     maxHeight: "calc(100dvh - 200px)",
                   }}
                 >
-                  {/* Trail — travels along the border once, then fades */}
-                  {trailVisible && trailPath && (
-                    <motion.div
-                      className="absolute pointer-events-none rounded-full"
-                      style={
-                        {
-                          width: 60,
-                          height: 60,
-                          offsetPath: `path("${trailPath}")`,
-                          offsetAnchor: "50% 50%",
-                          background:
-                            "radial-gradient(circle, rgba(255,255,255,0.65) 0%, transparent 70%)",
-                          opacity: trailFading ? 0 : 1,
-                          transition: "opacity 1s ease",
-                        } as React.CSSProperties
-                      }
-                      initial={{ offsetDistance: "0%" }}
-                      animate={{ offsetDistance: "100%" }}
-                      transition={{ duration: 4, ease: "linear" }}
-                      onAnimationComplete={() => setTrailFading(true)}
-                      onTransitionEnd={() => setTrailVisible(false)}
-                    />
-                  )}
                   <div className="relative flex items-center justify-center overflow-hidden w-full h-full">
                     <TransitionPanel
                       activeIndex={workIndex}

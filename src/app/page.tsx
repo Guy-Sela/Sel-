@@ -16,17 +16,13 @@ export default function Home() {
   const [trailVisible, setTrailVisible] = useState(false);
   const [trailFading, setTrailFading] = useState(false);
   const [trailPath, setTrailPath] = useState("");
-  const trailContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (activeView !== "works" || !trailContainerRef.current) return;
-    const ro = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-      setTrailPath(`M 0,0 H ${width} V ${height} H 0 Z`);
-    });
-    ro.observe(trailContainerRef.current);
-    return () => ro.disconnect();
-  }, [activeView]);
+    if (activeView === "works" && workIndex === 0) {
+      const t = setTimeout(() => setTrailVisible(true), 1000);
+      return () => clearTimeout(t);
+    }
+  }, [activeView, workIndex]);
 
   // For the prototype, we only have one work: Conceptual Timing
   const works = [
@@ -113,9 +109,6 @@ export default function Home() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "-100%", opacity: 0 }}
               transition={{ type: "spring", stiffness: 125, damping: 17 }}
-              onAnimationComplete={() =>
-                setTimeout(() => setTrailVisible(true), 1000)
-              }
               className="absolute inset-0"
             >
               <div className="w-full h-full relative flex items-center justify-center px-4 md:px-6">
@@ -193,7 +186,13 @@ export default function Home() {
 
                 {/* Exhibition Content — always dead center, properly constrained */}
                 <div
-                  ref={trailContainerRef}
+                  ref={(node) => {
+                    if (node) {
+                      const { width, height } = node.getBoundingClientRect();
+                      const path = `M 0,0 H ${width} V ${height} H 0 Z`;
+                      if (trailPath !== path) setTrailPath(path);
+                    }
+                  }}
                   className="relative"
                   style={{
                     transform: "scale(0.75)",

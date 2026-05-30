@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { TransitionPanel } from "@/components/motion-primitives/transition-panel";
+import { BorderTrail } from "@/components/core/border-trail";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,7 @@ export default function Home() {
   >("hero");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [workIndex, setWorkIndex] = useState(0);
+  const [trailVisible, setTrailVisible] = useState(true);
 
   // For the prototype, we only have one work: Conceptual Timing
   const works = [
@@ -182,6 +184,7 @@ export default function Home() {
                 >
                   <TransitionPanel
                     activeIndex={workIndex}
+                    transition={{ type: "spring", stiffness: 125, damping: 17 }}
                     variants={{
                       enter: { x: "100%", opacity: 0 },
                       center: { x: 0, opacity: 1 },
@@ -189,16 +192,31 @@ export default function Home() {
                     }}
                     className="w-full h-full"
                   >
-                    {works.map((work) => (
+                    {works.map((work, idx) => (
                       <div
                         key={work.id}
-                        className="overflow-hidden bg-black touch-auto"
+                        className="relative overflow-hidden bg-black touch-auto"
                         style={{
                           width: "min(1280px, 90vw)",
                           height: "min(64dvh, 70vh)",
                           maxHeight: "calc(100dvh - 240px)",
                         }}
                       >
+                        {idx === 0 && trailVisible && (
+                          <BorderTrail
+                            style={{
+                              boxShadow:
+                                "0px 0px 60px 30px rgb(255 255 255 / 50%), 0 0 100px 60px rgb(0 0 0 / 50%), 0 0 140px 90px rgb(0 0 0 / 50%)",
+                            }}
+                            size={100}
+                            transition={{
+                              repeat: 0,
+                              duration: 4,
+                              ease: "linear",
+                            }}
+                            onAnimationComplete={() => setTrailVisible(false)}
+                          />
+                        )}
                         <iframe
                           src={work.url}
                           className="w-full h-full border-none"

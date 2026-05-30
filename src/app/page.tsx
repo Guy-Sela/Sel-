@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Navbar } from "@/components/navbar";
 import { TransitionPanel } from "@/components/motion-primitives/transition-panel";
-import { BorderTrail } from "@/components/core/border-trail";
-import { BorderBeam } from "@/components/magicui/border-beam";
+
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +15,18 @@ export default function Home() {
   const [workIndex, setWorkIndex] = useState(0);
   const [trailVisible, setTrailVisible] = useState(false);
   const [trailFading, setTrailFading] = useState(false);
+  const [trailPath, setTrailPath] = useState("");
+  const trailContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (activeView !== "works" || !trailContainerRef.current) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      setTrailPath(`M 0,0 H ${width} V ${height} H 0 Z`);
+    });
+    ro.observe(trailContainerRef.current);
+    return () => ro.disconnect();
+  }, [activeView]);
 
   // For the prototype, we only have one work: Conceptual Timing
   const works = [
@@ -182,6 +193,7 @@ export default function Home() {
 
                 {/* Exhibition Content — always dead center, properly constrained */}
                 <div
+                  ref={trailContainerRef}
                   className="relative"
                   style={{
                     transform: "scale(0.75)",
@@ -190,25 +202,30 @@ export default function Home() {
                     maxHeight: "calc(100dvh - 200px)",
                   }}
                 >
-                  {/* Beam layer — fades independently */}
-                  {trailVisible && (
-                    <div
-                      className="absolute inset-0 pointer-events-none"
-                      style={{
-                        background:
-                          "conic-gradient(from var(--angle, 0deg), transparent 70%, rgba(255,255,255,0.7) 80%, transparent 90%)",
-                        animation: "border-rotate 4s linear 1",
-                        opacity: trailFading ? 0 : 1,
-                        transition: "opacity 1s ease",
-                      }}
-                      onAnimationEnd={() => setTrailFading(true)}
+                  {/* Trail — travels along the border once, then fades */}
+                  {trailVisible && trailPath && (
+                    <motion.div
+                      className="absolute pointer-events-none rounded-full"
+                      style={
+                        {
+                          width: 60,
+                          height: 60,
+                          offsetPath: `path("${trailPath}")`,
+                          offsetAnchor: "50% 50%",
+                          background:
+                            "radial-gradient(circle, rgba(255,255,255,0.65) 0%, transparent 70%)",
+                          opacity: trailFading ? 0 : 1,
+                          transition: "opacity 1s ease",
+                        } as React.CSSProperties
+                      }
+                      initial={{ offsetDistance: "0%" }}
+                      animate={{ offsetDistance: "100%" }}
+                      transition={{ duration: 4, ease: "linear" }}
+                      onAnimationComplete={() => setTrailFading(true)}
                       onTransitionEnd={() => setTrailVisible(false)}
                     />
                   )}
-                  <div
-                    className="relative flex items-center justify-center overflow-hidden w-full h-full"
-                    style={{ margin: "1px" }}
-                  >
+                  <div className="relative flex items-center justify-center overflow-hidden w-full h-full">
                     <TransitionPanel
                       activeIndex={workIndex}
                       transition={{

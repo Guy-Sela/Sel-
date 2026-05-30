@@ -60,6 +60,14 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      keyframes: {
+        "border-rotate": {
+          to: { "--angle": "360deg" },
+        },
+      },
+      animation: {
+        "border-rotate": "border-rotate 4s linear infinite",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

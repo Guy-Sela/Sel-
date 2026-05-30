@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { TransitionPanel } from "@/components/motion-primitives/transition-panel";
 import { BorderTrail } from "@/components/core/border-trail";
+import { BorderBeam } from "@/components/magicui/border-beam";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +14,8 @@ export default function Home() {
   >("hero");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [workIndex, setWorkIndex] = useState(0);
-  const [trailVisible, setTrailVisible] = useState(true);
+  const [trailVisible, setTrailVisible] = useState(false);
+  const [trailFading, setTrailFading] = useState(false);
 
   // For the prototype, we only have one work: Conceptual Timing
   const works = [
@@ -100,6 +102,9 @@ export default function Home() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "-100%", opacity: 0 }}
               transition={{ type: "spring", stiffness: 125, damping: 17 }}
+              onAnimationComplete={() =>
+                setTimeout(() => setTrailVisible(true), 1000)
+              }
               className="absolute inset-0"
             >
               <div className="w-full h-full relative flex items-center justify-center px-4 md:px-6">
@@ -177,54 +182,66 @@ export default function Home() {
 
                 {/* Exhibition Content — always dead center, properly constrained */}
                 <div
+                  className="relative"
                   style={{
-                    zoom: 0.75,
+                    transform: "scale(0.75)",
+                    minWidth: "min(1280px, 90vw)",
+                    minHeight: "min(64dvh, 70vh)",
                     maxHeight: "calc(100dvh - 200px)",
                   }}
                 >
-                  <TransitionPanel
-                    activeIndex={workIndex}
-                    transition={{ type: "spring", stiffness: 125, damping: 17 }}
-                    variants={{
-                      enter: { x: "100%", opacity: 0 },
-                      center: { x: 0, opacity: 1 },
-                      exit: { x: "-100%", opacity: 0 },
-                    }}
-                    className="w-full h-full"
+                  {/* Beam layer — fades independently */}
+                  {trailVisible && (
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background:
+                          "conic-gradient(from var(--angle, 0deg), transparent 70%, rgba(255,255,255,0.7) 80%, transparent 90%)",
+                        animation: "border-rotate 4s linear 1",
+                        opacity: trailFading ? 0 : 1,
+                        transition: "opacity 1s ease",
+                      }}
+                      onAnimationEnd={() => setTrailFading(true)}
+                      onTransitionEnd={() => setTrailVisible(false)}
+                    />
+                  )}
+                  <div
+                    className="relative flex items-center justify-center overflow-hidden w-full h-full"
+                    style={{ margin: "1px" }}
                   >
-                    {works.map((work, idx) => (
-                      <div
-                        key={work.id}
-                        className="relative overflow-hidden bg-black touch-auto"
-                        style={{
-                          width: "min(1280px, 90vw)",
-                          height: "min(64dvh, 70vh)",
-                          maxHeight: "calc(100dvh - 240px)",
-                        }}
-                      >
-                        {idx === 0 && trailVisible && (
-                          <BorderTrail
-                            style={{
-                              boxShadow:
-                                "0px 0px 60px 30px rgb(255 255 255 / 50%), 0 0 100px 60px rgb(0 0 0 / 50%), 0 0 140px 90px rgb(0 0 0 / 50%)",
-                            }}
-                            size={100}
-                            transition={{
-                              repeat: 0,
-                              duration: 4,
-                              ease: "linear",
-                            }}
-                            onAnimationComplete={() => setTrailVisible(false)}
+                    <TransitionPanel
+                      activeIndex={workIndex}
+                      transition={{
+                        type: "spring",
+                        stiffness: 125,
+                        damping: 17,
+                      }}
+                      variants={{
+                        enter: { x: "100%", opacity: 0 },
+                        center: { x: 0, opacity: 1 },
+                        exit: { x: "-100%", opacity: 0 },
+                      }}
+                      className="w-full h-full"
+                    >
+                      {works.map((work, idx) => (
+                        <div
+                          key={work.id}
+                          className="relative overflow-hidden bg-black touch-auto"
+                          style={{
+                            width: "min(1280px, 90vw)",
+                            height: "min(64dvh, 70vh)",
+                            maxHeight: "calc(100dvh - 240px)",
+                          }}
+                        >
+                          <iframe
+                            src={work.url}
+                            className="w-full h-full border-none"
+                            title={work.id}
                           />
-                        )}
-                        <iframe
-                          src={work.url}
-                          className="w-full h-full border-none"
-                          title={work.id}
-                        />
-                      </div>
-                    ))}
-                  </TransitionPanel>
+                        </div>
+                      ))}
+                    </TransitionPanel>
+                  </div>
                 </div>
               </div>
             </motion.div>

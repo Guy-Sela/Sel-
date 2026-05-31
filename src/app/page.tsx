@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Navbar } from "@/components/navbar";
 import { TransitionPanel } from "@/components/motion-primitives/transition-panel";
+import { BorderTrailSvg } from "@/components/border-trail-svg";
 
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -214,6 +215,9 @@ export default function Home() {
                             className="w-full h-full border-none"
                             title={work.id}
                           />
+                          {idx === 0 && (
+                            <BorderTrailSvg size={200} duration={8} />
+                          )}
                         </div>
                       ))}
                     </TransitionPanel>

@@ -50,7 +50,7 @@ function FullscreenMockupPopover({
         <button
           type="button"
           aria-label="Close"
-          className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 sm:h-10 sm:w-10 sm:right-4 sm:top-4 items-center justify-center rounded-full bg-black/50 border border-white text-white hover:bg-black/70"
+          className="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full bg-black/50 border border-white text-white hover:bg-black/70"
           onClick={(event) => {
             event.stopPropagation();
             setOpen(false);
@@ -64,7 +64,7 @@ function FullscreenMockupPopover({
             strokeWidth={1.5}
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="h-4 w-4 sm:h-5 sm:w-5"
+            className="h-5 w-5"
           >
             <path d="M6 6l12 12M18 6l-12 12" />
           </svg>

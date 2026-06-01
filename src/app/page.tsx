@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Navbar } from "@/components/navbar";
 import { TransitionPanel } from "@/components/motion-primitives/transition-panel";
-import { BorderTrailSvg } from "@/components/border-trail-svg";
+import { BorderTrail } from "@/components/core/border-trail";
 
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -78,36 +78,6 @@ export default function Home() {
 
       {/* The Stage */}
       <div className="flex-1 relative overflow-hidden">
-        {/* Persistent Frame (Mobile only) */}
-        {activeView === "works" && (
-          <div className="md:hidden pointer-events-none absolute inset-0 z-30 flex flex-col items-center">
-            {/* Top gap with centered separator */}
-            <div className="pt-16 flex-1 w-full flex items-center justify-center">
-              <div className="h-px bg-white/50" style={{ width: "15vw" }} />
-            </div>
-
-            {/* Stage area placeholder to align vertical separators */}
-            <div
-              className="relative w-full"
-              style={{ height: "calc(100dvh - 14rem)" }}
-            >
-              <div
-                className="absolute left-0 top-1/2 -translate-y-1/2 w-px bg-white/50"
-                style={{ height: "15vw" }}
-              />
-              <div
-                className="absolute right-0 top-1/2 -translate-y-1/2 w-px bg-white/50"
-                style={{ height: "15vw" }}
-              />
-            </div>
-
-            {/* Bottom gap with centered separator */}
-            <div className="pb-16 flex-1 w-full flex items-center justify-center">
-              <div className="h-px bg-white/50" style={{ width: "15vw" }} />
-            </div>
-          </div>
-        )}
-
         {/* Main View Controller */}
         <AnimatePresence mode="wait" initial={false}>
           {/* Hero View */}
@@ -143,15 +113,11 @@ export default function Home() {
                   )}
                 >
                   <svg
-                    className="h-7 w-7 block"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.75"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                    className="h-6 w-6 block"
+                    viewBox="0 -960 960 960"
+                    fill="currentColor"
                   >
-                    <path d="M15 18l-6-6 6-6" />
+                    <path d="M639-80l71-71-329-329 329-329-71-71-400 400L639-80Z" />
                   </svg>
                 </button>
 
@@ -166,25 +132,21 @@ export default function Home() {
                   )}
                 >
                   <svg
-                    className="h-7 w-7 block"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.75"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                    className="h-6 w-6 block"
+                    viewBox="0 -960 960 960"
+                    fill="currentColor"
                   >
-                    <path d="M9 18l6-6 6-6" />
+                    <path d="M321-80l-71-71 329-329-329-329 71-71 400 400L321-80Z" />
                   </svg>
                 </button>
 
                 {/* Mobile Control Bar */}
-                <div className="md:hidden z-20 absolute bottom-0 left-0 right-0 h-16 flex items-center justify-between px-6 bg-black">
+                <div className="md:hidden z-20 absolute bottom-0 left-0 right-0 h-16 flex items-center justify-center bg-black px-6">
                   <a
                     href={works[workIndex].url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="h-10 w-10 flex items-center justify-center text-white/80 active:text-white"
+                    className="absolute left-6 h-10 flex items-center text-white/80 active:text-white"
                   >
                     <svg
                       className="h-5 w-5"
@@ -194,7 +156,7 @@ export default function Home() {
                       <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z" />
                     </svg>
                   </a>
-                  <div className="flex items-center gap-6 flex-shrink-0">
+                  <div className="flex items-center justify-center gap-6">
                     <button
                       onClick={prevWork}
                       disabled={workIndex === 0}
@@ -204,15 +166,11 @@ export default function Home() {
                       )}
                     >
                       <svg
-                        className="h-6 w-6"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                        className="h-5 w-5"
+                        viewBox="0 -960 960 960"
+                        fill="currentColor"
                       >
-                        <path d="M15 18l-6-6 6-6" />
+                        <path d="M639-80l71-71-329-329 329-329-71-71-400 400L639-80Z" />
                       </svg>
                     </button>
 
@@ -242,19 +200,14 @@ export default function Home() {
                       )}
                     >
                       <svg
-                        className="h-6 w-6"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                        className="h-5 w-5"
+                        viewBox="0 -960 960 960"
+                        fill="currentColor"
                       >
-                        <path d="M9 18l6-6-6-6" />
+                        <path d="M321-80l-71-71 329-329-329-329 71-71 400 400L321-80Z" />
                       </svg>
                     </button>
                   </div>
-                  <div className="w-10" /> {/* Spacer to balance the layout */}
                 </div>
 
                 {/* Desktop-only secondary controls */}
@@ -321,30 +274,62 @@ export default function Home() {
                       {works.map((work, idx) => (
                         <div
                           key={work.id}
-                          className="relative flex flex-col items-center w-full h-full pt-16 pb-16 md:pt-0 md:pb-0 md:flex-row md:justify-center md:items-center"
+                          className="relative flex flex-col items-center w-full h-full md:flex-row md:justify-center md:items-center"
                         >
                           {/* Top gap (spacer for centering) */}
                           <div className="md:hidden flex-1 w-full" />
 
                           <div
-                            className="relative overflow-hidden bg-black touch-auto md:mb-0"
+                            className="relative rounded-none bg-black touch-auto md:mb-0"
                             style={{
                               width: "var(--stage-width, 100%)",
                               height: "var(--stage-height, 100%)",
-                              transform: "var(--stage-scale, none)",
                             }}
                           >
                             <style jsx>{`
+                              /* Portrait: lock 4:5 (taller than wide) */
                               div {
-                                --stage-width: calc(100vw - 3rem);
-                                --stage-height: calc(100dvh - 14rem);
-                                --stage-scale: none;
+                                --stage-width: min(
+                                  100vw - 2rem,
+                                  (100dvh - 9rem) * 4 / 5
+                                );
+                                --stage-height: calc(
+                                  var(--stage-width) * 5 / 4
+                                );
                               }
                               @media (min-width: 768px) {
                                 div {
-                                  --stage-width: min(1280px, 90vw);
-                                  --stage-height: min(64dvh, 70vh);
-                                  --stage-scale: scale(0.75);
+                                  --stage-width: min(
+                                    100vw - 2rem,
+                                    (100dvh - 10rem) * 4 / 5
+                                  );
+                                  --stage-height: calc(
+                                    var(--stage-width) * 5 / 4
+                                  );
+                                }
+                              }
+                              /* Landscape: lock 16:9 */
+                              @media (orientation: landscape) {
+                                div {
+                                  --stage-width: min(
+                                    100vw - 2rem,
+                                    (100dvh - 9rem) * 16 / 9
+                                  );
+                                  --stage-height: calc(
+                                    var(--stage-width) * 9 / 16
+                                  );
+                                }
+                              }
+                              @media (orientation: landscape) and (min-width: 768px) {
+                                div {
+                                  --stage-width: min(
+                                    1280px,
+                                    88vw,
+                                    (100dvh - 10rem) * 16 / 9
+                                  );
+                                  --stage-height: calc(
+                                    var(--stage-width) * 9 / 16
+                                  );
                                 }
                               }
                             `}</style>
@@ -354,7 +339,13 @@ export default function Home() {
                               title={work.id}
                             />
                             {idx === 0 && (
-                              <BorderTrailSvg size={200} duration={8} />
+                              <BorderTrail
+                                style={{
+                                  boxShadow:
+                                    "0px 0px 60px 30px rgb(255 255 255 / 50%), 0 0 100px 60px rgb(0 0 0 / 50%), 0 0 140px 90px rgb(0 0 0 / 50%)",
+                                }}
+                                size={100}
+                              />
                             )}
                           </div>
 

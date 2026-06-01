@@ -78,6 +78,36 @@ export default function Home() {
 
       {/* The Stage */}
       <div className="flex-1 relative overflow-hidden">
+        {/* Persistent Frame (Mobile only) */}
+        {activeView === "works" && (
+          <div className="md:hidden pointer-events-none absolute inset-0 z-30 flex flex-col items-center">
+            {/* Top gap with centered separator */}
+            <div className="pt-16 flex-1 w-full flex items-center justify-center">
+              <div className="h-px bg-white/50" style={{ width: "15vw" }} />
+            </div>
+
+            {/* Stage area placeholder to align vertical separators */}
+            <div
+              className="relative w-full"
+              style={{ height: "calc(100dvh - 14rem)" }}
+            >
+              <div
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-px bg-white/50"
+                style={{ height: "15vw" }}
+              />
+              <div
+                className="absolute right-0 top-1/2 -translate-y-1/2 w-px bg-white/50"
+                style={{ height: "15vw" }}
+              />
+            </div>
+
+            {/* Bottom gap with centered separator */}
+            <div className="pb-16 flex-1 w-full flex items-center justify-center">
+              <div className="h-px bg-white/50" style={{ width: "15vw" }} />
+            </div>
+          </div>
+        )}
+
         {/* Main View Controller */}
         <AnimatePresence mode="wait" initial={false}>
           {/* Hero View */}
@@ -103,17 +133,17 @@ export default function Home() {
               className="absolute inset-0"
             >
               <div className="w-full h-full relative flex items-center justify-center px-4 md:px-6">
-                {/* Left Arrow — always visible, responsive positioning + size */}
+                {/* Left Arrow — desktop only */}
                 <button
                   onClick={prevWork}
                   className={cn(
-                    "z-20 flex items-center opacity-85 hover:opacity-100 transition-all",
-                    "absolute left-4 md:left-6 lg:left-10 top-1/2 -translate-y-1/2",
+                    "z-20 hidden md:flex items-center opacity-85 hover:opacity-100 transition-all",
+                    "absolute left-6 lg:left-10 top-1/2 -translate-y-1/2",
                     workIndex === 0 && "opacity-0 pointer-events-none",
                   )}
                 >
                   <svg
-                    className="h-6 w-6 md:h-7 md:w-7 block"
+                    className="h-7 w-7 block"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -125,8 +155,110 @@ export default function Home() {
                   </svg>
                 </button>
 
-                {/* Progress Indicators — always visible, responsive sizing + position */}
-                <div className="z-20 flex items-center gap-3 md:gap-4 absolute bottom-5 md:bottom-8 left-1/2 -translate-x-1/2">
+                {/* Right Arrow — desktop only */}
+                <button
+                  onClick={nextWork}
+                  className={cn(
+                    "z-20 hidden md:flex items-center opacity-85 hover:opacity-100 transition-all",
+                    "absolute right-6 lg:right-10 top-1/2 -translate-y-1/2",
+                    workIndex === works.length - 1 &&
+                      "opacity-0 pointer-events-none",
+                  )}
+                >
+                  <svg
+                    className="h-7 w-7 block"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M9 18l6-6 6-6" />
+                  </svg>
+                </button>
+
+                {/* Mobile Control Bar */}
+                <div className="md:hidden z-20 absolute bottom-0 left-0 right-0 h-16 flex items-center justify-between px-6 bg-black">
+                  <a
+                    href={works[workIndex].url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="h-10 w-10 flex items-center justify-center text-white/80 active:text-white"
+                  >
+                    <svg
+                      className="h-5 w-5"
+                      viewBox="0 -960 960 960"
+                      fill="currentColor"
+                    >
+                      <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z" />
+                    </svg>
+                  </a>
+                  <div className="flex items-center gap-6 flex-shrink-0">
+                    <button
+                      onClick={prevWork}
+                      disabled={workIndex === 0}
+                      className={cn(
+                        "h-10 w-10 flex items-center justify-center transition-opacity",
+                        workIndex === 0 ? "opacity-25" : "opacity-100",
+                      )}
+                    >
+                      <svg
+                        className="h-6 w-6"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M15 18l-6-6 6-6" />
+                      </svg>
+                    </button>
+
+                    <div className="flex items-center gap-2 min-w-[32px] justify-center">
+                      {works.map((_, idx) => (
+                        <div
+                          key={idx}
+                          className={cn(
+                            "transition-all duration-300",
+                            idx === workIndex
+                              ? "w-5 bg-white"
+                              : "w-3 bg-white/50",
+                          )}
+                          style={{ height: "1.75px" }}
+                        />
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={nextWork}
+                      disabled={workIndex === works.length - 1}
+                      className={cn(
+                        "h-10 w-10 flex items-center justify-center transition-opacity",
+                        workIndex === works.length - 1
+                          ? "opacity-25"
+                          : "opacity-100",
+                      )}
+                    >
+                      <svg
+                        className="h-6 w-6"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="w-10" /> {/* Spacer to balance the layout */}
+                </div>
+
+                {/* Desktop-only secondary controls */}
+                <div className="hidden md:flex z-20 items-center gap-4 absolute bottom-8 left-1/2 -translate-x-1/2">
                   {works.map((_, idx) => (
                     <button
                       key={idx}
@@ -138,8 +270,8 @@ export default function Home() {
                         className={cn(
                           "h-px rounded-full bg-white",
                           idx === workIndex
-                            ? "w-6 md:w-8 opacity-100"
-                            : "w-4 md:w-5 opacity-40 group-hover:opacity-70",
+                            ? "w-8 opacity-100"
+                            : "w-5 opacity-40 group-hover:opacity-70",
                         )}
                         animate={{ scaleX: idx === workIndex ? 1.2 : 1 }}
                         transition={{
@@ -152,38 +284,13 @@ export default function Home() {
                   ))}
                 </div>
 
-                {/* Right Arrow — always visible, responsive positioning + size */}
-                <button
-                  onClick={nextWork}
-                  className={cn(
-                    "z-20 flex items-center opacity-85 hover:opacity-100 transition-all",
-                    "absolute right-4 md:left-auto right-4 md:right-6 lg:right-10 top-1/2 -translate-y-1/2",
-                    workIndex === works.length - 1 &&
-                      "opacity-0 pointer-events-none",
-                  )}
-                >
-                  <svg
-                    className="h-6 w-6 md:h-7 md:w-7 block"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.75"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </button>
-
-                {/* Expand — opens current work in a new tab. Sits in the bottom-left
-                    corner where Next's dev indicator lives, so it reads as a utility control. */}
                 <a
                   href={works[workIndex].url}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Open work in new tab"
                   title="Open in new tab"
-                  className="z-20 absolute bottom-5 md:bottom-8 left-6 md:left-10 h-6 w-6 md:h-8 md:w-8 flex items-center justify-center text-white/70 hover:text-white transition-colors"
+                  className="z-20 hidden md:flex absolute bottom-8 left-10 h-8 w-8 items-center justify-center text-white/70 hover:text-white transition-colors"
                 >
                   <svg
                     className="h-5 w-5 block"
@@ -194,16 +301,8 @@ export default function Home() {
                   </svg>
                 </a>
 
-                {/* Exhibition Content — always dead center, properly constrained */}
-                <div
-                  className="relative"
-                  style={{
-                    transform: "scale(0.75)",
-                    minWidth: "min(1280px, 90vw)",
-                    minHeight: "min(64dvh, 70vh)",
-                    maxHeight: "calc(100dvh - 200px)",
-                  }}
-                >
+                {/* Exhibition Content */}
+                <div className="relative w-full h-full flex items-center justify-center">
                   <div className="relative flex items-center justify-center overflow-hidden w-full h-full">
                     <TransitionPanel
                       activeIndex={workIndex}
@@ -222,21 +321,45 @@ export default function Home() {
                       {works.map((work, idx) => (
                         <div
                           key={work.id}
-                          className="relative overflow-hidden bg-black touch-auto"
-                          style={{
-                            width: "min(1280px, 90vw)",
-                            height: "min(64dvh, 70vh)",
-                            maxHeight: "calc(100dvh - 240px)",
-                          }}
+                          className="relative flex flex-col items-center w-full h-full pt-16 pb-16 md:pt-0 md:pb-0 md:flex-row md:justify-center md:items-center"
                         >
-                          <iframe
-                            src={work.url}
-                            className="w-full h-full border-none"
-                            title={work.id}
-                          />
-                          {idx === 0 && (
-                            <BorderTrailSvg size={200} duration={8} />
-                          )}
+                          {/* Top gap (spacer for centering) */}
+                          <div className="md:hidden flex-1 w-full" />
+
+                          <div
+                            className="relative overflow-hidden bg-black touch-auto md:mb-0"
+                            style={{
+                              width: "var(--stage-width, 100%)",
+                              height: "var(--stage-height, 100%)",
+                              transform: "var(--stage-scale, none)",
+                            }}
+                          >
+                            <style jsx>{`
+                              div {
+                                --stage-width: calc(100vw - 3rem);
+                                --stage-height: calc(100dvh - 14rem);
+                                --stage-scale: none;
+                              }
+                              @media (min-width: 768px) {
+                                div {
+                                  --stage-width: min(1280px, 90vw);
+                                  --stage-height: min(64dvh, 70vh);
+                                  --stage-scale: scale(0.75);
+                                }
+                              }
+                            `}</style>
+                            <iframe
+                              src={work.url}
+                              className="w-full h-full border-none"
+                              title={work.id}
+                            />
+                            {idx === 0 && (
+                              <BorderTrailSvg size={200} duration={8} />
+                            )}
+                          </div>
+
+                          {/* Bottom gap (spacer for centering) */}
+                          <div className="md:hidden flex-1 w-full" />
                         </div>
                       ))}
                     </TransitionPanel>

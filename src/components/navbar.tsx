@@ -37,7 +37,8 @@ export function Navbar({
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-[100]">
-      <div className="relative z-[110] w-full h-24 flex items-center justify-between px-6 md:px-10 bg-black/80 backdrop-blur-sm">
+      <div className="relative z-[110] w-full h-16 md:h-24 flex items-center justify-between px-6 md:px-10 bg-black/80 backdrop-blur-sm">
+        {/* Logo */}
         {/* Logo */}
         <button
           onClick={() => handleNavClick("hero")}

@@ -183,21 +183,14 @@ export default function Home() {
                   rel="noopener noreferrer"
                   aria-label="Open work in new tab"
                   title="Open in new tab"
-                  className="z-20 absolute bottom-5 md:bottom-8 left-6 md:left-10 h-6 w-6 md:h-8 md:w-8 flex items-center justify-center text-white hover:opacity-70 transition-opacity"
+                  className="z-20 absolute bottom-5 md:bottom-8 left-6 md:left-10 h-6 w-6 md:h-8 md:w-8 flex items-center justify-center text-white/70 hover:text-white transition-colors"
                 >
                   <svg
                     className="h-5 w-5 block"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.75"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                    viewBox="0 -960 960 960"
+                    fill="currentColor"
                   >
-                    <path d="M8 3H5a2 2 0 0 0-2 2v3" />
-                    <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
-                    <path d="M3 16v3a2 2 0 0 0 2 2h3" />
-                    <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+                    <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z" />
                   </svg>
                 </a>
 

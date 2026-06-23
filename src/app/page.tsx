@@ -8,6 +8,121 @@ import { BorderTrail } from "@/components/core/border-trail";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
+// Two words that slide past each other and swap sides, kept symmetric about
+// the center. The travel distance is based on the text size, guaranteeing
+// consistent separation on all devices (mobile, tablet, desktop).
+function CrossingWords({
+  axis,
+  containerClassName,
+  spanClassName,
+}: {
+  axis: "x" | "y";
+  containerClassName: string;
+  spanClassName: string;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const artRef = useRef<HTMLSpanElement>(null);
+  const codeRef = useRef<HTMLSpanElement>(null);
+  const [amps, setAmps] = useState<{ art: number; code: number } | null>(null);
+
+  useEffect(() => {
+    const measure = () => {
+      const c = containerRef.current;
+      const a = artRef.current;
+      const co = codeRef.current;
+      if (!c || !a || !co) return;
+
+      const size = (el: HTMLElement) =>
+        axis === "x" ? el.offsetWidth : el.offsetHeight;
+      const extent = axis === "x" ? c.offsetWidth : c.offsetHeight;
+
+      if (extent === 0) return;
+
+      const maxSize = Math.max(size(a), size(co));
+
+      // 1. Base travel distance dynamically on text size.
+      // Use 0.75x for horizontal (tablets/desktop) for a tighter, gentler spread.
+      // Use 0.85x for vertical (mobile) to ensure they clear each other.
+      let amplitude = maxSize * (axis === "x" ? 0.55 : 0.75);
+
+      // 2. Safety check: Prevent them from clipping outside the screen edges
+      const maxAllowed = Math.max(0, extent / 2 - maxSize / 2 - 16);
+      amplitude = Math.min(amplitude, maxAllowed);
+
+      setAmps({
+        art: amplitude,
+        code: amplitude,
+      });
+    };
+
+    measure();
+
+    const ro = new ResizeObserver(measure);
+    if (containerRef.current) ro.observe(containerRef.current);
+
+    // Re-measure once the web font has loaded
+    if (typeof document !== "undefined" && document.fonts?.ready) {
+      document.fonts.ready.then(measure);
+    }
+    return () => ro.disconnect();
+  }, [axis]);
+
+  const transition = {
+    duration: 8,
+    delay: 1.5,
+    repeat: Infinity,
+    repeatType: "reverse" as const,
+    ease: [0.65, 0, 0.35, 1] as const,
+  };
+
+  return (
+    <div ref={containerRef} className={containerClassName}>
+      {/* Invisible measurement layer */}
+      <div className="absolute inset-0 pointer-events-none">
+        <span ref={artRef} className={cn(spanClassName, "absolute opacity-0")}>
+          Art
+        </span>
+        <span ref={codeRef} className={cn(spanClassName, "absolute opacity-0")}>
+          Code
+        </span>
+      </div>
+
+      {amps && (
+        <>
+          {/* Art */}
+          <div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            style={{ mixBlendMode: "difference" }}
+          >
+            <motion.div
+              initial={{ [axis]: -amps.art }}
+              animate={{ [axis]: amps.art }}
+              transition={transition}
+              style={{ isolation: "auto" }}
+            >
+              <span className={spanClassName}>Art</span>
+            </motion.div>
+          </div>
+
+          {/* Code */}
+          <div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            style={{ mixBlendMode: "difference" }}
+          >
+            <motion.div
+              initial={{ [axis]: amps.code }}
+              animate={{ [axis]: -amps.code }}
+              transition={transition}
+              style={{ isolation: "auto" }}
+            >
+              <span className={spanClassName}>Code</span>
+            </motion.div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 export default function Home() {
   const [activeView, setActiveView] = useState<
     "hero" | "works" | "about" | "contact"
@@ -99,7 +214,7 @@ export default function Home() {
               initial={{ x: "100%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "-100%", opacity: 0 }}
-              transition={{ type: "spring", stiffness: 125, damping: 17 }}
+              transition={{ type: "spring", stiffness: 80, damping: 20 }}
               className="absolute inset-0"
             >
               <div className="w-full h-full relative flex items-center justify-center px-4 md:px-6">
@@ -229,8 +344,8 @@ export default function Home() {
                         animate={{ scaleX: idx === workIndex ? 1.2 : 1 }}
                         transition={{
                           type: "spring",
-                          stiffness: 125,
-                          damping: 17,
+                          stiffness: 80,
+                          damping: 20,
                         }}
                       />
                     </button>
@@ -261,8 +376,8 @@ export default function Home() {
                       activeIndex={workIndex}
                       transition={{
                         type: "spring",
-                        stiffness: 125,
-                        damping: 17,
+                        stiffness: 80,
+                        damping: 20,
                       }}
                       variants={{
                         enter: { x: "100%", opacity: 0 },
@@ -367,17 +482,27 @@ export default function Home() {
               initial={{ x: "100%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "100%", opacity: 0 }}
-              transition={{ type: "spring", stiffness: 125, damping: 17 }}
-              className="absolute inset-0 bg-black flex items-center justify-center pt-24 md:pt-0 px-6"
+              transition={{
+                type: "spring",
+                stiffness: 80,
+                damping: 20,
+              }}
+              className="absolute inset-0 bg-black flex items-center justify-center overflow-hidden pt-16 md:pt-24"
             >
-              <div className="text-center max-w-lg">
-                <div className="text-5xl md:text-7xl font-josefin tracking-[2px] mb-8">
-                  About
-                </div>
-                <div className="text-white/60 text-lg leading-relaxed">
-                  Placeholder content for About. This panel slides in from the
-                  right.
-                </div>
+              <div className="relative flex items-center justify-center w-full h-full">
+                {/* Desktop: Horizontal Slide */}
+                <CrossingWords
+                  axis="x"
+                  containerClassName="hidden md:flex absolute inset-0 items-center justify-center"
+                  spanClassName="block font-josefin text-[clamp(2.5rem,12vw,8rem)] font-light text-white uppercase whitespace-nowrap"
+                />
+
+                {/* Mobile: Vertical Slide */}
+                <CrossingWords
+                  axis="y"
+                  containerClassName="flex md:hidden absolute inset-0 items-center justify-center"
+                  spanClassName="block font-josefin text-[clamp(2rem,15vw,6rem)] font-light text-white uppercase whitespace-nowrap"
+                />
               </div>
             </motion.div>
           )}
@@ -389,18 +514,31 @@ export default function Home() {
               initial={{ x: "100%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "100%", opacity: 0 }}
-              transition={{ type: "spring", stiffness: 125, damping: 17 }}
-              className="absolute inset-0 bg-black flex items-center justify-center pt-24 md:pt-0 px-6"
+              transition={{ type: "spring", stiffness: 80, damping: 20 }}
+              className="absolute inset-0 bg-black flex flex-col pt-16 md:pt-24 px-6 md:px-10"
             >
-              <div className="text-center max-w-lg">
-                <div className="text-5xl md:text-7xl font-josefin tracking-[2px] mb-8">
-                  Contact
-                </div>
-                <div className="text-white/60 text-lg leading-relaxed">
-                  Placeholder content for Contact. This panel slides in from the
-                  right.
-                </div>
-              </div>
+              <div className="flex-1" />
+              <nav className="flex flex-col gap-3 mb-10">
+                {[
+                  { label: "Email", href: "mailto:ops@selahq.com" },
+                  { label: "X", href: "https://x.com/selaonx" },
+                  { label: "GitHub", href: "https://github.com/Guy-Sela" },
+                ].map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target={link.label !== "Email" ? "_blank" : undefined}
+                    rel={link.label !== "Email" ? "noopener" : undefined}
+                    className="text-[clamp(28px,5vw,48px)] font-light tracking-[0.1em] uppercase text-[#999] hover:text-white transition-colors w-fit font-josefin"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </nav>
+
+              <footer className="h-16 md:h-24 flex items-center text-sm font-light tracking-[0.08em] text-[#999] font-josefin">
+                <span>© Selà {new Date().getFullYear()}</span>
+              </footer>
             </motion.div>
           )}
         </AnimatePresence>

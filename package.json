@@ -10,6 +10,7 @@
     "build": "npm run integrate && next build --no-lint && rm -rf docs && mv out docs",
     "preview": "npx serve docs",
     "lint": "next lint",
+    "deploy": "sh scripts/deploy.sh",
     "sitemap": "node scripts/sitemap.cjs"
   },
   "dependencies": {

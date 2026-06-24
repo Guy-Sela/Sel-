@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import Link from "next/link";
 
 const josefin = localFont({
   src: "./fonts/josefin-sans.woff2",
@@ -65,14 +64,6 @@ export default function RootLayout({
                 >
                   SELÀ
                 </a>
-                <nav className="flex items-center gap-6">
-                  <Link
-                    href="/conceptual-timing"
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Conceptual Timing
-                  </Link>
-                </nav>
               </div>
             </header>
             <main className="pt-16">{children}</main>

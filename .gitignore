@@ -43,8 +43,16 @@ dev-log.txt
 **/dist/
 **/out/
 
-# Duplicates/Backups
-docs 2/
+# Security & Secrets
+*.pem
+*.crt
+*.key
+.env
+.env.local
 
 # Duplicates/Backups
 docs 2/
+.cursor/
+
+*.pem
+*.crt

@@ -35,9 +35,8 @@ jobs:
         run: npm ci
         working-directory: meditativeclocks/exhibition
 
-
       - name: Generate sitemap
-        run: node scripts/sitemap.js
+        run: node scripts/sitemap.cjs
 
       - name: Build site
         run: npm run build

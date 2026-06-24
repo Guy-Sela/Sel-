@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
 import Link from "next/link";
 
 const josefin = localFont({
@@ -54,26 +53,25 @@ export default function RootLayout({
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem
+          forcedTheme="dark"
           disableTransitionOnChange
         >
           <div className="min-h-screen bg-background text-foreground">
             <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border/50">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <Link
-                  href="/conceptual-timing"
+                <a
+                  href="https://selà.com"
                   className="font-josefin text-lg tracking-wide hover:opacity-70 transition-opacity"
                 >
                   SELÀ
-                </Link>
+                </a>
                 <nav className="flex items-center gap-6">
                   <Link
                     href="/conceptual-timing"
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Collection
+                    Conceptual Timing
                   </Link>
-                  <ThemeToggle />
                 </nav>
               </div>
             </header>
@@ -85,14 +83,6 @@ export default function RootLayout({
                     © {new Date().getFullYear()} Selà. All rights reserved.
                   </p>
                   <div className="flex gap-6">
-                    <a
-                      href="https://selà.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      Main Site
-                    </a>
                     <a
                       href="mailto:ops@selahq.com"
                       className="text-sm text-muted-foreground hover:text-foreground transition-colors"

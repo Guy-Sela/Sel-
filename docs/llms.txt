@@ -1,0 +1,19 @@
+# selà
+
+> selà is a software developer and conceptual artist. The site presents a small, curated set of works alongside brief About and Contact panels.
+
+The site is a single-page experience (Next.js App Router) with four views — Hero, Works, About, Contact — switched from a top navbar. The Works view embeds each piece in an iframe and supports keyboard/touch navigation between them.
+
+## Works
+
+- [Conceptual Timing](https://xn--sel-cla.com/meditativeclocks/exhibition/conceptual-timing/index.html): An exhibition piece from the Meditative Clocks series exploring time as concept rather than measurement.
+- [pxsoul](https://pxsoul.xn--sel-cla.com/): A standalone work hosted on its own subdomain.
+
+## Site
+
+- [Home](https://xn--sel-cla.com/): Entry point with navigation to all views.
+- [Sitemap](https://xn--sel-cla.com/sitemap.xml): Machine-readable list of URLs.
+
+## Optional
+
+- [ASCII profile](https://xn--sel-cla.com/ascii-profile.txt)

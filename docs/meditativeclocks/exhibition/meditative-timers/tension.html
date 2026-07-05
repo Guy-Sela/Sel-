@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tension</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  .line {
+    position: fixed;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background: #fff;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  #left  { left: 0;  animation-name: left-travel;  }
+  #right { right: 0; animation-name: right-travel; }
+</style>
+</head>
+<body>
+  <div class="line" id="left"></div>
+  <div class="line" id="right"></div>
+
+  <script>
+    // ── dial these ─────────────────────────────────────
+    const CYCLE = 60;   // total cycle duration in seconds
+    const PAUSE = 5;    // how long the lines hold at near-meet
+    const GAP   = 20;   // total gap between lines at closest (px)
+    // ───────────────────────────────────────────────────
+
+    const travel  = (CYCLE - PAUSE) / 2;          // seconds each way
+    const arrive  = (travel / CYCLE * 100).toFixed(4);   // % when lines meet
+    const leave   = ((travel + PAUSE) / CYCLE * 100).toFixed(4); // % when they leave
+    const half    = GAP / 2;
+
+    const css = `
+      .line { animation-duration: ${CYCLE}s; }
+
+      @keyframes left-travel {
+        0%       { transform: translateX(0); }
+        ${arrive}%  { transform: translateX(calc(50vw - ${half}px)); }
+        ${leave}%   { transform: translateX(calc(50vw - ${half}px)); }
+        100%     { transform: translateX(0); }
+      }
+
+      @keyframes right-travel {
+        0%       { transform: translateX(0); }
+        ${arrive}%  { transform: translateX(calc(-50vw + ${half}px)); }
+        ${leave}%   { transform: translateX(calc(-50vw + ${half}px)); }
+        100%     { transform: translateX(0); }
+      }
+    `;
+
+    document.head.appendChild(Object.assign(document.createElement('style'), { textContent: css }));
+  </script>
+</body>
+</html>

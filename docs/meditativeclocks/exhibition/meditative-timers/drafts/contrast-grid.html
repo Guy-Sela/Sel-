@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Simple Hue Shift 10x10</title>
+        <style>
+            body {
+                background-color: black;
+                margin: 0;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            canvas {
+                width: 400px;
+                height: 400px;
+                image-rendering: pixelated;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="artCanvas" width="10" height="10"></canvas>
+
+        <script>
+            const canvas = document.getElementById("artCanvas");
+            const ctx = canvas.getContext("2d");
+            const gridSize = 10;
+
+            // Track visited pixels so the wave only moves forward
+            const visited = Array.from({ length: gridSize }, () =>
+                Array(gridSize).fill(false),
+            );
+            const frontier = [];
+
+            // Add to queue if it's within bounds and hasn't been visited
+            function addFrontier(x, y) {
+                if (
+                    x >= 0 &&
+                    x < gridSize &&
+                    y >= 0 &&
+                    y < gridSize &&
+                    !visited[x][y]
+                ) {
+                    frontier.push({ x, y });
+                    visited[x][y] = true; // Mark as visited immediately
+                }
+            }
+
+            // 1. THE SEED
+            const startX = Math.floor(Math.random() * gridSize);
+            const startY = Math.floor(Math.random() * gridSize);
+
+            // Start with a totally random Hue (0 to 360)
+            let currentHue = Math.random() * 360;
+
+            addFrontier(startX, startY);
+
+            // 2. THE GROWTH
+            // Directions: Up, Right, Down, Left
+            const directions = [
+                [0, -1],
+                [1, 0],
+                [0, 1],
+                [-1, 0],
+            ];
+
+            while (frontier.length > 0) {
+                // Grab the next pixel in the wave
+                const current = frontier.shift();
+                const cx = current.x;
+                const cy = current.y;
+
+                // Draw the pixel using the current hue (100% saturation, 50% lightness)
+                ctx.fillStyle = `hsl(${currentHue}, 100%, 50%)`;
+                ctx.fillRect(cx, cy, 1, 1);
+
+                // Shift the hue by the Golden Angle for the next pixel
+                // This forces maximum distinct contrast without ever looping into a chessboard
+                currentHue = (currentHue + 137.5) % 360;
+
+                // Add surrounding uncolored pixels to the wave
+                for (const [dx, dy] of directions) {
+                    addFrontier(cx + dx, cy + dy);
+                }
+            }
+        </script>
+    </body>
+</html>

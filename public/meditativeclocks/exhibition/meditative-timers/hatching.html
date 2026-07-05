@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hatching</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  svg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #fill {
+    animation-name: fade-in;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    opacity: 0;
+  }
+
+  #ring {
+    animation-name: fade-out;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    opacity: 1;
+  }
+
+  @keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+</style>
+</head>
+<body>
+  <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+    <circle id="fill" cx="50" cy="50" fill="white" stroke="none" />
+    <circle id="ring" cx="50" cy="50" fill="none"  stroke="white" />
+  </svg>
+
+  <script>
+    // ── dial these ─────────────────────────────────────
+    const CYCLE  = 60;   // seconds for one full cross-fade (black->white->black)
+    const SIZE   = 60;   // fill circle diameter in vmin
+    const STROKE = 0.4;  // ring stroke width in vmin
+    // ───────────────────────────────────────────────────
+
+    const half  = CYCLE / 2;
+    const rFill = SIZE / 2;
+    const rRing = rFill + STROKE / 2; // ring center offset so inner edge = fill outer edge
+
+    document.getElementById('fill').setAttribute('r', rFill);
+
+    const ring = document.getElementById('ring');
+    ring.setAttribute('r', rRing);
+    ring.setAttribute('stroke-width', STROKE);
+
+    [document.getElementById('fill'), ring].forEach(el => {
+      el.style.animationDuration = `${half}s`;
+    });
+  </script>
+</body>
+</html>

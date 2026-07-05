@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>never touch</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  svg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #square {
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <!-- dot is inside the group so it rotates with the square during transition -->
+  <g id="square">
+    <rect id="box" fill="none" stroke="white" />
+    <circle id="dot" fill="white" />
+  </g>
+</svg>
+
+<script>
+  // ── dial these ────────────────────────────────────
+  const SIZE       = 60;
+  const GRAVITY    = 0.0008;
+  const DRAG       = 0.99;
+  const THRESHOLD  = 3;
+  const DOT_RADIUS = 0.6;
+  const STROKE     = 0.4;
+  // ─────────────────────────────────────────────────
+
+  const S  = SIZE;
+  const cx = 50;
+  const cy = 50;
+
+  const box = document.getElementById('box');
+  const dot = document.getElementById('dot');
+  const sq  = document.getElementById('square');
+
+  box.setAttribute('x',            cx - S/2);
+  box.setAttribute('y',            cy - S/2);
+  box.setAttribute('width',        S);
+  box.setAttribute('height',       S);
+  box.setAttribute('stroke-width', STROKE);
+  dot.setAttribute('r',            DOT_RADIUS);
+
+  const limit = S/2 - DOT_RADIUS;
+
+  let lx = 0;
+  let ly = -limit * 0.7;
+  let vx = 0;
+  let vy = 0;
+  let rotation = 0;
+  let flipping = false;
+
+  function flip() {
+    flipping = true;
+
+    const steps = [90, 180, 270];
+    const dir   = Math.random() < 0.5 ? 1 : -1;
+    rotation   += dir * steps[Math.floor(Math.random() * steps.length)];
+    sq.style.transform       = `rotate(${rotation}deg)`;
+    sq.style.transformOrigin = `${cx}px ${cy}px`;
+
+    vx = 0;
+    vy = 0;
+
+    setTimeout(() => { flipping = false; }, 1250);
+  }
+
+  function frame() {
+    if (!flipping) {
+      const rad = rotation * Math.PI / 180;
+
+      // World gravity (0,1) projected onto local axes
+      const gx = GRAVITY * Math.sin(rad);
+      const gy = GRAVITY * Math.cos(rad);
+
+      vx = (vx + gx) * DRAG;
+      vy = (vy + gy) * DRAG;
+      lx += vx;
+      ly += vy;
+
+      // Trigger only on the wall gravity is pulling toward
+      const nearWall = Math.abs(gx) > Math.abs(gy)
+        ? (gx > 0 ? lx >=  limit - THRESHOLD
+                  : lx <= -limit + THRESHOLD)
+        : (gy > 0 ? ly >=  limit - THRESHOLD
+                  : ly <= -limit + THRESHOLD);
+
+      if (nearWall) {
+        flip();
+      }
+
+      // Hard clamp to threshold boundary — dot never reaches the wall
+      lx = Math.max(-(limit - THRESHOLD), Math.min(limit - THRESHOLD, lx));
+      ly = Math.max(-(limit - THRESHOLD), Math.min(limit - THRESHOLD, ly));
+    }
+
+    // Dot position in local coords — the group's CSS rotation handles screen placement
+    dot.setAttribute('cx', cx + lx);
+    dot.setAttribute('cy', cy + ly);
+
+    requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+</script>
+</body>
+</html>

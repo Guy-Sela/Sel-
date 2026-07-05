@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SVG 8-Way Pixel Walk</title>
+        <style>
+            body {
+                background-color: black;
+                margin: 0;
+                padding: 0;
+                overflow: hidden; /* Hide scrollbars */
+                width: 100vw;
+                height: 100vh;
+            }
+            svg {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <svg id="artSvg"></svg>
+
+        <script>
+            // ==========================================
+            // ⚙️ EASY CONFIGURATION
+            // ==========================================
+            const CONFIG = {
+                // WARNING: Do not set this to 1 with SVG!
+                // Keep it at 20+ to prevent the browser from crashing.
+                pixelSize: 10,
+
+                // Elements to draw per frame
+                pixelsPerFrame: 10,
+            };
+            // ==========================================
+
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svgElement = document.getElementById("artSvg");
+
+            // 1. CALCULATE GRID SIZES
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+
+            const cols = Math.ceil(screenWidth / CONFIG.pixelSize);
+            const rows = Math.ceil(screenHeight / CONFIG.pixelSize);
+            const totalPixels = cols * rows;
+
+            // 2. GENERATE UNIQUE COLORS
+            const uniqueColors = new Uint32Array(totalPixels);
+            const colorStep = 16777215 / totalPixels;
+            for (let i = 0; i < totalPixels; i++) {
+                uniqueColors[i] = Math.floor(i * colorStep);
+            }
+
+            // Shuffle colors
+            for (let i = totalPixels - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const temp = uniqueColors[i];
+                uniqueColors[i] = uniqueColors[j];
+                uniqueColors[j] = temp;
+            }
+
+            let colorIndex = 0;
+            function getColor() {
+                const hex = uniqueColors[colorIndex++];
+                const r = (hex >> 16) & 255;
+                const g = (hex >> 8) & 255;
+                const b = hex & 255;
+                return `rgb(${r},${g},${b})`;
+            }
+
+            // 3. TRACKING THE GRID
+            const visited = new Uint8Array(totalPixels);
+            const stack = [];
+            const getIndex = (x, y) => y * cols + x;
+
+            const directions = [
+                [-1, -1],
+                [0, -1],
+                [1, -1],
+                [-1, 0],
+                [1, 0],
+                [-1, 1],
+                [0, 1],
+                [1, 1],
+            ];
+
+            // 4. DRAWING FUNCTION (SVG SPECIFIC)
+            function drawSVGPixel(x, y) {
+                const rect = document.createElementNS(svgNS, "rect");
+                rect.setAttribute("x", x * CONFIG.pixelSize);
+                rect.setAttribute("y", y * CONFIG.pixelSize);
+                rect.setAttribute("width", CONFIG.pixelSize);
+                rect.setAttribute("height", CONFIG.pixelSize);
+                rect.setAttribute("fill", getColor());
+
+                // To prevent microscopic gaps between SVG shapes when scaling,
+                // an incredibly tiny overlap stroke is sometimes used.
+                rect.setAttribute("stroke", rect.getAttribute("fill"));
+                rect.setAttribute("stroke-width", "0.5");
+
+                svgElement.appendChild(rect);
+            }
+
+            // 5. THE SEED
+            const startX = Math.floor(Math.random() * cols);
+            const startY = Math.floor(Math.random() * rows);
+
+            visited[getIndex(startX, startY)] = 1;
+            stack.push([startX, startY]);
+            drawSVGPixel(startX, startY);
+
+            // 6. THE ANIMATION LOOP
+            function drawPath() {
+                for (let step = 0; step < CONFIG.pixelsPerFrame; step++) {
+                    if (stack.length === 0) return;
+
+                    const current = stack[stack.length - 1];
+                    const cx = current[0];
+                    const cy = current[1];
+
+                    const validNeighbors = [];
+                    for (let i = 0; i < directions.length; i++) {
+                        const nx = cx + directions[i][0];
+                        const ny = cy + directions[i][1];
+
+                        if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
+                            if (visited[getIndex(nx, ny)] === 0) {
+                                validNeighbors.push([nx, ny]);
+                            }
+                        }
+                    }
+
+                    if (validNeighbors.length > 0) {
+                        const next =
+                            validNeighbors[
+                                Math.floor(
+                                    Math.random() * validNeighbors.length,
+                                )
+                            ];
+                        const nx = next[0];
+                        const ny = next[1];
+
+                        visited[getIndex(nx, ny)] = 1;
+                        stack.push([nx, ny]);
+
+                        drawSVGPixel(nx, ny);
+                    } else {
+                        stack.pop();
+                    }
+                }
+
+                requestAnimationFrame(drawPath);
+            }
+
+            requestAnimationFrame(drawPath);
+
+            window.addEventListener("resize", () => {
+                location.reload();
+            });
+        </script>
+    </body>
+</html>

@@ -39,10 +39,10 @@ jobs:
         run: node scripts/sitemap.cjs
 
       - name: Build site
-        run: npm run build
+        run: npm run build && touch docs/.nojekyll
 
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

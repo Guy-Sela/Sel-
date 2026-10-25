@@ -16,7 +16,11 @@ dist/
 **/node_modules/
 **/.venv/
 
-# Build output (docs/ is committed for GitHub Pages)
+# Generated website output. GitHub Actions rebuilds these from source.
+/docs/
+/public/meditativeclocks/
+/public/mockups/
+/public/mockups-compressed/
 
 # OS files
 .DS_Store

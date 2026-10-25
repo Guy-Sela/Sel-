@@ -134,8 +134,8 @@
       min-height: 0;
       overflow: hidden;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      align-items: flex-start;
+      justify-content: flex-start;
     }
 
     .ansi-art {
@@ -144,7 +144,9 @@
       /* Will be set dynamically: start at terminal font-size then shrink via transform */
       font-size: 10px;
       line-height: 10px;
-      transform-origin: center center;
+      flex: 0 0 auto;
+      width: max-content;
+      transform-origin: top left;
       will-change: transform;
       color: #fff;
     }
@@ -342,15 +344,15 @@
               active = false;
             }
           } else {
-            const rgbMatch = tag.match(/(\d+);(\d+);(\d+)/);
+            const rgbMatch = tag.match(/^\x1b\[38;2;(\d+);(\d+);(\d+)m$/);
             if (rgbMatch) {
               const r = Number(rgbMatch[1]);
               const g = Number(rgbMatch[2]);
               const b = Number(rgbMatch[3]);
 
-              // grayscale + brightness boost (same "middle" tuning)
-              let gray = Math.floor(0.299 * r + 0.587 * g + 0.114 * b);
-              gray = Math.min(255, Math.floor(gray * 2.1 + 70));
+              // Lift midtones without flattening highlights or lifting black to gray.
+              const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+              const gray = Math.round(255 * Math.pow(luminance, 0.7));
 
               if (active) html += '</span>';
               html += `<span style="color: rgb(${gray},${gray},${gray})">`;
@@ -369,145 +371,143 @@
       // ------------------------------
       // Fit ANSI art in its box (scale)
       // ------------------------------
+      let ansiSize = null;
+      let ansiFitScale = 1;
+      let ansiZoomProgress = 1;
+      let ansiStageWidth = 0;
+      let ansiOffset = { x: 0, y: 0 };
+
       function computeAnsiFitScale() {
         const stage = ansiEl.parentElement;
-        if (!stage) return;
-        const rect = stage.getBoundingClientRect();
-        const pad = 4;
-        const availW = Math.max(120, rect.width - pad);
-        const availH = Math.max(120, rect.height - pad);
-
-        // Measure using a temp span matching ansiEl font.
-        const meas = document.createElement('span');
-        meas.style.position = 'absolute';
-        meas.style.visibility = 'hidden';
-        meas.style.fontFamily = getComputedStyle(ansiEl).fontFamily;
-        meas.style.fontSize = getComputedStyle(ansiEl).fontSize;
-        meas.textContent = 'M';
-        document.body.appendChild(meas);
-        const m = meas.getBoundingClientRect();
-        meas.remove();
-        const cw = m.width || 6;
-        const ch = m.height || 10;
-
-        // Estimate dimensions from plain-text version (strip tags).
-        const plain = ansiEl.textContent || '';
-        const lines = plain.split('\n');
-        const cols = Math.max(1, ...lines.map(l => l.length));
-        const rows = Math.max(1, lines.length);
-
-        const fullW = cols * cw;
-        const fullH = rows * ch;
-        const scale = Math.min(availW / fullW, availH / fullH, 1);
-        return (scale > 0 && scale < 100) ? scale : 0.2;
+        if (!stage || !ansiSize) return 1;
+        return Math.min(
+          Math.max(0, stage.clientWidth - 4) / ansiSize.width,
+          Math.max(0, stage.clientHeight - 4) / ansiSize.height,
+          1
+        );
       }
 
       function fitAnsiToScale(scale) {
-        ansiEl.style.transform = `scale(${scale})`;
+        const x = ansiOffset.x * ansiZoomProgress;
+        const y = ansiOffset.y * ansiZoomProgress;
+        ansiEl.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
       }
 
-      window.addEventListener('resize', () => {
-        // Recompute final scale on resize; keep current scale if we're mid-animation.
-        const s = computeAnsiFitScale();
-        if (typeof s === 'number') fitAnsiToScale(s);
-      }, { passive: true });
-      if (window.visualViewport) window.visualViewport.addEventListener('resize', () => {
-        const s = computeAnsiFitScale();
-        if (typeof s === 'number') fitAnsiToScale(s);
-      });
+      function updateAnsiFit() {
+        if (!ansiSize) return;
+        ansiFitScale = computeAnsiFitScale();
+        const stage = ansiEl.parentElement;
+        ansiStageWidth = stage.clientWidth;
+        ansiOffset = {
+          x: Math.max(0, (stage.clientWidth - ansiSize.width * ansiFitScale) / 2),
+          y: Math.max(0, (stage.clientHeight - ansiSize.height * ansiFitScale) / 2)
+        };
+        fitAnsiToScale(1 + (ansiFitScale - 1) * ansiZoomProgress);
+      }
+
+      function prepareAnsi(html) {
+        ansiEl.style.transform = 'none';
+        ansiEl.style.width = 'max-content';
+        ansiEl.style.height = 'auto';
+        ansiEl.innerHTML = html;
+        const rect = ansiEl.getBoundingClientRect();
+        ansiSize = { width: Math.max(1, rect.width), height: Math.max(1, rect.height) };
+        // Reserve the full dimensions so typing cannot shift the scaling origin.
+        ansiEl.style.width = `${ansiSize.width}px`;
+        ansiEl.style.height = `${ansiSize.height}px`;
+        updateAnsiFit();
+      }
+
+      window.addEventListener('resize', updateAnsiFit, { passive: true });
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', updateAnsiFit);
+      }
+      if (window.ResizeObserver) {
+        const observer = new ResizeObserver(updateAnsiFit);
+        observer.observe(ansiEl.parentElement);
+      }
 
       // ------------------------------
       // ANSI animation:
       // - wait a few seconds after text finishes
-      // - start ~120wpm pace with pauses
-      // - after some time, ramp into ~200 visible chars/frame
+      // - start at a human typing pace with pauses
+      // - accelerate the reveal while zooming on an independent clock
       // ------------------------------
-      function tokenizeHtml(fullHtml) {
-        return fullHtml.match(/<[^>]+>|&[^;]+;|[^<>&]/g) || [];
-      }
 
       function easeOutCubic(t) {
         return 1 - Math.pow(1 - Math.max(0, Math.min(1, t)), 3);
       }
 
-      function countVisible(tokens) {
-        let n = 0;
-        for (const t of tokens) if (!t.startsWith('<')) n++;
-        return n;
-      }
+      async function animateAnsi(fullHtml) {
+        ansiZoomProgress = 0;
+        prepareAnsi(fullHtml);
 
-      async function animateAnsi(fullHtml, finalScale) {
-        ansiEl.innerHTML = '';
-        const ANSI_CURSOR_HTML = '<span class="ansi-cursor blink">_</span>';
-        const tokens = tokenizeHtml(fullHtml);
-        let i = 0;
-        let current = '';
+        const runs = [];
+        const walker = document.createTreeWalker(ansiEl, NodeFilter.SHOW_TEXT);
+        let node;
+        let totalVisible = 0;
+        while ((node = walker.nextNode())) {
+          const text = node.data;
+          runs.push({ node, text });
+          totalVisible += text.length;
+        }
+        for (const run of runs) run.node.data = '';
 
-        // Stage 1: human pace for a short while (with a few "what is going on" hesitations)
-        const stage1MaxVisible = 80; // "a moment" at 120wpm-ish
-        let visibleCount = 0;
+        const artCursor = document.createElement('span');
+        artCursor.className = 'ansi-cursor blink';
+        artCursor.textContent = '_';
+        ansiEl.appendChild(artCursor);
+        let runIndex = 0;
+        let offset = 0;
         let visibleDone = 0;
-        const totalVisible = Math.max(1, countVisible(tokens));
-        const speed120 = { minDelay: 60, maxDelay: 100, pausePunct: 250, pauseNewline: 280 };
-        // Hold full-size for a bit before shrink begins, to create continuity + tension.
-        const shrinkStartVisible = 220;
-        const pauseMarks = new Set([18, 45, 72, 110, 155, 205]);
 
-        while (i < tokens.length && visibleCount < stage1MaxVisible) {
-          const t = tokens[i++];
-          current += t;
-          ansiEl.innerHTML = current + ANSI_CURSOR_HTML;
-
-          if (!t.startsWith('<')) {
-            visibleCount++;
-            visibleDone++;
-            // Shrink gradually, but only after a "hold" period.
-            const denom = Math.max(1, (totalVisible - shrinkStartVisible));
-            const pRaw = visibleDone <= shrinkStartVisible ? 0 : ((visibleDone - shrinkStartVisible) / denom);
-            const p = easeOutCubic(pRaw);
-            fitAnsiToScale((1 - p) * 1 + p * finalScale);
-
-            // A few deliberate hesitations early on.
-            if (pauseMarks.has(visibleDone)) {
-              await sleep(520 + Math.floor(Math.random() * 680));
+        function reveal(count) {
+          let last = '';
+          while (count > 0 && runIndex < runs.length) {
+            const run = runs[runIndex];
+            const take = Math.min(count, run.text.length - offset);
+            const chunk = run.text.slice(offset, offset + take);
+            run.node.appendData(chunk);
+            last = chunk.slice(-1);
+            offset += take;
+            visibleDone += take;
+            count -= take;
+            if (offset === run.text.length) {
+              runIndex++;
+              offset = 0;
             }
-            // treat actual newlines as a punctuation-like pause
-            if (t === '\n') await sleep(speed120.pauseNewline);
-            else await sleep(Math.floor(speed120.minDelay + Math.random() * (speed120.maxDelay - speed120.minDelay)));
           }
+          return last;
         }
 
-        // Stage 2: ramp up batch size until ~200 chars/frame
-        let batch = 8;
-        const maxBatch = 1000;
-        const ramp = 60;
+        // Keep the opening inside the viewport, including on narrow screens.
+        await sleep(250);
+        const fontSize = parseFloat(getComputedStyle(ansiEl).fontSize) || 16;
+        const openingCharacters = Math.min(80, Math.max(1, Math.floor(ansiStageWidth / fontSize)));
+        while (visibleDone < Math.min(openingCharacters, totalVisible)) {
+          const character = reveal(1);
+          await sleep(character === '\n' ? 180 : 60 + Math.floor(Math.random() * 40));
+        }
 
+        // Reveal in typing order, but time the zoom independently of frame rate.
+        const remaining = totalVisible - visibleDone;
+        const startVisible = visibleDone;
+        const duration = 12000;
+        const zoomDelay = 150;
         return new Promise((resolve) => {
-          function step() {
-            if (i >= tokens.length) {
-              ansiEl.innerHTML = current + ANSI_CURSOR_HTML;
-              fitAnsiToScale(finalScale);
-              resolve();
-              return;
-            }
-
-            let visibleProcessed = 0;
-            while (i < tokens.length && visibleProcessed < batch) {
-              const t = tokens[i++];
-              current += t;
-              if (!t.startsWith('<')) visibleProcessed++;
-            }
-            ansiEl.innerHTML = current + ANSI_CURSOR_HTML;
-
-            visibleDone += visibleProcessed;
-            const denom = Math.max(1, (totalVisible - shrinkStartVisible));
-            const pRaw = visibleDone <= shrinkStartVisible ? 0 : ((visibleDone - shrinkStartVisible) / denom);
-            const p = easeOutCubic(pRaw);
-            fitAnsiToScale((1 - p) * 1 + p * finalScale);
-
-            batch = Math.min(maxBatch, batch + ramp);
-            requestAnimationFrame(step);
+          let startedAt;
+          function step(now) {
+            if (startedAt === undefined) startedAt = now;
+            const elapsed = now - startedAt;
+            const progress = Math.min(1, elapsed / duration);
+            const target = startVisible + Math.floor(remaining * progress * progress);
+            reveal(target - visibleDone);
+            ansiZoomProgress = easeOutCubic((elapsed - zoomDelay) / (duration - zoomDelay));
+            fitAnsiToScale(1 + (ansiFitScale - 1) * ansiZoomProgress);
+            if (progress < 1) requestAnimationFrame(step);
+            else resolve();
           }
+
           requestAnimationFrame(step);
         });
       }
@@ -582,19 +582,8 @@
         ansiEl.style.fontSize = `${typedFontPx}px`;
         ansiEl.style.lineHeight = `${typedFontPx}px`;
 
-        // Set a quick plain text snapshot for sizing; actual HTML comes during animation.
-        ansiEl.textContent = ansiRaw.replace(/\x1b\[[0-9;]*m/g, '').replace(/\r/g, '');
-        const finalScale = computeAnsiFitScale() ?? 0.2;
-        fitAnsiToScale(1); // start same size as the terminal text
-
-        // Suspense prelude: show only the ANSI cursor for a moment, then begin drawing.
-        ansiEl.innerHTML = '<span class="ansi-cursor blink">_</span>';
-        await sleep(900);
-        await sleep(520);
-
-        // Now animate the actual colored HTML
-        await animateAnsi(html, finalScale);
-        fitAnsiToScale(finalScale);
+        if (document.fonts) await document.fonts.ready;
+        await animateAnsi(html);
       }
 
       if (reduce) {
@@ -617,10 +606,9 @@
         typedText.appendChild(tm);
         typedText.appendChild(document.createTextNode('.'));
         setCursorVisible(false);
-        fetch('ascii-profile.txt').then(r => r.text()).then(t => {
-          ansiEl.innerHTML = ansiToHtml(t);
-          const scale = computeAnsiFitScale();
-          if (typeof scale === 'number') fitAnsiToScale(scale);
+        fetch('ascii-profile.txt').then(r => r.text()).then(async t => {
+          if (document.fonts) await document.fonts.ready;
+          prepareAnsi(ansiToHtml(t));
         }).catch(() => { });
         return;
       }

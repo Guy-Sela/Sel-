@@ -6,6 +6,12 @@ build/
 # Production
 dist/
 
+# Local artwork submission exports (not website assets)
+/meditativeclocks/clocks/semi-linear_clock_svg/export/
+/meditativeclocks/clocks/semi-linear_clock_svg/gtm/
+/public/meditativeclocks/clocks/semi-linear_clock_svg/export/
+/public/meditativeclocks/clocks/semi-linear_clock_svg/gtm/
+
 # Dependencies
 **/node_modules/
 **/.venv/

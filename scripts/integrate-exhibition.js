@@ -10,6 +10,11 @@ const ROOT = path.resolve(__dirname, "..");
 const meditativeClocksDir = path.join(ROOT, "meditativeclocks");
 const exhibitionDir = path.join(meditativeClocksDir, "exhibition");
 const publicBaseDest = path.join(ROOT, "public", "meditativeclocks");
+const submissionExportDirs = new Set(
+  ["export", "gtm"].map((folder) =>
+    path.join(meditativeClocksDir, "clocks", "semi-linear_clock_svg", folder),
+  ),
+);
 
 async function integrate() {
   console.log("🚀 Starting Integration for Meditative Clocks...");
@@ -37,7 +42,10 @@ async function integrate() {
     const dest = path.join(publicBaseDest, folder);
     if (fs.existsSync(src)) {
       console.log(`  ➔ Syncing static folder: ${folder}`);
-      fs.cpSync(src, dest, { recursive: true });
+      fs.cpSync(src, dest, {
+        recursive: true,
+        filter: (source) => !submissionExportDirs.has(source),
+      });
     }
   });
 
@@ -68,4 +76,7 @@ async function integrate() {
   );
 }
 
-integrate().catch(console.error);
+integrate().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

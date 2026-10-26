@@ -36,9 +36,12 @@ Thumbs.db
 *.log
 npm-debug.log*
 
-# Environment
+# Environment (including nested projects and deployment-specific files)
 .env
-.env.local
+.env.*
+!.env.example
+!.env.sample
+!.env.template
 
 AGENTS.md
 

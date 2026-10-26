@@ -20,6 +20,8 @@ if git diff --cached --quiet; then
   exit 1
 fi
 
+npm run security:check
+
 GIT_EDITOR=true git commit -m "$1"
 git push origin main
 echo "Pushed main. GitHub Actions will build and deploy the site."

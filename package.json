@@ -11,6 +11,7 @@
     "preview": "npx serve docs",
     "lint": "next lint",
     "deploy": "sh scripts/deploy.sh",
+    "security:check": "node scripts/check-tracked-secrets.js",
     "sitemap": "node scripts/sitemap.cjs"
   },
   "dependencies": {
